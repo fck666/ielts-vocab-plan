@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IELTS Vocabulary Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-mark" aria-hidden="true">VL</div>
+      <div>
+        <p class="eyebrow">IELTS 6.5 VOCABULARY LAB</p>
+        <h1>雅思词汇考试系统</h1>
+      </div>
+      <div class="header-stat" id="headerStat">360 个词汇单位</div>
+    </header>
+
+    <main class="app-shell">
+      <section id="setupView" class="view active" aria-labelledby="setupTitle">
+        <div class="intro-grid">
+          <div>
+            <p class="eyebrow accent">ACTIVE RECALL · CONTEXT · OUTPUT</p>
+            <h2 id="setupTitle">用不同方式检查，才知道自己真的会了。</h2>
+            <p class="lead">本系统不只考默写：它会混合词义识别、中译英、拼写和语境填空，覆盖“认识、掌握、会用”三个层次。</p>
+          </div>
+          <div class="principle-card">
+            <span class="principle-number">01</span>
+            <strong>先回忆，再看答案</strong>
+            <span>每题提交后才显示搭配、例句和使用提醒。</span>
+          </div>
+        </div>
+
+        <div class="setup-layout">
+          <form id="setupForm" class="panel setup-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">CONFIGURE</p>
+                <h3>设置本次考试</h3>
+              </div>
+              <span class="pill">离线可用</span>
+            </div>
+
+            <div class="field-row two-col">
+              <label>
+                <span>起始周</span>
+                <select id="weekFrom">
+                  <option value="1">Week 1</option>
+                  <option value="2">Week 2</option>
+                  <option value="3">Week 3</option>
+                </select>
+              </label>
+              <label>
+                <span>结束周</span>
+                <select id="weekTo">
+                  <option value="1">Week 1</option>
+                  <option value="2">Week 2</option>
+                  <option value="3" selected>Week 3</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field-label">
+              <span>题目数量</span>
+              <select id="questionCount">
+                <option value="10">10 题 · 快速热身</option>
+                <option value="20" selected>20 题 · 推荐</option>
+                <option value="40">40 题 · 完整练习</option>
+                <option value="all">全部词汇</option>
+              </select>
+            </label>
+
+            <fieldset class="type-fieldset">
+              <legend>题型（至少选择一种）</legend>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="meaning" checked />
+                <span class="check-copy"><strong>词义识别</strong><small>英文 → 中文四选一</small></span>
+                <span class="type-code">A</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="reverse" checked />
+                <span class="check-copy"><strong>主动回忆</strong><small>中文 → 英文四选一</small></span>
+                <span class="type-code">B</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="spell" checked />
+                <span class="check-copy"><strong>拼写输出</strong><small>根据释义输入词汇</small></span>
+                <span class="type-code">C</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="cloze" checked />
+                <span class="check-copy"><strong>语境填空</strong><small>根据例句输入目标词</small></span>
+                <span class="type-code">D</span>
+              </label>
+            </fieldset>
+
+            <button class="primary-button" type="submit">开始考试 <span>→</span></button>
+            <p id="setupHint" class="form-hint" aria-live="polite"></p>
+          </form>
+
+          <aside class="panel how-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">WHY MIXED QUESTIONS</p>
+                <h3>四种题型各自检查什么</h3>
+              </div>
+            </div>
+            <div class="method-list">
+              <div class="method-item"><span class="method-dot coral">A</span><div><strong>词义识别</strong><p>确认看到单词时能快速理解。</p></div></div>
+              <div class="method-item"><span class="method-dot blue">B</span><div><strong>主动回忆</strong><p>模拟写作和口语中从中文概念找英文。</p></div></div>
+              <div class="method-item"><span class="method-dot gold">C</span><div><strong>拼写输出</strong><p>发现“会读但不会写”的隐性漏洞。</p></div></div>
+              <div class="method-item"><span class="method-dot green">D</span><div><strong>语境填空</strong><p>检查词义、词性和搭配能否真正落地。</p></div></div>
+            </div>
+            <div class="mini-note"><strong>建议</strong><span>第一次可以选 20 题全题型；如果某类正确率低于 70%，下一轮单独练习该题型。</span></div>
+          </aside>
+        </div>
+
+        <section class="history-strip panel" aria-label="历史记录">
+          <div><span class="eyebrow">YOUR RECORD</span><strong id="historySummary">还没有考试记录</strong></div>
+          <div class="history-metrics"><span><b id="dueCount">0</b><small>今日待复习</small></span><span><b id="masteredCount">0</b><small>已稳定掌握</small></span><span><b id="attemptCount">0</b><small>累计答题</small></span><span><b id="bestScore">—</b><small>最高正确率</small></span></div>
+        </section>
+
+        <section class="practice-teaser panel" aria-label="口语和写作练习">
+          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>保存口语回答或写作练习，记录自评分和练习日期。它们和考试进度一样只保存在当前浏览器。</p></div>
+          <button id="openPractice" class="secondary-button" type="button">进入口语 / 写作练习 <span>→</span></button>
+        </section>
+
+        <section class="study-teaser panel" aria-label="背单词学习模式">
+          <div><p class="eyebrow accent">LEARN BY DAY</p><h3>按周、按天背单词</h3><p>打开完整词条卡片，查看音标、词性、搭配和例句；每个词的熟练度会和考试进度共用。</p></div>
+          <button id="openStudy" class="secondary-button" type="button">进入学习模式 <span>→</span></button>
+        </section>
+      </section>
+
+      <section id="examView" class="view" aria-labelledby="questionTitle">
+        <div class="exam-topbar">
+          <button class="text-button" id="quitExam" type="button">← 返回设置</button>
+          <div class="progress-wrap"><div class="progress-meta"><span id="progressLabel">第 1 / 20 题</span><span id="progressPercent">0%</span></div><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div></div>
+          <div class="exam-score"><span>本轮得分</span><strong id="liveScore">0</strong></div>
+        </div>
+
+        <div class="exam-layout">
+          <article class="question-card panel">
+            <div class="question-meta"><span id="questionTypeLabel" class="question-type">词义识别</span><span id="questionSource">Week 1 · Day 1</span></div>
+            <div id="questionContent"></div>
+            <div id="answerArea" class="answer-area"></div>
+            <div id="feedback" class="feedback" aria-live="polite"></div>
+            <div class="question-actions"><button id="submitAnswer" class="primary-button" type="button">提交答案 <span>↵</span></button><button id="nextQuestion" class="secondary-button hidden" type="button">下一题 <span>→</span></button></div>
+          </article>
+          <aside class="side-panel">
+            <div class="panel vocab-reference"><p class="eyebrow">AFTER SUBMIT</p><h3>答完后你会看到</h3><ul><li>正确答案与本题解析</li><li>常见搭配和原始例句</li><li>词族与雅思使用提醒</li></ul></div>
+            <div class="panel exam-tip"><span class="tip-icon">✦</span><strong>不要凭印象点选</strong><p>先在脑中说出答案，再提交。主动回忆比重复阅读更能形成长期记忆。</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="resultView" class="view" aria-labelledby="resultTitle">
+        <div class="result-hero"><p class="eyebrow accent">SESSION COMPLETE</p><h2 id="resultTitle">本轮练习完成</h2><p id="resultSubtitle" class="lead">下面是这次练习的掌握情况。</p><div class="score-ring"><div><strong id="resultScore">0%</strong><span>正确率</span></div></div></div>
+        <div class="result-grid"><div class="panel result-panel"><div class="panel-heading"><div><p class="eyebrow">BREAKDOWN</p><h3>按题型查看</h3></div></div><div id="typeBreakdown" class="breakdown-list"></div></div><div class="panel result-panel"><div class="panel-heading"><div><p class="eyebrow">REVIEW</p><h3>需要再看一遍</h3></div><span id="wrongCount" class="pill">0 个</span></div><div id="wrongWords" class="wrong-list"></div></div></div>
+        <div id="reviewSummary" class="review-summary panel"></div>
+        <div class="result-actions"><button id="retryWrong" class="primary-button" type="button">只练错题 <span>↻</span></button><button id="newExam" class="secondary-button" type="button">重新设置 <span>→</span></button></div>
+      </section>
+
+      <section id="practiceView" class="view" aria-labelledby="practiceTitle">
+        <div class="practice-topbar"><button class="text-button" id="backToSetup" type="button">← 返回考试设置</button><div><p class="eyebrow accent">OUTPUT PRACTICE</p><h2 id="practiceTitle">口语与写作练习</h2></div><span class="pill">本地保存</span></div>
+        <div class="practice-layout">
+          <article class="panel practice-editor">
+            <div class="practice-tabs" role="tablist" aria-label="练习类型"><button class="practice-tab active" data-practice-mode="speaking" type="button">口语 Part 3</button><button class="practice-tab" data-practice-mode="writing" type="button">Task 2 写作</button></div>
+            <div class="practice-prompt-meta"><span id="practicePromptType" class="question-type">口语 Part 3</span><span id="practicePromptWeek">主题练习</span></div>
+            <h3 id="practicePromptTitle">为什么学校应该培养批判性思维？</h3>
+            <p id="practicePromptBody" class="practice-prompt-body">请回答 1–2 分钟，尽量使用本周词汇，并给出一个具体例子。</p>
+            <div id="practiceHints" class="practice-hints"></div>
+            <label class="answer-label" for="practiceResponse">你的回答</label><textarea id="practiceResponse" class="practice-textarea" placeholder="先独立组织观点，再开始输入……"></textarea>
+            <div class="practice-toolbar"><span id="practiceWordCount">0 词</span><label>自评分 <select id="practiceRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
+            <div class="question-actions"><button id="newPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="savePractice" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div>
+            <p id="practiceHint" class="form-hint" aria-live="polite"></p>
+          </article>
+          <aside class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT OUTPUT</p><h3>最近练习</h3></div><span id="practiceCount" class="pill">0 次</span></div><div id="practiceHistory" class="practice-history"></div></aside>
+        </div>
+      </section>
+
+      <section id="studyView" class="view" aria-labelledby="studyTitle">
+        <div class="study-topbar">
+          <button class="text-button" id="backFromStudy" type="button">← 返回考试设置</button>
+          <div><p class="eyebrow accent">LEARN BY DAY</p><h2 id="studyTitle">背单词学习模式</h2></div>
+          <span class="pill">本地保存</span>
+        </div>
+        <div class="study-controls panel">
+          <div class="study-selects">
+            <label><span>选择周</span><select id="studyWeek"></select></label>
+            <label><span>选择天</span><select id="studyDay"></select></label>
+            <label><span>显示词汇</span><select id="studyFilter"><option value="all">全部词汇</option><option value="new">尚未学习</option><option value="due">今天待复习</option><option value="needs">需要巩固</option><option value="mastered">已稳定掌握</option></select></label>
+          </div>
+          <div class="study-summary"><strong id="studyProgressSummary">正在加载词汇</strong><span id="studyProgressHint">按天学习，每次完成后标记熟练度。</span></div>
+        </div>
+        <div id="studyWords" class="study-words" aria-live="polite"></div>
+      </section>
+    </main>
+    <footer class="site-footer">本地静态页面 · 数据保存在浏览器本机，不会上传</footer>
+
+    <script src="data/words.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

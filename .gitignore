@@ -1,0 +1,10 @@
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+*.log
+*.tmp
+
+# Local browser/runtime artifacts
+.playwright/
+coverage/
