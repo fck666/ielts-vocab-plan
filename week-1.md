@@ -831,12 +831,12 @@
     - **词族**：profession n.; professional adj.; develop v.
     - **提醒**：适合教育、工作满意度和员工福利类题目。
 
-16. **job satisfaction** /ˈdʒɒb sætɪsˌfækʃən/ · *n.* · 工作满意度
-    - **搭配**：improve job satisfaction; high job satisfaction; job satisfaction survey
-    - **例句**：Flexible working hours can improve job satisfaction.
-    - **译文**：灵活的工作时间可以提高工作满意度。
-    - **词族**：satisfy v.; satisfaction n.; satisfactory adj.
-    - **提醒**：本词与第 6 个词组重复出现，第二次重点练习输出而不是重新抄写。
+16. **employee morale** /ˈemplɔɪiː məˈrɑːl/ · *n.* · 员工士气
+   - **搭配**：support employee morale; improve employee morale; low employee morale
+   - **例句**：Flexible working arrangements can improve employee morale.
+   - **译文**：灵活的工作安排可以提升员工士气。
+   - **词族**：morale n.; moral adj.
+   - **提醒**：不要与个人 job satisfaction 混淆；morale 指群体的精神状态。
 
 17. **minimum wage** /ˌmɪnɪməm ˈweɪdʒ/ · *n.* · 最低工资
     - **搭配**：raise the minimum wage; minimum wage policy; earn the minimum wage

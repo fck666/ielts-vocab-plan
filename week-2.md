@@ -589,12 +589,12 @@
    - **词族**：analysis n.; analytical adj.; analyst n.
    - **提醒**：英式拼写 `analyse`，美式为 `analyze`；名词统一是 `analysis`。
 
-2. **assess** /əˈses/ · *v.* · 评估
-   - **搭配**：assess the impact; assess effectiveness; assess a risk
-   - **例句**：This study assesses the impact of remote work on productivity.
-   - **译文**：这项研究评估远程工作对生产率的影响。
-   - **词族**：assessment n.; assessor n.
-   - **提醒**：比 `look at` 正式，适合引入研究目的。
+2. **benchmark** /ˈbentʃmɑːrk/ · *n./v.* · 基准；以基准衡量
+   - **搭配**：set a benchmark; benchmark performance; benchmark against
+   - **例句**：Researchers can benchmark results against similar studies.
+   - **译文**：研究人员可以将结果与类似研究进行基准比较。
+   - **词族**：benchmark n./v.; benchmarking n.
+   - **提醒**：常与 against 连用，表示与参照标准比较。
 
 3. **indicate** /ˈɪndɪkeɪt/ · *v.* · 表明；指出
    - **搭配**：evidence indicates; indicate a trend; indicate that
@@ -803,12 +803,12 @@
     - **词族**：detriment n.; detrimentally adv.
     - **提醒**：固定结构是 `detrimental to`，和 `harmful to` 意义接近。
 
-12. **sustainable** /səˈsteɪnəbəl/ · *adj.* · 可持续的
-    - **搭配**：sustainable growth; sustainable transport; sustainable use of resources
-    - **例句**：Cities need sustainable transport systems for long-term growth.
-    - **译文**：城市需要可持续交通系统来实现长期发展。
-    - **词族**：sustain v.; sustainability n.
-    - **提醒**：同一篇文章中不要反复重复，可用 `long-term` 作部分替换。
+12. **viable** /ˈvaɪəbəl/ · *adj.* · 可行的；能持续发展的
+   - **搭配**：a viable alternative; economically viable; viable solution
+   - **例句**：Public transport is a viable alternative to private cars.
+   - **译文**：公共交通是私家车的一种可行替代方案。
+   - **词族**：viability n.; viable adj.
+   - **提醒**：强调方案在现实条件下可行，不只是理论上可能。
 
 13. **inevitable** /ɪnˈevɪtəbəl/ · *adj.* · 不可避免的
     - **搭配**：an inevitable consequence; inevitable change; seem inevitable

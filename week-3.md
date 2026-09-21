@@ -336,12 +336,12 @@
    - **词族**：low adj./n.; lowest adj.; decline v./n.
    - **提醒**：可与 `peak at` 成对描述极值。
 
-7. **account for** /əˈkaʊnt fɔː/ · *v. phr.* · 占据
-   - **搭配**：account for 25%; account for the largest share
-   - **例句**：Renewable energy accounted for 25 percent of total production.
-   - **译文**：可再生能源占总产量的 25%。
-   - **词族**：account n./v.; proportion n.; share n.
-   - **提醒**：描述过去数据时注意使用过去式 `accounted for`。
+7. **explain variation** /ɪkˈspleɪn ˌveəriˈeɪʃən/ · *v. phr.* · 解释差异
+   - **搭配**：explain variation in results; explain changes; explain differences
+   - **例句**：The model helps explain variation in household energy use.
+   - **译文**：这个模型有助于解释家庭能源使用量的差异。
+   - **词族**：explain v.; explanation n.; variation n.
+   - **提醒**：后面通常接 in + 名词，说明差异出现在哪个方面。
 
 8. **proportion** /prəˈpɔːʃən/ · *n.* · 比例
    - **搭配**：the proportion of; a high proportion; a small proportion
