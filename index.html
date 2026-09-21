@@ -120,8 +120,13 @@
           <div class="history-metrics"><span><b id="dueCount">0</b><small>今日待复习</small></span><span><b id="masteredCount">0</b><small>已稳定掌握</small></span><span><b id="attemptCount">0</b><small>累计答题</small></span><span><b id="bestScore">—</b><small>最高正确率</small></span></div>
         </section>
 
+        <section class="stats-teaser panel" aria-label="学习数据统计">
+          <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h3>查看完整学习统计</h3><p>按词汇掌握、考试表现、输出练习和每周进度查看自己的学习轨迹。</p></div>
+          <button id="openStats" class="secondary-button" type="button">打开统计面板 <span>→</span></button>
+        </section>
+
         <section class="practice-teaser panel" aria-label="口语和写作练习">
-          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>保存口语回答或写作练习，记录自评分和练习日期。它们和考试进度一样只保存在当前浏览器。</p></div>
+          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>保存口语回答或写作练习，记录自评分和练习日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
           <button id="openPractice" class="secondary-button" type="button">进入口语 / 写作练习 <span>→</span></button>
         </section>
 
@@ -161,7 +166,7 @@
       </section>
 
       <section id="practiceView" class="view" aria-labelledby="practiceTitle">
-        <div class="practice-topbar"><button class="text-button" id="backToSetup" type="button">← 返回考试设置</button><div><p class="eyebrow accent">OUTPUT PRACTICE</p><h2 id="practiceTitle">口语与写作练习</h2></div><span class="pill">本地保存</span></div>
+        <div class="practice-topbar"><button class="text-button" id="backToSetup" type="button">← 返回考试设置</button><div><p class="eyebrow accent">OUTPUT PRACTICE</p><h2 id="practiceTitle">口语与写作练习</h2></div><span class="pill">SQLite 本机保存</span></div>
         <div class="practice-layout">
           <article class="panel practice-editor">
             <div class="practice-tabs" role="tablist" aria-label="练习类型"><button class="practice-tab active" data-practice-mode="speaking" type="button">口语 Part 3</button><button class="practice-tab" data-practice-mode="writing" type="button">Task 2 写作</button></div>
@@ -182,7 +187,7 @@
         <div class="study-topbar">
           <button class="text-button" id="backFromStudy" type="button">← 返回考试设置</button>
           <div><p class="eyebrow accent">LEARN BY DAY</p><h2 id="studyTitle">背单词学习模式</h2></div>
-          <span class="pill">本地保存</span>
+          <span class="pill">SQLite 本机保存</span>
         </div>
         <div class="study-controls panel">
           <div class="study-selects">
@@ -194,10 +199,49 @@
         </div>
         <div id="studyWords" class="study-words" aria-live="polite"></div>
       </section>
-    </main>
-    <footer class="site-footer">本地静态页面 · 数据保存在浏览器本机，不会上传</footer>
 
+      <section id="statsView" class="view" aria-labelledby="statsTitle">
+        <div class="stats-topbar">
+          <button class="text-button" id="backFromStats" type="button">← 返回考试设置</button>
+          <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h2 id="statsTitle">学习数据统计</h2></div>
+          <span class="pill">本机数据</span>
+        </div>
+        <div class="stats-data-actions" aria-label="学习数据管理">
+          <span id="statsDataHint" class="stats-muted">数据可导出为 SQLite 文件，方便备份或迁移到另一台设备。</span>
+          <div><button id="exportData" class="secondary-button" type="button">导出学习数据</button><button id="importData" class="secondary-button" type="button">导入学习数据</button><input id="importDataFile" type="file" accept=".sqlite,.db,application/vnd.sqlite3,application/octet-stream" hidden /></div>
+        </div>
+
+        <div class="stats-overview" aria-label="学习总览">
+          <article class="panel stats-metric"><span>词汇总量</span><strong id="statsTotalWords">0</strong><small>当前词库</small></article>
+          <article class="panel stats-metric"><span>已学习</span><strong id="statsStudiedWords">0</strong><small id="statsStudiedHint">0% 已有记录</small></article>
+          <article class="panel stats-metric"><span>稳定掌握</span><strong id="statsMasteredWords">0</strong><small id="statsMasteredHint">熟练度 4–5</small></article>
+          <article class="panel stats-metric"><span>今日待复习</span><strong id="statsDueWords">0</strong><small id="statsNewWords">含尚未学习词</small></article>
+        </div>
+
+        <div class="stats-grid">
+          <article class="panel stats-panel">
+            <div class="panel-heading"><div><p class="eyebrow">EXAM PERFORMANCE</p><h3>考试表现</h3></div><span id="statsExamCount" class="pill">0 次</span></div>
+            <div class="stats-inline-metrics"><div><strong id="statsAverageScore">—</strong><span>平均正确率</span></div><div><strong id="statsBestScore">—</strong><span>最高正确率</span></div><div><strong id="statsAnswerCount">0</strong><span>答题总数</span></div></div>
+            <div id="statsRecentExams" class="stats-recent-list"></div>
+          </article>
+          <article class="panel stats-panel">
+            <div class="panel-heading"><div><p class="eyebrow">OUTPUT PRACTICE</p><h3>口语与写作</h3></div><span id="statsPracticeCount" class="pill">0 次</span></div>
+            <div class="stats-inline-metrics"><div><strong id="statsSpeakingCount">0</strong><span>口语练习</span></div><div><strong id="statsWritingCount">0</strong><span>写作练习</span></div><div><strong id="statsPracticeRating">—</strong><span>平均自评分</span></div></div>
+            <p id="statsPracticeHint" class="stats-muted">保存一次回答后，这里会显示你的输出练习节奏。</p>
+          </article>
+        </div>
+
+        <article class="panel stats-panel stats-week-panel">
+          <div class="panel-heading"><div><p class="eyebrow">WEEKLY PROGRESS</p><h3>按 Week 查看进度</h3></div><span class="stats-muted">每个词只计入当前最高熟练度</span></div>
+          <div id="statsWeekProgress" class="stats-week-list" aria-live="polite"></div>
+        </article>
+      </section>
+    </main>
+    <footer class="site-footer">本地静态页面 · SQLite 数据保存在浏览器本机，不会上传</footer>
+
+    <script src="vendor/sql-wasm.js"></script>
     <script src="data/words.js"></script>
+    <script src="db.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

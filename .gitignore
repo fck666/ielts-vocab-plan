@@ -8,3 +8,4 @@ node_modules/
 # Local browser/runtime artifacts
 .playwright/
 coverage/
+__pycache__/

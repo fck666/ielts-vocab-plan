@@ -17,8 +17,10 @@
 - `data/words.js`：同一份数据的离线浏览器版本，保证直接双击 `index.html` 也能运行。
 - `data/schema.json`：词条字段的 JSON Schema，方便后续校验或扩展。
 - `index.html`、`app.js`、`styles.css`：无需构建工具的静态考试系统。
+- `db.js`、`vendor/sql-wasm.js`、`vendor/sql-wasm.wasm`：在浏览器内运行 SQLite 的持久化层，不需要启动数据库服务。
+- `data/ielts-vocab.sqlite`：可提交到 Git 的词库种子数据库，包含词条表和学习数据表结构。
 
-直接双击 `index.html` 即可打开。如果浏览器限制本地脚本，也可以在本目录启动一个静态服务器，例如 `python3 -m http.server 8000`，再访问 `http://localhost:8000/`。
+推荐在本目录启动一个静态服务器，例如 `python3 -m http.server 8000`，再访问 `http://localhost:8000/`，这样浏览器可以正常读取仓库中的 SQLite 种子文件。部分浏览器也能直接双击 `index.html` 打开；如果 `file://` 环境限制数据库文件读取，页面会自动用内置词条数据初始化，但仍建议使用静态服务器。
 
 ### 后续添加 Week 或词汇
 
@@ -46,9 +48,17 @@
 - 学习模式可以把词条标记为“已会”、安排次日复习，或直接调整 0–5 级熟练度
 - 单词学习卡片和考试题支持英音（UK）/美音（US）朗读，使用浏览器 Web Speech API 自动选择可用英文 voice
 
-### 数据保存说明
+### 数据库与保存说明
 
-考试进度和输出练习使用浏览器的 `localStorage`，所以刷新页面或关闭后重新打开同一浏览器中的同一地址，数据仍会保留。数据不会上传服务器，也不会自动同步到其他浏览器或设备；使用无痕窗口、清除网站数据或更换浏览器时，本地记录可能不可见。
+项目目前不需要后端或正在运行的数据库服务。页面加载 `data/ielts-vocab.sqlite` 作为初始词库，并用 SQL.js 在浏览器内读写 SQLite；学习进度、熟练度、错题、复习日期、考试记录和口语/写作记录会保存为 SQLite 快照，再由 IndexedDB 持久化到当前浏览器。因此刷新页面或重新打开同一地址，数据仍会保留。
+
+`data/ielts-vocab.sqlite` 是仓库中的种子文件，不会被浏览器自动改写。统计面板的“导出 SQLite”会下载当前最新快照；把文件复制回 `data/ielts-vocab.sqlite` 后再提交，才能把某次学习状态保存进 Git。也可以在另一台设备用“导入 SQLite”恢复数据。项目不会上传数据，也不会自动跨浏览器或设备同步。
+
+如果浏览器禁用了 IndexedDB（例如某些无痕或严格隐私环境），页面会退回到兼容性的 `localStorage` 保存方式；这时仍可使用考试系统，但不建议把它作为长期备份。
+
+词库变更后可运行 `python3 build_data.py` 生成 JSON/JS 数据，再运行 `python3 build_database.py` 重建 Git 中的 SQLite 种子文件。数据库表包括 `words`、`word_progress`、`exams` 和 `practice_records`，后续添加 Week 不需要修改表结构。
+
+`vendor/sql-wasm.js` 和 `vendor/sql-wasm.wasm` 来自 [sql.js](https://github.com/sql-js/sql.js)，按其 MIT License 分发。
 
 ### 发音说明
 

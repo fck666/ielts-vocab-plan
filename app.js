@@ -1,12 +1,11 @@
+window.IELTSDatabaseReady.then((database) => {
 (() => {
   "use strict";
 
   const words = Array.isArray(window.IELTS_WORDS) ? window.IELTS_WORDS : [];
+  const db = database;
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
-  const storageKey = "ielts-vocabulary-lab-records-v1";
-  const progressKey = "ielts-vocabulary-lab-progress-v1";
-  const practiceKey = "ielts-vocabulary-lab-practice-v1";
 
   const practicePrompts = {
     speaking: [
@@ -38,7 +37,7 @@
     studyFilter: "all",
   };
 
-  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), practice: $("#practiceView"), study: $("#studyView") };
+  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), practice: $("#practiceView"), study: $("#studyView"), stats: $("#statsView") };
 
   // Speech synthesis is available without a server, but installed voices depend on the browser and OS.
   const speech = window.speechSynthesis || null;
@@ -181,11 +180,11 @@
   }
 
   function loadProgress() {
-    try { return JSON.parse(localStorage.getItem(progressKey) || "{}"); } catch { return {}; }
+    return db.getProgressMap();
   }
 
   function saveProgress(progress) {
-    localStorage.setItem(progressKey, JSON.stringify(progress));
+    db.saveProgressMap(progress);
   }
 
   function getWordProgress(id) {
@@ -426,14 +425,13 @@
   }
 
   function saveRecord(record) {
-    const records = loadRecords();
-    records.unshift(record);
-    localStorage.setItem(storageKey, JSON.stringify(records.slice(0, 20)));
+    db.addExamRecord(record);
     renderHistory();
+    renderStats();
   }
 
   function loadRecords() {
-    try { return JSON.parse(localStorage.getItem(storageKey) || "[]"); } catch { return []; }
+    return db.getExamRecords();
   }
 
   function renderHistory() {
@@ -449,6 +447,59 @@
     $("#bestScore").textContent = best === null ? "—" : `${best}%`;
   }
 
+  function renderStats() {
+    const progress = loadProgress();
+    const records = loadRecords();
+    const practiceRecords = loadPracticeRecords();
+    const now = new Date();
+    const reviewedWords = words.filter((word) => progress[word.id]?.lastReviewedAt);
+    const masteredWords = reviewedWords.filter((word) => Number(progress[word.id]?.level) >= 4);
+    const dueWords = words.filter((word) => !progress[word.id]?.nextReviewAt || new Date(progress[word.id].nextReviewAt) <= now);
+    const newWords = words.length - reviewedWords.length;
+    const averageScore = records.length ? Math.round(records.reduce((sum, record) => sum + Number(record.score || 0), 0) / records.length) : null;
+    const bestScore = records.length ? Math.max(...records.map((record) => Number(record.score || 0))) : null;
+    const answerCount = records.reduce((sum, record) => sum + Number(record.total || 0), 0);
+    const speakingCount = practiceRecords.filter((record) => record.mode === "speaking").length;
+    const writingCount = practiceRecords.filter((record) => record.mode === "writing").length;
+    const ratedPractice = practiceRecords.filter((record) => Number.isFinite(Number(record.rating)));
+    const averageRating = ratedPractice.length ? (ratedPractice.reduce((sum, record) => sum + Number(record.rating), 0) / ratedPractice.length).toFixed(1) : null;
+
+    const setText = (id, value) => { const element = $(id); if (element) element.textContent = value; };
+    setText("#statsTotalWords", words.length);
+    setText("#statsStudiedWords", reviewedWords.length);
+    setText("#statsStudiedHint", `${words.length ? Math.round((reviewedWords.length / words.length) * 100) : 0}% 已有记录`);
+    setText("#statsMasteredWords", masteredWords.length);
+    setText("#statsMasteredHint", `${reviewedWords.length ? Math.round((masteredWords.length / reviewedWords.length) * 100) : 0}% 的已学习词`);
+    setText("#statsDueWords", dueWords.length);
+    setText("#statsNewWords", `${newWords} 个尚未学习`);
+    setText("#statsExamCount", `${records.length} 次`);
+    setText("#statsAverageScore", averageScore === null ? "—" : `${averageScore}%`);
+    setText("#statsBestScore", bestScore === null ? "—" : `${bestScore}%`);
+    setText("#statsAnswerCount", answerCount);
+    setText("#statsPracticeCount", `${practiceRecords.length} 次`);
+    setText("#statsSpeakingCount", speakingCount);
+    setText("#statsWritingCount", writingCount);
+    setText("#statsPracticeRating", averageRating === null ? "—" : `${averageRating}/5`);
+    const practiceHint = $("#statsPracticeHint");
+    if (practiceHint) practiceHint.textContent = practiceRecords.length ? `最近一次练习：${new Date(practiceRecords[0].createdAt).toLocaleDateString("zh-CN")} · 平均自评分 ${averageRating || "—"}/5` : "保存一次回答后，这里会显示你的输出练习节奏。";
+
+    const recentExams = $("#statsRecentExams");
+    if (recentExams) recentExams.innerHTML = records.length
+      ? records.slice(0, 5).map((record) => `<div class="stats-recent-item"><span>${new Date(record.createdAt).toLocaleDateString("zh-CN")} · ${record.total || 0} 题</span><strong>${Number(record.score || 0)}%</strong></div>`).join("")
+      : `<p class="stats-muted">完成一次考试后，这里会显示最近成绩。</p>`;
+
+    const weekProgress = $("#statsWeekProgress");
+    if (!weekProgress) return;
+    const weeks = [...new Set(words.map((word) => word.week))].sort((a, b) => a - b);
+    weekProgress.innerHTML = weeks.length ? weeks.map((week) => {
+      const weekWords = words.filter((word) => word.week === week);
+      const studied = weekWords.filter((word) => progress[word.id]?.lastReviewedAt).length;
+      const mastered = weekWords.filter((word) => Number(progress[word.id]?.level) >= 4).length;
+      const percent = weekWords.length ? Math.round((studied / weekWords.length) * 100) : 0;
+      return `<div class="stats-week-row"><div class="stats-week-label"><strong>Week ${week}</strong><span>${weekWords.length} 个词</span></div><div class="stats-week-track" role="progressbar" aria-label="Week ${week} 学习进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="stats-week-fill" style="width:${percent}%"></div></div><div class="stats-week-meta"><strong>${percent}%</strong> 已学习 · ${mastered} 个稳定掌握</div></div>`;
+    }).join("") : `<p class="stats-muted">当前词库还没有 Week 数据。</p>`;
+  }
+
   function renderReviewSummary() {
     const progress = loadProgress();
     const due = words.filter((word) => isDue(word)).length;
@@ -462,7 +513,7 @@
   }
 
   function loadPracticeRecords() {
-    try { return JSON.parse(localStorage.getItem(practiceKey) || "[]"); } catch { return []; }
+    return db.getPracticeRecords();
   }
 
   function savePracticeRecord() {
@@ -473,13 +524,12 @@
     }
     const prompts = practicePrompts[state.practiceMode];
     const prompt = prompts[state.practicePromptIndex];
-    const records = loadPracticeRecords();
-    records.unshift({ mode: state.practiceMode, prompt: prompt.title, response, rating: Number($("#practiceRating").value), createdAt: new Date().toISOString() });
-    localStorage.setItem(practiceKey, JSON.stringify(records.slice(0, 50)));
+    db.addPracticeRecord({ mode: state.practiceMode, prompt: prompt.title, response, rating: Number($("#practiceRating").value), createdAt: new Date().toISOString() });
     $("#practiceHint").textContent = "已保存到本机。可以换一个题目继续练习。";
     $("#practiceResponse").value = "";
     updatePracticeWordCount();
     renderPracticeHistory();
+    renderStats();
   }
 
   function renderPracticeHistory() {
@@ -636,6 +686,11 @@
     showView("study");
   }
 
+  function openStats() {
+    renderStats();
+    showView("stats");
+  }
+
   function populateWeekOptions() {
     const weeks = [...new Set(words.map((word) => word.week))].sort((a, b) => a - b);
     const from = $("#weekFrom");
@@ -687,6 +742,28 @@
   });
   $("#openStudy").addEventListener("click", openStudy);
   $("#backFromStudy").addEventListener("click", () => showView("setup"));
+  $("#openStats").addEventListener("click", openStats);
+  $("#backFromStats").addEventListener("click", () => showView("setup"));
+  $("#exportData").addEventListener("click", () => {
+    const exported = typeof db.download === "function" && db.download();
+    $("#statsDataHint").textContent = exported ? "已开始下载 SQLite 学习数据文件。" : "当前浏览器无法导出数据库文件。";
+  });
+  $("#importData").addEventListener("click", () => $("#importDataFile").click());
+  $("#importDataFile").addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || typeof db.importBytes !== "function") return;
+    if (!window.confirm("导入会替换当前本机学习数据，确定继续吗？")) return;
+    try {
+      await db.importBytes(new Uint8Array(await file.arrayBuffer()));
+      $("#statsDataHint").textContent = "导入成功，正在刷新统计数据。";
+      renderStats();
+      renderHistory();
+    } catch (error) {
+      console.error("Failed to import learning data", error);
+      $("#statsDataHint").textContent = "导入失败，请选择有效的 SQLite 数据库文件。";
+    }
+  });
   $("#studyWeek").addEventListener("change", () => {
     state.studyWeek = Number($("#studyWeek").value);
     state.studyDay = 1;
@@ -728,6 +805,8 @@
       if (!state.answered) submitAnswer(); else { state.current += 1; renderQuestion(); }
     }
   });
+  window.IELTSStats = { render: renderStats };
   populateWeekOptions();
   renderHistory();
 })();
+});
