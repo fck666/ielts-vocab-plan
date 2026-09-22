@@ -755,14 +755,14 @@ window.IELTSDatabaseReady.then((database) => {
       const record = studyRecord(word);
       const status = studyStatus(record);
       const nextReview = record.nextReviewAt ? new Date(record.nextReviewAt).toLocaleDateString("zh-CN") : "尚未安排";
-      const levelOptions = [0, 1, 2, 3, 4, 5].map((level) => `<option value="${level}" ${level === record.level ? "selected" : ""}>${level} / 5</option>`).join("");
+      const levelStars = [1, 2, 3, 4, 5].map((level) => `<button class="study-star${level <= record.level ? " is-active" : ""}" type="button" data-study-level="${level}" aria-label="${escapeHtml(word.term)} 熟练度 ${level} / 5" aria-pressed="${level <= record.level ? "true" : "false"}" title="${level} / 5">★</button>`).join("");
       return `<article class="study-card panel" data-word-id="${escapeHtml(word.id)}">
         <div class="study-card-head"><div><span class="study-day-label">Day ${word.day} · ${escapeHtml(word.dayTitle)}</span><h3>${escapeHtml(word.term)}</h3><p class="study-pronunciation">${escapeHtml(word.ipa)} <span>·</span> ${escapeHtml(word.partOfSpeech)}</p>${pronunciationControls(word)}</div><span class="study-status ${status.className}">${status.label}</span></div>
         <div class="study-meaning"><strong>${escapeHtml(word.meaningZh)}</strong><span>下次复习：${escapeHtml(nextReview)}</span></div>
         <div class="study-detail-grid"><div><small>常用搭配</small><p>${escapeHtml(word.collocations.join(" · "))}</p></div><div><small>词族</small><p>${escapeHtml(word.wordFamily || "暂无")}</p></div></div>
         <div class="study-example"><small>例句</small><p>${escapeHtml(word.exampleEn)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p></div>
         <div class="study-note"><strong>使用提醒</strong><span>${escapeHtml(word.note || "")}</span></div>
-        <div class="study-card-actions"><label>熟练度 <select class="study-level" aria-label="${escapeHtml(word.term)} 熟练度">${levelOptions}</select></label><button class="study-action-button" data-study-action="mastered" type="button">标记已会</button><button class="study-action-button subtle" data-study-action="review" type="button">安排复习</button></div>
+        <div class="study-card-actions"><div class="study-rating" role="group" aria-label="${escapeHtml(word.term)} 熟练度"><span>熟练度</span><span class="study-stars">${levelStars}</span></div><button class="study-action-button" data-study-action="mastered" type="button">标记已会</button><button class="study-action-button subtle" data-study-action="review" type="button">安排复习</button></div>
       </article>`;
     }).join("");
   }
@@ -1092,6 +1092,13 @@ window.IELTSDatabaseReady.then((database) => {
     if (word) speakWord(word, button.dataset.speakAccent, button);
   });
   $("#studyWords").addEventListener("click", (event) => {
+    const levelButton = event.target.closest("[data-study-level]");
+    if (levelButton) {
+      const card = levelButton.closest("[data-word-id]");
+      const word = words.find((item) => item.id === card?.dataset.wordId);
+      if (word) updateStudyLevel(word, Number(levelButton.dataset.studyLevel), "study-level");
+      return;
+    }
     const button = event.target.closest("[data-study-action]");
     if (!button) return;
     const card = button.closest("[data-word-id]");
@@ -1099,12 +1106,6 @@ window.IELTSDatabaseReady.then((database) => {
     if (!word) return;
     if (button.dataset.studyAction === "mastered") updateStudyLevel(word, 5, "study-mastered");
     else scheduleStudyReview(word);
-  });
-  $("#studyWords").addEventListener("change", (event) => {
-    if (!event.target.matches(".study-level")) return;
-    const card = event.target.closest("[data-word-id]");
-    const word = words.find((item) => item.id === card?.dataset.wordId);
-    if (word) updateStudyLevel(word, Number(event.target.value), "study-level");
   });
   document.addEventListener("keydown", (event) => {
     if (views.training.classList.contains("active") && !event.target.closest("input, textarea, select, [contenteditable='true']")) {

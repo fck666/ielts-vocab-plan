@@ -198,3 +198,14 @@ select:focus, .text-input:focus { border-color: var(--navy); box-shadow: 0 0 0 3
 @media (max-width: 540px) {
   .stats-teaser { display: block; }.stats-teaser .secondary-button { width: 100%; margin-top: 15px; }.stats-topbar { gap: 13px; }.stats-topbar h2 { font-size: 32px; }.stats-data-actions { display: block; }.stats-data-actions > div { margin-top: 10px; }.stats-data-actions .secondary-button { flex: 1; }.stats-panel { padding: 20px; }.stats-overview { gap: 10px; }.stats-metric { min-height: 110px; padding: 15px; }.stats-metric strong { font-size: 25px; }.stats-inline-metrics { gap: 8px; }.stats-inline-metrics strong { font-size: 19px; }.stats-week-row { grid-template-columns: 1fr; gap: 7px; }.stats-week-meta { text-align: left; }
 }
+
+/* Direct proficiency control */
+.study-rating { display: flex; align-items: center; gap: 9px; min-width: 0; margin-right: auto; color: var(--muted); font-size: 11px; font-weight: 700; }
+.study-stars { display: inline-flex; align-items: center; gap: 1px; }
+.study-star { width: 25px; height: 28px; padding: 0; border: 0; color: #cbd5d1; background: transparent; font-size: 24px; line-height: 1; transition: color .15s, transform .15s; }
+.study-star:hover, .study-star:focus-visible, .study-star.is-active { color: var(--gold); }
+.study-star:hover { transform: translateY(-1px); }
+.study-star:focus-visible { outline: 3px solid rgba(33, 58, 80, .2); outline-offset: 2px; border-radius: 5px; }
+@media (max-width: 540px) {
+  .study-rating { width: 100%; }
+}
