@@ -42,12 +42,13 @@ window.IELTSDatabaseReady.then((database) => {
     config: null,
     practicePromptIndex: { speaking: 0, writing: 0 },
     practiceSelection: { speaking: { type: "part3", week: 1 }, writing: { type: "task2", week: 1 } },
+    dailyTraining: { week: 1, day: 1, queue: [], current: 0, correct: 0, wrong: 0, answered: false },
     studyWeek: 1,
     studyDay: 1,
     studyFilter: "all",
   };
 
-  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), speaking: $("#speakingView"), writing: $("#writingView"), study: $("#studyView"), stats: $("#statsView") };
+  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), speaking: $("#speakingView"), writing: $("#writingView"), study: $("#studyView"), training: $("#trainingView"), stats: $("#statsView") };
 
   // Speech synthesis is available without a server, but installed voices depend on the browser and OS.
   const speech = window.speechSynthesis || null;
@@ -153,6 +154,7 @@ window.IELTSDatabaseReady.then((database) => {
     speaking: "口语练习",
     writing: "写作练习",
     study: "背单词",
+    training: "单日输入训练",
     stats: "学习统计",
   };
 
@@ -172,6 +174,10 @@ window.IELTSDatabaseReady.then((database) => {
     if (route === "speaking" || route === "writing") {
       const types = route === "speaking" ? ["part1", "part2", "part3"] : ["task1", "task2"];
       openPractice(route, types.includes(parts[1]) ? parts[1] : types[types.length - 1], { updateUrl: false });
+      return;
+    }
+    if (route === "study" && parts[1] === "training") {
+      openTraining({ updateUrl: false });
       return;
     }
     showView(Object.prototype.hasOwnProperty.call(views, route) ? route : "setup", { updateUrl: false });
@@ -760,6 +766,92 @@ window.IELTSDatabaseReady.then((database) => {
     showView("study");
   }
 
+  function trainingWeeks() {
+    return [...new Set(words.map((word) => word.week))].sort((a, b) => a - b);
+  }
+
+  function renderTrainingDays() {
+    const week = Number($("#trainingWeek").value || state.dailyTraining.week);
+    const days = [...new Set(words.filter((word) => word.week === week).map((word) => word.day))].sort((a, b) => a - b);
+    const daySelect = $("#trainingDay");
+    daySelect.innerHTML = days.map((day) => {
+      const title = words.find((word) => word.week === week && word.day === day)?.dayTitle || "";
+      return `<option value="${day}">Day ${day} · ${escapeHtml(title)}</option>`;
+    }).join("");
+    const preferred = days.includes(Number(state.dailyTraining.day)) ? Number(state.dailyTraining.day) : days[0];
+    daySelect.value = String(preferred || "");
+    state.dailyTraining.week = week;
+    state.dailyTraining.day = Number(daySelect.value || days[0]);
+  }
+
+  function populateTrainingOptions() {
+    const weekSelect = $("#trainingWeek");
+    weekSelect.innerHTML = trainingWeeks().map((week) => `<option value="${week}">Week ${week}</option>`).join("");
+    weekSelect.value = String(state.dailyTraining.week);
+    renderTrainingDays();
+  }
+
+  function startDailyTraining() {
+    const week = Number($("#trainingWeek").value);
+    const day = Number($("#trainingDay").value);
+    const dayWords = words.filter((word) => word.week === week && word.day === day);
+    state.dailyTraining = { week, day, queue: dayWords.map((word) => ({ word, retry: false })), current: 0, correct: 0, wrong: 0, answered: false };
+    $("#trainingSummary").textContent = `Week ${week} · Day ${day} 共 ${dayWords.length} 个词，答错词会在本轮末尾再出现。`;
+    renderDailyTraining();
+  }
+
+  function renderDailyTraining() {
+    const training = state.dailyTraining;
+    const item = training.queue[training.current];
+    $("#trainingFeedback").innerHTML = "";
+    $("#submitTraining").classList.toggle("hidden", !item || training.answered);
+    $("#nextTraining").classList.toggle("hidden", !item || !training.answered);
+    if (!item) {
+      $("#trainingProgress").textContent = `本日训练完成 · 首次答错 ${training.wrong} 个`;
+      $("#trainingPrompt").innerHTML = `<div class="training-complete"><strong>今日训练完成</strong><p>共完成 ${training.queue.length} 次作答，正确 ${training.correct} 次。${training.wrong ? "重复出现的错词已经在本轮末尾处理。" : "本轮没有错词。"}</p><button id="restartTraining" class="secondary-button" type="button">再练一次</button></div>`;
+      $("#trainingAnswerArea").innerHTML = "";
+      $("#nextTraining").classList.add("hidden");
+      $("#submitTraining").classList.add("hidden");
+      $("#restartTraining").addEventListener("click", startDailyTraining);
+      return;
+    }
+    const word = item.word;
+    $("#trainingProgress").textContent = `Week ${training.week} · Day ${training.day} · 第 ${training.current + 1} / ${training.queue.length} 题${item.retry ? " · 错题重做" : ""}`;
+    $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><h3>${escapeHtml(word.ipa)}</h3><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-meta">${escapeHtml(word.partOfSpeech)} · ${escapeHtml(word.collocations.join(" · "))}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p></div></div>`;
+    $("#trainingAnswerArea").innerHTML = `<div class="training-answer"><label class="answer-label" for="trainingInput">输入英文单词或词组</label><input id="trainingInput" class="text-input" type="text" autocomplete="off" placeholder="输入答案后按 Enter 提交" /></div>`;
+    $("#trainingInput").focus();
+    $("#trainingInput").addEventListener("keydown", (event) => { if (event.key === "Enter") submitDailyTraining(); });
+  }
+
+  function submitDailyTraining() {
+    const training = state.dailyTraining;
+    const item = training.queue[training.current];
+    if (!item || training.answered) return;
+    const input = $("#trainingInput")?.value.trim() || "";
+    if (!input) {
+      $("#trainingFeedback").innerHTML = `<div class="feedback-box wrong"><div class="feedback-title">先输入答案</div><p>请根据中文释义和例句写出英文单词或词组。</p></div>`;
+      return;
+    }
+    const correct = isCorrect({ type: "spell", answer: item.word.term }, input);
+    training.answered = true;
+    if (correct) training.correct += 1;
+    else {
+      training.wrong += item.retry ? 0 : 1;
+      if (!item.retry) training.queue.push({ word: item.word, retry: true });
+    }
+    updateWordProgress(item.word, correct, "daily-training", input);
+    $("#trainingFeedback").innerHTML = `<div class="feedback-box ${correct ? "" : "wrong"}"><div class="feedback-title">${correct ? "回答正确" : "需要再巩固"}</div>${correct ? "" : `<p>正确答案：<strong>${escapeHtml(item.word.term)}</strong></p>`}<p><strong>词族：</strong>${escapeHtml(item.word.wordFamily || "暂无")}</p><p><strong>提醒：</strong>${escapeHtml(item.word.note || "")}</p></div>`;
+    $("#submitTraining").classList.add("hidden");
+    $("#nextTraining").classList.remove("hidden");
+  }
+
+  function openTraining({ updateUrl = true } = {}) {
+    if (!$("#trainingWeek").options.length) populateTrainingOptions();
+    renderTrainingDays();
+    if (!state.dailyTraining.queue.length || state.dailyTraining.week !== Number($("#trainingWeek").value) || state.dailyTraining.day !== Number($("#trainingDay").value)) startDailyTraining();
+    showView("training", { updateUrl, route: "study/training" });
+  }
+
   function openStats() {
     renderStats();
     showView("stats");
@@ -823,6 +915,17 @@ window.IELTSDatabaseReady.then((database) => {
     });
   });
   $("#openStudy").addEventListener("click", openStudy);
+  $("#openTraining").addEventListener("click", openTraining);
+  $("#backFromTraining").addEventListener("click", () => showView("setup"));
+  $("#startTraining").addEventListener("click", startDailyTraining);
+  $("#submitTraining").addEventListener("click", submitDailyTraining);
+  $("#nextTraining").addEventListener("click", () => {
+    state.dailyTraining.current += 1;
+    state.dailyTraining.answered = false;
+    renderDailyTraining();
+  });
+  $("#trainingWeek").addEventListener("change", () => { state.dailyTraining.week = Number($("#trainingWeek").value); renderTrainingDays(); });
+  $("#trainingDay").addEventListener("change", () => { state.dailyTraining.day = Number($("#trainingDay").value); });
   $("#backFromStudy").addEventListener("click", () => showView("setup"));
   $("#openStats").addEventListener("click", openStats);
   $("#backFromStats").addEventListener("click", () => showView("setup"));

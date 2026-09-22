@@ -146,7 +146,7 @@
 
         <section class="study-teaser panel" aria-label="背单词学习模式">
           <div><p class="eyebrow accent">LEARN BY DAY</p><h3>按周、按天背单词</h3><p>打开完整词条卡片，查看音标、词性、搭配和例句；每个词的熟练度会和考试进度共用。</p></div>
-          <button id="openStudy" class="secondary-button" type="button">进入学习模式 <span>→</span></button>
+          <div class="study-entry-actions"><button id="openStudy" class="secondary-button" type="button">查看词条 <span>→</span></button><button id="openTraining" class="secondary-button" type="button">单日输入训练 <span>→</span></button></div>
         </section>
       </section>
 
@@ -224,6 +224,25 @@
           <div class="study-summary"><strong id="studyProgressSummary">正在加载词汇</strong><span id="studyProgressHint">按天学习，每次完成后标记熟练度。</span></div>
         </div>
         <div id="studyWords" class="study-words" aria-live="polite"></div>
+      </section>
+
+      <section id="trainingView" class="view" aria-labelledby="trainingTitle">
+        <div class="study-topbar">
+          <button class="text-button" id="backFromTraining" type="button">← 返回考试设置</button>
+          <div><p class="eyebrow accent">DAILY INPUT TRAINING</p><h2 id="trainingTitle">单日输入训练</h2></div>
+          <span class="pill">当天 20 词</span>
+        </div>
+        <div class="training-layout">
+          <article class="panel training-card">
+            <div class="training-controls"><label><span>选择周</span><select id="trainingWeek"></select></label><label><span>选择天</span><select id="trainingDay"></select></label><button id="startTraining" class="secondary-button" type="button">开始本日训练</button></div>
+            <div id="trainingProgress" class="training-progress"></div>
+            <div id="trainingPrompt"></div>
+            <div id="trainingAnswerArea"></div>
+            <div id="trainingFeedback" class="feedback" aria-live="polite"></div>
+            <div class="question-actions"><button id="submitTraining" class="primary-button" type="button">提交答案 <span>↵</span></button><button id="nextTraining" class="secondary-button hidden" type="button">下一题 <span>→</span></button></div>
+          </article>
+          <aside class="panel training-guide"><p class="eyebrow">训练方法</p><h3>先回忆，再查看词条</h3><p>系统给出中文释义、词性和例句提示，你需要输入英文单词或词组。英美拼写差异和一个字符以内的拼写错误会被视为可接受答案。</p><ul><li>当天 20 个词按顺序出现</li><li>答错词会在本轮最后重复</li><li>结果会更新熟练度和复习日期</li></ul><div id="trainingSummary" class="training-summary"></div></aside>
+        </div>
       </section>
 
       <section id="statsView" class="view" aria-labelledby="statsTitle">

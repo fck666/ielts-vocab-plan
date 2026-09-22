@@ -38,9 +38,12 @@
 - `http://localhost:8765/#/writing/task1`：Writing Task 1 图表写作
 - `http://localhost:8765/#/writing/task2`：Writing Task 2 议论文
 - `http://localhost:8765/#/study`：背单词学习模式
+- `http://localhost:8765/#/study/training`：单日输入训练
 - `http://localhost:8765/#/stats`：学习数据统计
 
 这些链接仍然由同一个静态 `index.html` 提供，刷新或直接打开时会根据 hash 显示对应页面；浏览器的前进、后退也可以切换页面。
+
+“单日输入训练”会根据选择的 Week 和 Day 加载当天的 20 个词。每题输入英文答案后提交，系统会进行英美拼写兼容和轻微拼写容错；答错的词会在本轮末尾自动重复，并通过原有 SQLite 学习数据更新熟练度、错题和下次复习日期。
 
 ### 后续添加 Week 或词汇
 
