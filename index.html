@@ -140,8 +140,8 @@
         </section>
 
         <section class="practice-teaser panel" aria-label="口语和写作练习">
-          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>保存口语回答或写作练习，记录自评分和练习日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
-          <button id="openPractice" class="secondary-button" type="button">进入口语 / 写作练习 <span>→</span></button>
+          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
+          <div class="practice-entry-actions"><button id="openSpeaking" class="secondary-button" type="button">口语练习 <span>→</span></button><button id="openWriting" class="secondary-button" type="button">写作练习 <span>→</span></button></div>
         </section>
 
         <section class="study-teaser panel" aria-label="背单词学习模式">
@@ -179,21 +179,31 @@
         <div class="result-actions"><button id="retryWrong" class="primary-button" type="button">只练错题 <span>↻</span></button><button id="newExam" class="secondary-button" type="button">重新设置 <span>→</span></button></div>
       </section>
 
-      <section id="practiceView" class="view" aria-labelledby="practiceTitle">
-        <div class="practice-topbar"><button class="text-button" id="backToSetup" type="button">← 返回考试设置</button><div><p class="eyebrow accent">OUTPUT PRACTICE</p><h2 id="practiceTitle">口语与写作练习</h2></div><span class="pill">SQLite 本机保存</span></div>
+      <section id="speakingView" class="view" aria-labelledby="speakingTitle">
+        <div class="practice-topbar"><button class="text-button" id="backFromSpeaking" type="button">← 返回考试设置</button><div><p class="eyebrow accent">SPEAKING OUTPUT</p><h2 id="speakingTitle">口语 Part 3 练习</h2></div><span class="pill">SQLite 本机保存</span></div>
         <div class="practice-layout">
           <article class="panel practice-editor">
-            <div class="practice-tabs" role="tablist" aria-label="练习类型"><button class="practice-tab active" data-practice-mode="speaking" type="button">口语 Part 3</button><button class="practice-tab" data-practice-mode="writing" type="button">Task 2 写作</button></div>
-            <div class="practice-prompt-meta"><span id="practicePromptType" class="question-type">口语 Part 3</span><span id="practicePromptWeek">主题练习</span></div>
-            <h3 id="practicePromptTitle">为什么学校应该培养批判性思维？</h3>
-            <p id="practicePromptBody" class="practice-prompt-body">请回答 1–2 分钟，尽量使用本周词汇，并给出一个具体例子。</p>
-            <div id="practiceHints" class="practice-hints"></div>
-            <label class="answer-label" for="practiceResponse">你的回答</label><textarea id="practiceResponse" class="practice-textarea" placeholder="先独立组织观点，再开始输入……"></textarea>
-            <div class="practice-toolbar"><span id="practiceWordCount">0 词</span><label>自评分 <select id="practiceRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
-            <div class="question-actions"><button id="newPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="savePractice" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div>
-            <p id="practiceHint" class="form-hint" aria-live="polite"></p>
+            <div class="practice-prompt-meta"><span id="speakingPromptType" class="question-type">口语 Part 3</span><span id="speakingPromptWeek">观点 · 理由 · 例子</span></div>
+            <h3 id="speakingPromptTitle"></h3><p id="speakingPromptBody" class="practice-prompt-body"></p><div id="speakingHints" class="practice-hints"></div>
+            <label class="answer-label" for="speakingResponse">你的回答</label><textarea id="speakingResponse" class="practice-textarea" placeholder="先用英文组织观点，再开始输入……"></textarea>
+            <div class="practice-toolbar"><span id="speakingWordCount">0 词</span><label>自评分 <select id="speakingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
+            <div class="question-actions"><button id="newSpeakingPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="saveSpeaking" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="speakingHint" class="form-hint" aria-live="polite"></p>
           </article>
-          <aside class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT OUTPUT</p><h3>最近练习</h3></div><span id="practiceCount" class="pill">0 次</span></div><div id="practiceHistory" class="practice-history"></div></aside>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">题目准备</p><h3>按 Part 3 评分逻辑练习</h3><p>题目围绕教育、科技、工作和城市等高频话题，要求给出立场、理由和例子。它们是训练题，不是官方原题。</p><ol><li>先直接回答问题</li><li>补充原因或对比</li><li>给出个人或社会例子</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SPEAKING</p><h3>最近练习</h3></div><span id="speakingCount" class="pill">0 次</span></div><div id="speakingHistory" class="practice-history"></div></div></aside>
+        </div>
+      </section>
+
+      <section id="writingView" class="view" aria-labelledby="writingTitle">
+        <div class="practice-topbar"><button class="text-button" id="backFromWriting" type="button">← 返回考试设置</button><div><p class="eyebrow accent">WRITING OUTPUT</p><h2 id="writingTitle">Task 2 写作练习</h2></div><span class="pill">SQLite 本机保存</span></div>
+        <div class="practice-layout">
+          <article class="panel practice-editor">
+            <div class="practice-prompt-meta"><span id="writingPromptType" class="question-type">Task 2 写作</span><span id="writingPromptWeek">立场 · 论证 · 搭配</span></div>
+            <h3 id="writingPromptTitle"></h3><p id="writingPromptBody" class="practice-prompt-body"></p><div id="writingHints" class="practice-hints"></div>
+            <label class="answer-label" for="writingResponse">你的回答</label><textarea id="writingResponse" class="practice-textarea" placeholder="先写清楚立场和段落逻辑，再开始输入……"></textarea>
+            <div class="practice-toolbar"><span id="writingWordCount">0 词</span><label>自评分 <select id="writingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
+            <div class="question-actions"><button id="newWritingPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="saveWriting" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="writingHint" class="form-hint" aria-live="polite"></p>
+          </article>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">题目准备</p><h3>按 Task 2 论证任务练习</h3><p>题目覆盖 agree/disagree、discussion、problem-solution 等常见任务，训练题会要求你明确立场、展开论证并使用例子。</p><ol><li>先确定题型和立场</li><li>每段只展开一个主观点</li><li>检查连接、搭配和例证</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT WRITING</p><h3>最近练习</h3></div><span id="writingCount" class="pill">0 次</span></div><div id="writingHistory" class="practice-history"></div></div></aside>
         </div>
       </section>
 

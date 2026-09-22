@@ -30,14 +30,13 @@ window.IELTSDatabaseReady.then((database) => {
     selectedOption: null,
     results: [],
     config: null,
-    practiceMode: "speaking",
-    practicePromptIndex: 0,
+    practicePromptIndex: { speaking: 0, writing: 0 },
     studyWeek: 1,
     studyDay: 1,
     studyFilter: "all",
   };
 
-  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), practice: $("#practiceView"), study: $("#studyView"), stats: $("#statsView") };
+  const views = { setup: $("#setupView"), exam: $("#examView"), result: $("#resultView"), speaking: $("#speakingView"), writing: $("#writingView"), study: $("#studyView"), stats: $("#statsView") };
 
   // Speech synthesis is available without a server, but installed voices depend on the browser and OS.
   const speech = window.speechSynthesis || null;
@@ -516,52 +515,66 @@ window.IELTSDatabaseReady.then((database) => {
     return db.getPracticeRecords();
   }
 
-  function savePracticeRecord() {
-    const response = $("#practiceResponse").value.trim();
+  function practiceIds(mode) {
+    const prefix = mode === "speaking" ? "speaking" : "writing";
+    return {
+      response: `#${prefix}Response`, rating: `#${prefix}Rating`, hint: `#${prefix}Hint`,
+      wordCount: `#${prefix}WordCount`, promptTitle: `#${prefix}PromptTitle`,
+      promptBody: `#${prefix}PromptBody`, promptType: `#${prefix}PromptType`,
+      promptWeek: `#${prefix}PromptWeek`, hints: `#${prefix}Hints`,
+      history: `#${prefix}History`, count: `#${prefix}Count`,
+    };
+  }
+
+  function savePracticeRecord(mode) {
+    const ids = practiceIds(mode);
+    const response = $(ids.response).value.trim();
     if (!response) {
-      $("#practiceHint").textContent = "请先写下回答，再保存练习。";
+      $(ids.hint).textContent = "请先写下回答，再保存练习。";
       return;
     }
-    const prompts = practicePrompts[state.practiceMode];
-    const prompt = prompts[state.practicePromptIndex];
-    db.addPracticeRecord({ mode: state.practiceMode, prompt: prompt.title, response, rating: Number($("#practiceRating").value), createdAt: new Date().toISOString() });
-    $("#practiceHint").textContent = "已保存到本机。可以换一个题目继续练习。";
-    $("#practiceResponse").value = "";
-    updatePracticeWordCount();
-    renderPracticeHistory();
+    const prompts = practicePrompts[mode];
+    const prompt = prompts[state.practicePromptIndex[mode] % prompts.length];
+    db.addPracticeRecord({ mode, prompt: prompt.title, response, rating: Number($(ids.rating).value), createdAt: new Date().toISOString() });
+    $(ids.hint).textContent = "已保存到本机。可以换一个题目继续练习。";
+    $(ids.response).value = "";
+    updatePracticeWordCount(mode);
+    renderPracticeHistory(mode);
     renderStats();
   }
 
-  function renderPracticeHistory() {
+  function renderPracticeHistory(mode) {
+    const ids = practiceIds(mode);
     const records = loadPracticeRecords();
-    $("#practiceCount").textContent = `${records.length} 次`;
-    $("#practiceHistory").innerHTML = records.length ? records.slice(0, 12).map((record) => `<div class="practice-history-item"><strong>${record.mode === "speaking" ? "口语 Part 3" : "Task 2 写作"} · ${record.rating}/5</strong><p>${escapeHtml(record.response)}</p><small>${new Date(record.createdAt).toLocaleDateString("zh-CN")}</small></div>`).join("") : `<p class="empty-state">还没有练习记录。先完成一次回答吧。</p>`;
+    const filtered = records.filter((record) => record.mode === mode);
+    $(ids.count).textContent = `${filtered.length} 次`;
+    $(ids.history).innerHTML = filtered.length ? filtered.slice(0, 12).map((record) => `<div class="practice-history-item"><strong>${mode === "speaking" ? "口语 Part 3" : "Task 2 写作"} · ${record.rating}/5</strong><p>${escapeHtml(record.response)}</p><small>${new Date(record.createdAt).toLocaleDateString("zh-CN")}</small></div>`).join("") : `<p class="empty-state">还没有${mode === "speaking" ? "口语" : "写作"}练习记录。先完成一次回答吧。</p>`;
   }
 
-  function updatePracticeWordCount() {
-    const value = $("#practiceResponse").value.trim();
+  function updatePracticeWordCount(mode) {
+    const ids = practiceIds(mode);
+    const value = $(ids.response).value.trim();
     const count = value ? value.split(/\s+/).filter(Boolean).length : 0;
-    $("#practiceWordCount").textContent = `${count} 词`;
+    $(ids.wordCount).textContent = `${count} 词`;
   }
 
-  function renderPracticePrompt() {
-    const prompts = practicePrompts[state.practiceMode];
-    const prompt = prompts[state.practicePromptIndex % prompts.length];
-    $("#practicePromptType").textContent = state.practiceMode === "speaking" ? "口语 Part 3" : "Task 2 写作";
-    $("#practicePromptWeek").textContent = state.practiceMode === "speaking" ? "观点 · 理由 · 例子" : "立场 · 论证 · 搭配";
-    $("#practicePromptTitle").textContent = prompt.title;
-    $("#practicePromptBody").textContent = prompt.body;
-    $("#practiceHints").innerHTML = prompt.hints.map((hint) => `<span>${escapeHtml(hint)}</span>`).join("");
+  function renderPracticePrompt(mode) {
+    const ids = practiceIds(mode);
+    const prompts = practicePrompts[mode];
+    const prompt = prompts[state.practicePromptIndex[mode] % prompts.length];
+    $(ids.promptType).textContent = mode === "speaking" ? "口语 Part 3" : "Task 2 写作";
+    $(ids.promptWeek).textContent = mode === "speaking" ? "观点 · 理由 · 例子" : "立场 · 论证 · 搭配";
+    $(ids.promptTitle).textContent = prompt.title;
+    $(ids.promptBody).textContent = prompt.body;
+    $(ids.hints).innerHTML = prompt.hints.map((hint) => `<span>${escapeHtml(hint)}</span>`).join("");
   }
 
   function openPractice(mode = "speaking") {
-    state.practiceMode = mode;
-    state.practicePromptIndex = 0;
-    $$(".practice-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.practiceMode === mode));
-    $("#practiceHint").textContent = "";
-    renderPracticePrompt();
-    renderPracticeHistory();
-    showView("practice");
+    const ids = practiceIds(mode);
+    $(ids.hint).textContent = "";
+    renderPracticePrompt(mode);
+    renderPracticeHistory(mode);
+    showView(mode);
   }
 
   function studyRecord(word) {
@@ -715,30 +728,23 @@ window.IELTSDatabaseReady.then((database) => {
   $("#quitExam").addEventListener("click", () => showView("setup"));
   $("#newExam").addEventListener("click", () => showView("setup"));
   $("#retryWrong").addEventListener("click", retryWrong);
-  $("#openPractice").addEventListener("click", () => openPractice());
-  $("#backToSetup").addEventListener("click", () => showView("setup"));
-  $("#savePractice").addEventListener("click", savePracticeRecord);
-  $("#newPrompt").addEventListener("click", () => {
-    const prompts = practicePrompts[state.practiceMode];
-    state.practicePromptIndex = (state.practicePromptIndex + 1) % prompts.length;
-    $("#practiceHint").textContent = "";
-    $("#practiceResponse").value = "";
-    updatePracticeWordCount();
-    renderPracticePrompt();
-  });
-  $("#practiceResponse").addEventListener("input", updatePracticeWordCount);
-  $$(".practice-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      state.practiceMode = tab.dataset.practiceMode;
-      state.practicePromptIndex = 0;
-      $$(".practice-tab").forEach((item) => {
-        item.classList.toggle("active", item === tab);
-      });
-      $("#practiceHint").textContent = "";
-      $("#practiceResponse").value = "";
-      updatePracticeWordCount();
-      renderPracticePrompt();
+  $("#openSpeaking").addEventListener("click", () => openPractice("speaking"));
+  $("#openWriting").addEventListener("click", () => openPractice("writing"));
+  $("#backFromSpeaking").addEventListener("click", () => showView("setup"));
+  $("#backFromWriting").addEventListener("click", () => showView("setup"));
+  ["speaking", "writing"].forEach((mode) => {
+    const ids = practiceIds(mode);
+    const prefix = mode === "speaking" ? "Speaking" : "Writing";
+    $(`#save${prefix}`).addEventListener("click", () => savePracticeRecord(mode));
+    $(`#new${prefix}Prompt`).addEventListener("click", () => {
+      const prompts = practicePrompts[mode];
+      state.practicePromptIndex[mode] = (state.practicePromptIndex[mode] + 1) % prompts.length;
+      $(ids.hint).textContent = "";
+      $(ids.response).value = "";
+      updatePracticeWordCount(mode);
+      renderPracticePrompt(mode);
     });
+    $(ids.response).addEventListener("input", () => updatePracticeWordCount(mode));
   });
   $("#openStudy").addEventListener("click", openStudy);
   $("#backFromStudy").addEventListener("click", () => showView("setup"));

@@ -63,6 +63,17 @@
 
 如果浏览器禁用了 IndexedDB（例如某些无痕或严格隐私环境），页面会退回到兼容性的 `localStorage` 保存方式；这时仍可使用考试系统，但不建议把它作为长期备份。
 
+## 口语与写作练习
+
+首页现在分别进入“口语 Part 3 练习”和“Task 2 写作练习”两个页面，历史记录仍共用 SQLite 的 `practice_records` 表，但按练习类型分别显示。
+
+题目是根据 IELTS 6.5 常见话题和任务结构整理的训练题，不冒充官方真题：
+
+- 口语题按 Part 3 的“直接回答—解释理由—补充例子”组织，覆盖教育、科技、工作、城市等高频讨论主题。
+- 写作题按 Task 2 常见的 agree/disagree、discussion、problem-solution 等论证任务组织，提示词帮助练习立场、论证、连接和搭配。
+
+练习题保存在前端静态代码中，不需要后端或联网题库；以后可以直接在 `app.js` 的 `practicePrompts` 中增加题目，保存记录的数据库结构无需改变。
+
 词库变更后可运行 `python3 build_data.py` 生成 JSON/JS 数据，再运行 `python3 build_database.py` 重建 Git 中的 SQLite 种子文件。数据库表包括 `words`、`word_progress`、`exams` 和 `practice_records`，后续添加 Week 不需要修改表结构。
 
 `vendor/sql-wasm.js` 和 `vendor/sql-wasm.wasm` 来自 [sql.js](https://github.com/sql-js/sql.js)，按其 MIT License 分发。
