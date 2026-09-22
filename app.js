@@ -795,7 +795,7 @@ window.IELTSDatabaseReady.then((database) => {
     const week = Number($("#trainingWeek").value);
     const day = Number($("#trainingDay").value);
     const dayWords = words.filter((word) => word.week === week && word.day === day);
-    state.dailyTraining = { week, day, queue: dayWords.map((word) => ({ word, retry: false })), current: 0, correct: 0, wrong: 0, answered: false };
+    state.dailyTraining = { week, day, queue: dayWords.map((word) => ({ word, retry: false, answered: false })), current: 0, correct: 0, wrong: 0, answered: false };
     $("#trainingSummary").textContent = `Week ${week} · Day ${day} 共 ${dayWords.length} 个词，答错词会在本轮末尾再出现。`;
     renderDailyTraining();
   }
@@ -804,6 +804,7 @@ window.IELTSDatabaseReady.then((database) => {
     const training = state.dailyTraining;
     const item = training.queue[training.current];
     $("#trainingFeedback").innerHTML = "";
+    training.answered = Boolean(item?.answered);
     $("#submitTraining").classList.toggle("hidden", !item || training.answered);
     $("#nextTraining").classList.toggle("hidden", !item || !training.answered);
     if (!item) {
@@ -817,9 +818,11 @@ window.IELTSDatabaseReady.then((database) => {
     }
     const word = item.word;
     $("#trainingProgress").textContent = `Week ${training.week} · Day ${training.day} · 第 ${training.current + 1} / ${training.queue.length} 题${item.retry ? " · 错题重做" : ""}`;
-    $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><h3>${escapeHtml(word.ipa)}</h3><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-meta">${escapeHtml(word.partOfSpeech)} · ${escapeHtml(word.collocations.join(" · "))}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p></div></div>`;
+    $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p></div></div>`;
     $("#trainingAnswerArea").innerHTML = `<div class="training-answer"><label class="answer-label" for="trainingInput">输入英文单词或词组</label><input id="trainingInput" class="text-input" type="text" autocomplete="off" placeholder="输入答案后按 Enter 提交" /></div>`;
-    $("#trainingInput").focus();
+    if (item.answer) $("#trainingInput").value = item.answer;
+    if (item.feedbackHtml) $("#trainingFeedback").innerHTML = item.feedbackHtml;
+    if (!item.answered) $("#trainingInput").focus();
     $("#trainingInput").addEventListener("keydown", (event) => { if (event.key === "Enter") submitDailyTraining(); });
   }
 
@@ -834,15 +837,33 @@ window.IELTSDatabaseReady.then((database) => {
     }
     const correct = isCorrect({ type: "spell", answer: item.word.term }, input);
     training.answered = true;
+    item.answered = true;
+    item.answer = input;
     if (correct) training.correct += 1;
     else {
       training.wrong += item.retry ? 0 : 1;
       if (!item.retry) training.queue.push({ word: item.word, retry: true });
     }
     updateWordProgress(item.word, correct, "daily-training", input);
-    $("#trainingFeedback").innerHTML = `<div class="feedback-box ${correct ? "" : "wrong"}"><div class="feedback-title">${correct ? "回答正确" : "需要再巩固"}</div>${correct ? "" : `<p>正确答案：<strong>${escapeHtml(item.word.term)}</strong></p>`}<p><strong>词族：</strong>${escapeHtml(item.word.wordFamily || "暂无")}</p><p><strong>提醒：</strong>${escapeHtml(item.word.note || "")}</p></div>`;
+    item.feedbackHtml = `<div class="feedback-box ${correct ? "" : "wrong"}"><div class="feedback-title">${correct ? "回答正确" : "需要再巩固"}</div>${correct ? "" : `<p>正确答案：<strong>${escapeHtml(item.word.term)}</strong></p>`}<p><strong>词族：</strong>${escapeHtml(item.word.wordFamily || "暂无")}</p><p><strong>提醒：</strong>${escapeHtml(item.word.note || "")}</p></div>`;
+    $("#trainingFeedback").innerHTML = item.feedbackHtml;
     $("#submitTraining").classList.add("hidden");
     $("#nextTraining").classList.remove("hidden");
+  }
+
+  function previousDailyTraining() {
+    const training = state.dailyTraining;
+    if (!training || training.current <= 0) return;
+    training.current -= 1;
+    renderDailyTraining();
+  }
+
+  function nextDailyTraining() {
+    const training = state.dailyTraining;
+    if (!training || !training.queue[training.current]?.answered) return;
+    training.current += 1;
+    training.answered = false;
+    renderDailyTraining();
   }
 
   function openTraining({ updateUrl = true } = {}) {
@@ -919,11 +940,7 @@ window.IELTSDatabaseReady.then((database) => {
   $("#backFromTraining").addEventListener("click", () => showView("setup"));
   $("#startTraining").addEventListener("click", startDailyTraining);
   $("#submitTraining").addEventListener("click", submitDailyTraining);
-  $("#nextTraining").addEventListener("click", () => {
-    state.dailyTraining.current += 1;
-    state.dailyTraining.answered = false;
-    renderDailyTraining();
-  });
+  $("#nextTraining").addEventListener("click", nextDailyTraining);
   $("#trainingWeek").addEventListener("change", () => { state.dailyTraining.week = Number($("#trainingWeek").value); renderTrainingDays(); });
   $("#trainingDay").addEventListener("change", () => { state.dailyTraining.day = Number($("#trainingDay").value); });
   $("#backFromStudy").addEventListener("click", () => showView("setup"));
@@ -986,6 +1003,19 @@ window.IELTSDatabaseReady.then((database) => {
     if (word) updateStudyLevel(word, Number(event.target.value), "study-level");
   });
   document.addEventListener("keydown", (event) => {
+    if (views.training.classList.contains("active") && !event.target.closest("input, textarea, select, [contenteditable='true']")) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        previousDailyTraining();
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        if (state.dailyTraining?.answered) nextDailyTraining();
+        else submitDailyTraining();
+        return;
+      }
+    }
     if (event.key === "Enter" && views.exam.classList.contains("active")) {
       if (!state.answered) submitAnswer(); else { state.current += 1; renderQuestion(); }
     }
