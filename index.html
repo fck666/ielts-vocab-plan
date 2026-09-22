@@ -99,17 +99,31 @@
             <p id="setupHint" class="form-hint" aria-live="polite"></p>
           </form>
 
-          <section class="panel study-primary-module" aria-label="背单词学习模式">
-            <div>
-              <p class="eyebrow accent">LEARN BY DAY</p>
-              <h3>按周、按天背单词</h3>
-              <p class="home-module-lead">打开完整词条卡片，查看音标、词性、搭配和例句；每个词的熟练度会和考试进度共用。</p>
+          <div class="home-right-column">
+            <section class="panel study-primary-module" aria-label="背单词学习模式">
+              <div>
+                <p class="eyebrow accent">LEARN BY DAY</p>
+                <h3>按周、按天背单词</h3>
+                <p class="home-module-lead">打开完整词条卡片，查看音标、词性、搭配和例句；每个词的熟练度会和考试进度共用。</p>
+              </div>
+              <div class="study-primary-actions">
+                <button id="openStudy" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>查看词条</strong><small>按天学习完整词条</small></span><span aria-hidden="true">→</span></button>
+                <button id="openTraining" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>单日输入训练</strong><small>用中文释义和例句回忆英文</small></span><span aria-hidden="true">→</span></button>
+              </div>
+            </section>
+
+            <div class="home-utility-grid">
+              <section class="stats-teaser panel" aria-label="学习数据统计">
+                <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h3>查看完整学习统计</h3><p>按词汇掌握、考试表现、输出练习和每周进度查看自己的学习轨迹。</p></div>
+                <button id="openStats" class="secondary-button" type="button">打开统计面板 <span>→</span></button>
+              </section>
+
+              <section class="practice-teaser panel" aria-label="口语和写作练习">
+                <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
+                <div class="practice-entry-actions"><button id="openSpeaking" class="secondary-button" type="button">口语练习 <span>→</span></button><button id="openWriting" class="secondary-button" type="button">写作练习 <span>→</span></button></div>
+              </section>
             </div>
-            <div class="study-primary-actions">
-              <button id="openStudy" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>查看词条</strong><small>按天学习完整词条</small></span><span aria-hidden="true">→</span></button>
-              <button id="openTraining" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>单日输入训练</strong><small>用中文释义和例句回忆英文</small></span><span aria-hidden="true">→</span></button>
-            </div>
-          </section>
+          </div>
         </div>
 
         <p class="setup-tip">四种题型分别覆盖理解、回忆、拼写和语境应用；第一次建议选择 20 题全题型。</p>
@@ -119,17 +133,6 @@
           <div class="history-metrics"><span><b id="dueCount">0</b><small>今日待复习</small></span><span><b id="masteredCount">0</b><small>已稳定掌握</small></span><span><b id="attemptCount">0</b><small>累计答题</small></span><span><b id="bestScore">—</b><small>最高正确率</small></span></div>
         </section>
 
-        <div class="home-utility-grid">
-          <section class="stats-teaser panel" aria-label="学习数据统计">
-          <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h3>查看完整学习统计</h3><p>按词汇掌握、考试表现、输出练习和每周进度查看自己的学习轨迹。</p></div>
-          <button id="openStats" class="secondary-button" type="button">打开统计面板 <span>→</span></button>
-          </section>
-
-          <section class="practice-teaser panel" aria-label="口语和写作练习">
-          <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
-          <div class="practice-entry-actions"><button id="openSpeaking" class="secondary-button" type="button">口语练习 <span>→</span></button><button id="openWriting" class="secondary-button" type="button">写作练习 <span>→</span></button></div>
-          </section>
-        </div>
       </section>
 
       <section id="examView" class="view" aria-labelledby="questionTitle">
