@@ -29,6 +29,16 @@
 
 推荐在本目录启动一个静态服务器，例如 `python3 -m http.server 8000`，再访问 `http://localhost:8000/`，这样浏览器可以正常读取仓库中的 SQLite 种子文件。部分浏览器也能直接双击 `index.html` 打开；如果 `file://` 环境限制数据库文件读取，页面会自动用内置词条数据初始化，但仍建议使用静态服务器。
 
+页面使用静态 hash 路由，因此不同功能可以使用不同链接，不需要后端路由配置：
+
+- `http://localhost:8765/`：首页与词汇考试设置
+- `http://localhost:8765/#/speaking`：口语 Part 3 练习
+- `http://localhost:8765/#/writing`：Task 2 写作练习
+- `http://localhost:8765/#/study`：背单词学习模式
+- `http://localhost:8765/#/stats`：学习数据统计
+
+这些链接仍然由同一个静态 `index.html` 提供，刷新或直接打开时会根据 hash 显示对应页面；浏览器的前进、后退也可以切换页面。
+
 ### 后续添加 Week 或词汇
 
 数据格式已经按扩展设计。以后可以：

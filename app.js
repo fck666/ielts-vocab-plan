@@ -135,9 +135,32 @@ window.IELTSDatabaseReady.then((database) => {
   // The study view can reuse these helpers when it renders vocabulary cards.
   window.IELTSVoice = { speak: speakWord, controls: pronunciationControls, supported: () => Boolean(speech && typeof window.SpeechSynthesisUtterance === "function") };
 
-  function showView(name) {
+  const viewRoutes = {
+    setup: "首页",
+    exam: "词汇考试",
+    result: "考试结果",
+    speaking: "口语 Part 3",
+    writing: "Task 2 写作",
+    study: "背单词",
+    stats: "学习统计",
+  };
+
+  function showView(name, { updateUrl = true } = {}) {
     Object.entries(views).forEach(([key, view]) => view.classList.toggle("active", key === name));
+    document.title = `${viewRoutes[name] || "IELTS Vocabulary Lab"} · IELTS Vocabulary Lab`;
+    if (updateUrl) {
+      const targetHash = name === "setup" ? "" : `#/${name}`;
+      if (window.location.hash !== targetHash) window.location.hash = targetHash;
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function routeFromHash() {
+    const route = window.location.hash.replace(/^#\/?/, "").split("?")[0] || "setup";
+    showView(Object.prototype.hasOwnProperty.call(views, route) ? route : "setup", { updateUrl: false });
+    if (route === "speaking" || route === "writing") openPractice(route);
+    if (route === "study") openStudy();
+    if (route === "stats") openStats();
   }
 
   function shuffle(items) {
@@ -812,7 +835,9 @@ window.IELTSDatabaseReady.then((database) => {
     }
   });
   window.IELTSStats = { render: renderStats };
+  window.addEventListener("hashchange", routeFromHash);
   populateWeekOptions();
   renderHistory();
+  routeFromHash();
 })();
 });
