@@ -835,6 +835,7 @@ window.IELTSDatabaseReady.then((database) => {
       $("#trainingFeedback").innerHTML = `<div class="feedback-box wrong"><div class="feedback-title">先输入答案</div><p>请根据中文释义和例句写出英文单词或词组。</p></div>`;
       return;
     }
+    $("#trainingInput")?.blur();
     const correct = isCorrect({ type: "spell", answer: item.word.term }, input);
     training.answered = true;
     item.answered = true;
