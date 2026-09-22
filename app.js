@@ -56,6 +56,7 @@ window.IELTSDatabaseReady.then((database) => {
   const SPEECH_RATE = 1;
   let speechVoices = [];
   let activeSpeechButton = null;
+  let speechWarmed = false;
 
   function refreshSpeechVoices() {
     speechVoices = speech ? speech.getVoices() : [];
@@ -84,6 +85,34 @@ window.IELTSDatabaseReady.then((database) => {
     const locale = accent === "us" ? "en-us" : "en-gb";
     return speechVoices.some((voice) => String(voice.lang || "").toLowerCase().replace(/_/g, "-") === locale);
   }
+
+  function warmSpeechEngine() {
+    if (!speech || speechWarmed || speech.speaking || speech.pending) return;
+    speechWarmed = true;
+    speech.resume();
+    const warmup = new SpeechSynthesisUtterance(".");
+    warmup.lang = "en-GB";
+    warmup.rate = 4;
+    warmup.volume = 0;
+    warmup.addEventListener("error", () => {
+      speechWarmed = false;
+    }, { once: true });
+    speech.speak(warmup);
+  }
+
+  function scheduleSpeechWarmup() {
+    if (!speech) return;
+    const run = () => {
+      if (document.visibilityState === "visible") warmSpeechEngine();
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(run, { timeout: 1500 });
+    } else {
+      window.setTimeout(run, 600);
+    }
+  }
+
+  scheduleSpeechWarmup();
 
   function setPronunciationStatus(wordId, message) {
     const escapedId = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(String(wordId)) : String(wordId).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
