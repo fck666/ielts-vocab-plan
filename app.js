@@ -7,19 +7,29 @@ window.IELTSDatabaseReady.then((database) => {
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-  const practicePrompts = {
-    speaking: [
-      { title: "为什么学校应该培养批判性思维？", body: "请回答 1–2 分钟，尽量使用本周词汇，并给出一个具体例子。", hints: ["critical thinking", "academic performance", "from my perspective"] },
-      { title: "科技是否让人与人之间的交流变得更好？", body: "先给出立场，再讨论一个优点和一个潜在问题。", hints: ["face-to-face interaction", "online platform", "to some extent"] },
-      { title: "年轻人应该如何应对工作压力？", body: "结合个人经历或观察，说明至少两种可行办法。", hints: ["cope with stress", "work-life balance", "maintain a balance"] },
-      { title: "城市政府应该优先解决哪一个问题？", body: "选择一个城市问题，解释原因并提出解决方案。", hints: ["urban planning", "public transport", "take effective measures"] },
-    ],
-    writing: [
-      { title: "Some people think governments should spend more money on public services than on the arts.", body: "写一个 Task 2 主体段或完整提纲，明确你的立场并给出具体理由。", hints: ["public funding", "allocate resources", "on balance"] },
-      { title: "Technology has changed the way people communicate. Is this a positive or negative development?", body: "写一个包含让步和反驳的主体段，避免只罗列观点。", hints: ["technological advancement", "social interaction", "nevertheless"] },
-      { title: "More people are moving from rural areas to cities. What problems can this cause?", body: "写问题—原因—结果链，并提出一个可行的解决方向。", hints: ["rural-urban migration", "urban sprawl", "address the issue"] },
-      { title: "Should schools make physical education compulsory?", body: "写一个 120–180 词的论证段，注意使用准确搭配。", hints: ["compulsory", "physical activity", "well-being"] },
-    ],
+  const weeklyOutputPlan = [
+    { week: 1, speakingTheme: "教育、学习", writingTheme: "教育政策、学校制度", hints: ["access to education", "academic performance", "from my perspective"], part1: "Do you enjoy learning new things?", part2: "Describe a teacher who influenced you.", part3: "Why should schools develop critical thinking?", task1: "The bar chart shows the percentage of students choosing four types of school activity in 2000 and 2020.", task2: "Some people believe schools should focus mainly on academic subjects, while others think practical skills are equally important. Discuss both views and give your opinion." },
+    { week: 2, speakingTheme: "工作、职场", writingTheme: "工作方式、就业与技能", hints: ["transferable skills", "career progression", "work-life balance"], part1: "What kind of work would you like to do in the future?", part2: "Describe a useful skill you learned for work.", part3: "How can employers help people maintain a healthy work-life balance?", task1: "The table compares the average weekly working hours and job satisfaction of five occupations.", task2: "Many people now work from home. Do the advantages outweigh the disadvantages?" },
+    { week: 3, speakingTheme: "科技、数字生活", writingTheme: "科技影响、网络与隐私", hints: ["technological innovation", "digital wellbeing", "data privacy"], part1: "How often do you use digital devices?", part2: "Describe a piece of technology that is useful to you.", part3: "Has technology improved the quality of human communication?", task1: "The line graph shows the percentage of households with internet access in three countries from 2005 to 2025.", task2: "Technology makes communication easier, but it can also reduce face-to-face interaction. Discuss both sides and give your opinion." },
+    { week: 4, speakingTheme: "环境、能源", writingTheme: "环境政策、气候变化", hints: ["carbon emissions", "renewable energy", "environmental policy"], part1: "What environmental problem concerns you most?", part2: "Describe a place where you noticed environmental change.", part3: "Should individuals or governments take more responsibility for climate change?", task1: "The diagram illustrates how household waste is collected and processed for recycling.", task2: "Governments should prioritise environmental protection even when it slows economic growth. To what extent do you agree or disagree?" },
+    { week: 5, speakingTheme: "健康、生活方式", writingTheme: "公共健康、医疗资源", hints: ["preventive medicine", "health literacy", "public health"], part1: "What do you do to stay healthy?", part2: "Describe a healthy habit you would like to develop.", part3: "Why do some people find it difficult to change unhealthy habits?", task1: "The bar chart compares healthcare expenditure per person in six countries in 2000 and 2020.", task2: "Public money should be spent on preventing illness rather than treating people after they become sick. Do you agree or disagree?" },
+    { week: 6, speakingTheme: "城市、交通", writingTheme: "城市规划、住房与交通", hints: ["urban planning", "public transport", "affordable housing"], part1: "What do you like about the area where you live?", part2: "Describe a city you would like to visit or live in.", part3: "What is the most effective way to reduce traffic congestion?", task1: "The maps show changes to a town centre before and after a transport redevelopment project.", task2: "Some people think cities should be designed for cars, while others support pedestrian-friendly planning. Discuss both views." },
+    { week: 7, speakingTheme: "经济、消费", writingTheme: "消费行为、贫富差距", hints: ["consumer behaviour", "income inequality", "responsible investment"], part1: "Do you prefer to save money or spend it?", part2: "Describe a purchase that was worth the money.", part3: "How can governments reduce the gap between rich and poor?", task1: "The pie charts show how household spending was distributed among six categories in two different years.", task2: "Advertising encourages people to buy things they do not need. Is this a positive or negative development?" },
+    { week: 8, speakingTheme: "媒体、社会", writingTheme: "媒体影响、信息可信度", hints: ["public perception", "media coverage", "reliable information"], part1: "What kind of news do you usually follow?", part2: "Describe a news story that attracted your attention.", part3: "How can people decide whether information online is reliable?", task1: "The table gives information about the number of people using four news sources in 2010 and 2020.", task2: "The media has too much influence on how people think. To what extent do you agree or disagree?" },
+    { week: 9, speakingTheme: "文化、旅游", writingTheme: "文化保护、全球化", hints: ["cultural heritage", "local identity", "sustainable tourism"], part1: "What kind of cultural events do you enjoy?", part2: "Describe a traditional place or event in your country.", part3: "Should historic buildings be protected even when they limit urban development?", task1: "The line graph shows the number of international visitors to three cultural sites between 2010 and 2020.", task2: "International tourism can damage local culture and the environment. What problems does it cause and how can they be solved?" },
+    { week: 10, speakingTheme: "综合复习", writingTheme: "混合题型与完整限时练习", hints: ["a balanced perspective", "evidence-based", "in the long term"], part1: "Which topic have you enjoyed discussing during your English study?", part2: "Describe an issue you would like to understand better.", part3: "When solving a social problem, should policymakers prioritise immediate results or long-term change?", task1: "The chart combines data about education, employment and public spending in a country over a ten-year period.", task2: "Some people believe every major social problem has a technological solution. Discuss this view and give your own opinion." },
+  ];
+
+  const practicePlan = {
+    speaking: {
+      part1: weeklyOutputPlan.map((item) => ({ week: item.week, theme: item.speakingTheme, title: item.part1, body: "请用 20–30 秒自然回答，补充一个具体细节。", hints: item.hints })),
+      part2: weeklyOutputPlan.map((item) => ({ week: item.week, theme: item.speakingTheme, title: item.part2, body: "请准备 1 分钟，连续回答 1–2 分钟，覆盖人物、经历、细节和感受。", hints: item.hints })),
+      part3: weeklyOutputPlan.map((item) => ({ week: item.week, theme: item.speakingTheme, title: item.part3, body: "请回答 1–2 分钟，先表明观点，再解释原因并给出一个例子或对比。", hints: item.hints })),
+    },
+    writing: {
+      task1: weeklyOutputPlan.map((item) => ({ week: item.week, theme: item.writingTheme, title: item.task1, body: "请用 20 分钟完成 Academic Task 1，概括总体趋势，比较关键数据，不要逐项罗列。建议 150–180 词。", hints: item.hints })),
+      task2: weeklyOutputPlan.map((item) => ({ week: item.week, theme: item.writingTheme, title: item.task2, body: "请用 40 分钟完成 Task 2，写出清晰立场、两个主体段和具体例证。建议至少 250 词。", hints: item.hints })),
+    },
   };
 
   const state = {
@@ -31,6 +41,7 @@ window.IELTSDatabaseReady.then((database) => {
     results: [],
     config: null,
     practicePromptIndex: { speaking: 0, writing: 0 },
+    practiceSelection: { speaking: { type: "part3", week: 1 }, writing: { type: "task2", week: 1 } },
     studyWeek: 1,
     studyDay: 1,
     studyFilter: "all",
@@ -139,26 +150,31 @@ window.IELTSDatabaseReady.then((database) => {
     setup: "首页",
     exam: "词汇考试",
     result: "考试结果",
-    speaking: "口语 Part 3",
-    writing: "Task 2 写作",
+    speaking: "口语练习",
+    writing: "写作练习",
     study: "背单词",
     stats: "学习统计",
   };
 
-  function showView(name, { updateUrl = true } = {}) {
+  function showView(name, { updateUrl = true, route = name } = {}) {
     Object.entries(views).forEach(([key, view]) => view.classList.toggle("active", key === name));
     document.title = `${viewRoutes[name] || "IELTS Vocabulary Lab"} · IELTS Vocabulary Lab`;
     if (updateUrl) {
-      const targetHash = name === "setup" ? "" : `#/${name}`;
+      const targetHash = name === "setup" ? "" : `#/${route}`;
       if (window.location.hash !== targetHash) window.location.hash = targetHash;
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function routeFromHash() {
-    const route = window.location.hash.replace(/^#\/?/, "").split("?")[0] || "setup";
+    const parts = (window.location.hash.replace(/^#\/?/, "").split("?")[0] || "setup").split("/");
+    const route = parts[0];
+    if (route === "speaking" || route === "writing") {
+      const types = route === "speaking" ? ["part1", "part2", "part3"] : ["task1", "task2"];
+      openPractice(route, types.includes(parts[1]) ? parts[1] : types[types.length - 1], { updateUrl: false });
+      return;
+    }
     showView(Object.prototype.hasOwnProperty.call(views, route) ? route : "setup", { updateUrl: false });
-    if (route === "speaking" || route === "writing") openPractice(route);
     if (route === "study") openStudy();
     if (route === "stats") openStats();
   }
@@ -544,9 +560,14 @@ window.IELTSDatabaseReady.then((database) => {
       response: `#${prefix}Response`, rating: `#${prefix}Rating`, hint: `#${prefix}Hint`,
       wordCount: `#${prefix}WordCount`, promptTitle: `#${prefix}PromptTitle`,
       promptBody: `#${prefix}PromptBody`, promptType: `#${prefix}PromptType`,
-      promptWeek: `#${prefix}PromptWeek`, hints: `#${prefix}Hints`,
+      promptWeek: `#${prefix}PromptWeek`, hints: `#${prefix}Hints`, week: `#${prefix}Week`, type: `#${prefix}Type`,
       history: `#${prefix}History`, count: `#${prefix}Count`,
     };
+  }
+
+  function selectedPracticePrompts(mode) {
+    const selection = state.practiceSelection[mode];
+    return practicePlan[mode][selection.type] || practicePlan[mode][mode === "speaking" ? "part3" : "task2"];
   }
 
   function savePracticeRecord(mode) {
@@ -556,8 +577,9 @@ window.IELTSDatabaseReady.then((database) => {
       $(ids.hint).textContent = "请先写下回答，再保存练习。";
       return;
     }
-    const prompts = practicePrompts[mode];
-    const prompt = prompts[state.practicePromptIndex[mode] % prompts.length];
+    const prompts = selectedPracticePrompts(mode);
+    const weekPrompts = prompts.filter((item) => item.week === Number(state.practiceSelection[mode].week));
+    const prompt = weekPrompts[state.practicePromptIndex[mode] % weekPrompts.length] || prompts[0];
     db.addPracticeRecord({ mode, prompt: prompt.title, response, rating: Number($(ids.rating).value), createdAt: new Date().toISOString() });
     $(ids.hint).textContent = "已保存到本机。可以换一个题目继续练习。";
     $(ids.response).value = "";
@@ -583,21 +605,37 @@ window.IELTSDatabaseReady.then((database) => {
 
   function renderPracticePrompt(mode) {
     const ids = practiceIds(mode);
-    const prompts = practicePrompts[mode];
-    const prompt = prompts[state.practicePromptIndex[mode] % prompts.length];
-    $(ids.promptType).textContent = mode === "speaking" ? "口语 Part 3" : "Task 2 写作";
-    $(ids.promptWeek).textContent = mode === "speaking" ? "观点 · 理由 · 例子" : "立场 · 论证 · 搭配";
+    const prompts = selectedPracticePrompts(mode);
+    const weekPrompts = prompts.filter((item) => item.week === Number(state.practiceSelection[mode].week));
+    const prompt = weekPrompts[state.practicePromptIndex[mode] % weekPrompts.length] || prompts[0];
+    const type = state.practiceSelection[mode].type;
+    const typeLabel = mode === "speaking" ? { part1: "口语 Part 1", part2: "口语 Part 2", part3: "口语 Part 3" }[type] : { task1: "Writing Task 1", task2: "Writing Task 2" }[type];
+    $(ids.promptType).textContent = typeLabel;
+    $(ids.promptWeek).textContent = `Week ${prompt.week} · ${prompt.theme}`;
     $(ids.promptTitle).textContent = prompt.title;
     $(ids.promptBody).textContent = prompt.body;
     $(ids.hints).innerHTML = prompt.hints.map((hint) => `<span>${escapeHtml(hint)}</span>`).join("");
   }
 
-  function openPractice(mode = "speaking") {
+  function populatePracticeControls(mode) {
+    const ids = practiceIds(mode);
+    const typeOptions = mode === "speaking"
+      ? [["part1", "Part 1 日常问答"], ["part2", "Part 2 个人陈述"], ["part3", "Part 3 深入讨论"]]
+      : [["task1", "Task 1 图表写作"], ["task2", "Task 2 议论文"]];
+    $(ids.type).innerHTML = typeOptions.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    $(ids.type).value = state.practiceSelection[mode].type;
+    $(ids.week).innerHTML = weeklyOutputPlan.map((item) => `<option value="${item.week}">Week ${item.week} · ${item[mode === "speaking" ? "speakingTheme" : "writingTheme"]}</option>`).join("");
+    $(ids.week).value = String(state.practiceSelection[mode].week);
+  }
+
+  function openPractice(mode = "speaking", type = null, { updateUrl = true } = {}) {
+    if (type) state.practiceSelection[mode].type = type;
+    populatePracticeControls(mode);
     const ids = practiceIds(mode);
     $(ids.hint).textContent = "";
     renderPracticePrompt(mode);
     renderPracticeHistory(mode);
-    showView(mode);
+    showView(mode, { updateUrl, route: `${mode}/${state.practiceSelection[mode].type}` });
   }
 
   function studyRecord(word) {
@@ -760,14 +798,29 @@ window.IELTSDatabaseReady.then((database) => {
     const prefix = mode === "speaking" ? "Speaking" : "Writing";
     $(`#save${prefix}`).addEventListener("click", () => savePracticeRecord(mode));
     $(`#new${prefix}Prompt`).addEventListener("click", () => {
-      const prompts = practicePrompts[mode];
-      state.practicePromptIndex[mode] = (state.practicePromptIndex[mode] + 1) % prompts.length;
+      const weeks = weeklyOutputPlan.map((item) => item.week);
+      const currentIndex = weeks.indexOf(Number(state.practiceSelection[mode].week));
+      state.practiceSelection[mode].week = weeks[(currentIndex + 1) % weeks.length];
+      state.practicePromptIndex[mode] = 0;
       $(ids.hint).textContent = "";
       $(ids.response).value = "";
       updatePracticeWordCount(mode);
+      populatePracticeControls(mode);
       renderPracticePrompt(mode);
     });
     $(ids.response).addEventListener("input", () => updatePracticeWordCount(mode));
+    $(ids.type).addEventListener("change", () => {
+      state.practiceSelection[mode].type = $(ids.type).value;
+      state.practicePromptIndex[mode] = 0;
+      renderPracticePrompt(mode);
+      const route = `${mode}/${state.practiceSelection[mode].type}`;
+      if (window.location.hash !== `#/${route}`) window.location.hash = `#/${route}`;
+    });
+    $(ids.week).addEventListener("change", () => {
+      state.practiceSelection[mode].week = Number($(ids.week).value);
+      state.practicePromptIndex[mode] = 0;
+      renderPracticePrompt(mode);
+    });
   });
   $("#openStudy").addEventListener("click", openStudy);
   $("#backFromStudy").addEventListener("click", () => showView("setup"));

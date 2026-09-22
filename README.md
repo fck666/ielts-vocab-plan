@@ -32,8 +32,11 @@
 页面使用静态 hash 路由，因此不同功能可以使用不同链接，不需要后端路由配置：
 
 - `http://localhost:8765/`：首页与词汇考试设置
-- `http://localhost:8765/#/speaking`：口语 Part 3 练习
-- `http://localhost:8765/#/writing`：Task 2 写作练习
+- `http://localhost:8765/#/speaking/part1`：口语 Part 1 日常问答
+- `http://localhost:8765/#/speaking/part2`：口语 Part 2 个人陈述
+- `http://localhost:8765/#/speaking/part3`：口语 Part 3 深入讨论
+- `http://localhost:8765/#/writing/task1`：Writing Task 1 图表写作
+- `http://localhost:8765/#/writing/task2`：Writing Task 2 议论文
 - `http://localhost:8765/#/study`：背单词学习模式
 - `http://localhost:8765/#/stats`：学习数据统计
 
@@ -75,14 +78,28 @@
 
 ## 口语与写作练习
 
-首页现在分别进入“口语 Part 3 练习”和“Task 2 写作练习”两个页面，历史记录仍共用 SQLite 的 `practice_records` 表，但按练习类型分别显示。
+首页现在分别进入“口语练习”和“写作练习”两个页面。口语页包含 Part 1、Part 2、Part 3，写作页包含 Task 1 和 Task 2；每页可选择 Week 1–10，历史记录仍共用 SQLite 的 `practice_records` 表。
 
 题目是根据 IELTS 6.5 常见话题和任务结构整理的训练题，不冒充官方真题：
 
-- 口语题按 Part 3 的“直接回答—解释理由—补充例子”组织，覆盖教育、科技、工作、城市等高频讨论主题。
-- 写作题按 Task 2 常见的 agree/disagree、discussion、problem-solution 等论证任务组织，提示词帮助练习立场、论证、连接和搭配。
+- 口语十周计划同时覆盖 Part 1 的自然回答、Part 2 的连续表达和 Part 3 的观点讨论。
+- 写作十周计划同时覆盖 Academic Task 1 的图表/流程/地图概述和 Task 2 的观点、讨论、问题解决及综合题型。
+- 每周主题与词汇计划对应：教育、工作、科技、环境、健康、城市、经济、媒体、文化，最后一周综合复习。
 
-练习题保存在前端静态代码中，不需要后端或联网题库；以后可以直接在 `app.js` 的 `practicePrompts` 中增加题目，保存记录的数据库结构无需改变。
+| 周次 | 口语主题 | 写作主题 |
+|---|---|---|
+| 1 | 教育、学习 | 教育政策、学校制度 |
+| 2 | 工作、职场 | 工作方式、就业与技能 |
+| 3 | 科技、数字生活 | 科技影响、网络与隐私 |
+| 4 | 环境、能源 | 环境政策、气候变化 |
+| 5 | 健康、生活方式 | 公共健康、医疗资源 |
+| 6 | 城市、交通 | 城市规划、住房与交通 |
+| 7 | 经济、消费 | 消费行为、贫富差距 |
+| 8 | 媒体、社会 | 媒体影响、信息可信度 |
+| 9 | 文化、旅游 | 文化保护、全球化 |
+| 10 | 综合复习 | 混合题型与完整限时练习 |
+
+练习题保存在前端静态代码中，不需要后端或联网题库；以后可以直接在 `app.js` 的 `weeklyOutputPlan` 中增加或调整十周题目，保存记录的数据库结构无需改变。
 
 词库变更后可运行 `python3 build_data.py` 生成 JSON/JS 数据，再运行 `python3 build_database.py` 重建 Git 中的 SQLite 种子文件。数据库表包括 `words`、`word_progress`、`exams` 和 `practice_records`，后续添加 Week 不需要修改表结构。
 

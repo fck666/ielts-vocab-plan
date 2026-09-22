@@ -183,13 +183,14 @@
         <div class="practice-topbar"><button class="text-button" id="backFromSpeaking" type="button">← 返回考试设置</button><div><p class="eyebrow accent">SPEAKING OUTPUT</p><h2 id="speakingTitle">口语 Part 3 练习</h2></div><span class="pill">SQLite 本机保存</span></div>
         <div class="practice-layout">
           <article class="panel practice-editor">
+            <div class="practice-controls"><label><span>题型</span><select id="speakingType"></select></label><label><span>计划周次</span><select id="speakingWeek"></select></label></div>
             <div class="practice-prompt-meta"><span id="speakingPromptType" class="question-type">口语 Part 3</span><span id="speakingPromptWeek">观点 · 理由 · 例子</span></div>
             <h3 id="speakingPromptTitle"></h3><p id="speakingPromptBody" class="practice-prompt-body"></p><div id="speakingHints" class="practice-hints"></div>
             <label class="answer-label" for="speakingResponse">你的回答</label><textarea id="speakingResponse" class="practice-textarea" placeholder="先用英文组织观点，再开始输入……"></textarea>
             <div class="practice-toolbar"><span id="speakingWordCount">0 词</span><label>自评分 <select id="speakingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
-            <div class="question-actions"><button id="newSpeakingPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="saveSpeaking" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="speakingHint" class="form-hint" aria-live="polite"></p>
+            <div class="question-actions"><button id="newSpeakingPrompt" class="secondary-button" type="button">下一个计划题目 ↻</button><button id="saveSpeaking" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="speakingHint" class="form-hint" aria-live="polite"></p>
           </article>
-          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">题目准备</p><h3>按 Part 3 评分逻辑练习</h3><p>题目围绕教育、科技、工作和城市等高频话题，要求给出立场、理由和例子。它们是训练题，不是官方原题。</p><ol><li>先直接回答问题</li><li>补充原因或对比</li><li>给出个人或社会例子</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SPEAKING</p><h3>最近练习</h3></div><span id="speakingCount" class="pill">0 次</span></div><div id="speakingHistory" class="practice-history"></div></div></aside>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">十周计划</p><h3>Part 1 · Part 2 · Part 3</h3><p>每周围绕一个主题练习三种口语任务：Part 1 练自然回答，Part 2 练连续表达，Part 3 练观点、理由和例子。</p><ol><li>先选择题型和 Week</li><li>按考试时限完成回答</li><li>保存后复盘词汇和流利度</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SPEAKING</p><h3>最近练习</h3></div><span id="speakingCount" class="pill">0 次</span></div><div id="speakingHistory" class="practice-history"></div></div></aside>
         </div>
       </section>
 
@@ -197,13 +198,14 @@
         <div class="practice-topbar"><button class="text-button" id="backFromWriting" type="button">← 返回考试设置</button><div><p class="eyebrow accent">WRITING OUTPUT</p><h2 id="writingTitle">Task 2 写作练习</h2></div><span class="pill">SQLite 本机保存</span></div>
         <div class="practice-layout">
           <article class="panel practice-editor">
+            <div class="practice-controls"><label><span>题型</span><select id="writingType"></select></label><label><span>计划周次</span><select id="writingWeek"></select></label></div>
             <div class="practice-prompt-meta"><span id="writingPromptType" class="question-type">Task 2 写作</span><span id="writingPromptWeek">立场 · 论证 · 搭配</span></div>
             <h3 id="writingPromptTitle"></h3><p id="writingPromptBody" class="practice-prompt-body"></p><div id="writingHints" class="practice-hints"></div>
             <label class="answer-label" for="writingResponse">你的回答</label><textarea id="writingResponse" class="practice-textarea" placeholder="先写清楚立场和段落逻辑，再开始输入……"></textarea>
             <div class="practice-toolbar"><span id="writingWordCount">0 词</span><label>自评分 <select id="writingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
-            <div class="question-actions"><button id="newWritingPrompt" class="secondary-button" type="button">换一个题目 ↻</button><button id="saveWriting" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="writingHint" class="form-hint" aria-live="polite"></p>
+            <div class="question-actions"><button id="newWritingPrompt" class="secondary-button" type="button">下一个计划题目 ↻</button><button id="saveWriting" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="writingHint" class="form-hint" aria-live="polite"></p>
           </article>
-          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">题目准备</p><h3>按 Task 2 论证任务练习</h3><p>题目覆盖 agree/disagree、discussion、problem-solution 等常见任务，训练题会要求你明确立场、展开论证并使用例子。</p><ol><li>先确定题型和立场</li><li>每段只展开一个主观点</li><li>检查连接、搭配和例证</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT WRITING</p><h3>最近练习</h3></div><span id="writingCount" class="pill">0 次</span></div><div id="writingHistory" class="practice-history"></div></div></aside>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">十周计划</p><h3>Task 1 · Task 2</h3><p>Task 1 每周练习图表、流程或地图概述；Task 2 覆盖观点、讨论、问题解决和综合题型。当前题目是训练题，不冒充官方真题。</p><ol><li>先识别题型和写作任务</li><li>按 20 或 40 分钟限时</li><li>检查结构、连接和例证</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT WRITING</p><h3>最近练习</h3></div><span id="writingCount" class="pill">0 次</span></div><div id="writingHistory" class="practice-history"></div></div></aside>
         </div>
       </section>
 
