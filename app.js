@@ -53,6 +53,7 @@ window.IELTSDatabaseReady.then((database) => {
 
   // Speech synthesis is available without a server, but installed voices depend on the browser and OS.
   const speech = window.speechSynthesis || null;
+  const SPEECH_RATE = 1;
   let speechVoices = [];
   let activeSpeechButton = null;
 
@@ -106,7 +107,8 @@ window.IELTSDatabaseReady.then((database) => {
       return false;
     }
     refreshSpeechVoices();
-    speech.cancel();
+    // Cancelling an idle queue can add startup latency in some browsers.
+    if (speech.speaking || speech.pending) speech.cancel();
     resetSpeechButton(activeSpeechButton);
     activeSpeechButton = sourceButton;
     if (activeSpeechButton) {
@@ -118,7 +120,7 @@ window.IELTSDatabaseReady.then((database) => {
     const voice = voiceForAccent(accent);
     if (voice) utterance.voice = voice;
     if (wordId) setPronunciationStatus(wordId, voice && hasExactVoice(accent) ? (accent === "us" ? "美音朗读中…" : "英音朗读中…") : "未找到指定音色，使用默认英语朗读…");
-    utterance.rate = 0.88;
+    utterance.rate = SPEECH_RATE;
     utterance.pitch = 1;
     const finish = () => {
       resetSpeechButton(sourceButton);
