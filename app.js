@@ -4,6 +4,7 @@ window.IELTSDatabaseReady.then((database) => {
 
   const words = Array.isArray(window.IELTS_WORDS) ? window.IELTS_WORDS : [];
   const db = database;
+  const DAILY_TRAINING_STORAGE_KEY = "ielts-vocabulary-lab-daily-training-v1";
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -784,6 +785,65 @@ window.IELTSDatabaseReady.then((database) => {
     state.dailyTraining.day = Number(daySelect.value || days[0]);
   }
 
+  function persistDailyTraining() {
+    const training = state.dailyTraining;
+    if (!training?.queue?.length) return;
+    const snapshot = {
+      version: 1,
+      week: training.week,
+      day: training.day,
+      current: training.current,
+      correct: training.correct,
+      wrong: training.wrong,
+      answered: training.answered,
+      queue: training.queue.map((item) => ({
+        wordId: item.word.id,
+        retry: Boolean(item.retry),
+        answered: Boolean(item.answered),
+        answer: item.answer || "",
+        draft: item.draft || "",
+        correct: item.correct ?? null,
+        feedbackHtml: item.feedbackHtml || "",
+      })),
+    };
+    try { localStorage.setItem(DAILY_TRAINING_STORAGE_KEY, JSON.stringify(snapshot)); } catch {}
+  }
+
+  function restoreDailyTraining() {
+    let snapshot;
+    try {
+      snapshot = JSON.parse(localStorage.getItem(DAILY_TRAINING_STORAGE_KEY) || "");
+    } catch {
+      return false;
+    }
+    if (!snapshot || snapshot.version !== 1 || !Array.isArray(snapshot.queue)) return false;
+    const queue = snapshot.queue.map((item) => {
+      const word = words.find((candidate) => candidate.id === item.wordId);
+      if (!word) return null;
+      return {
+        word,
+        retry: Boolean(item.retry),
+        answered: Boolean(item.answered),
+        answer: String(item.answer || ""),
+        draft: String(item.draft || ""),
+        correct: typeof item.correct === "boolean" ? item.correct : null,
+        feedbackHtml: String(item.feedbackHtml || ""),
+      };
+    }).filter(Boolean);
+    const current = Number(snapshot.current);
+    if (!queue.length || !Number.isInteger(current) || current < 0 || current > queue.length) return false;
+    state.dailyTraining = {
+      week: Number(snapshot.week) || 1,
+      day: Number(snapshot.day) || 1,
+      queue,
+      current,
+      correct: Number(snapshot.correct) || 0,
+      wrong: Number(snapshot.wrong) || 0,
+      answered: Boolean(snapshot.answered),
+    };
+    return true;
+  }
+
   function populateTrainingOptions() {
     const weekSelect = $("#trainingWeek");
     weekSelect.innerHTML = trainingWeeks().map((week) => `<option value="${week}">Week ${week}</option>`).join("");
@@ -798,11 +858,13 @@ window.IELTSDatabaseReady.then((database) => {
     state.dailyTraining = { week, day, queue: dayWords.map((word) => ({ word, retry: false, answered: false })), current: 0, correct: 0, wrong: 0, answered: false };
     $("#trainingSummary").textContent = `Week ${week} · Day ${day} 共 ${dayWords.length} 个词，答错词会在本轮末尾再出现。`;
     renderDailyTraining();
+    persistDailyTraining();
   }
 
   function renderDailyTraining() {
     const training = state.dailyTraining;
     const item = training.queue[training.current];
+    $("#trainingSummary").textContent = `Week ${training.week} · Day ${training.day} 共 ${training.queue.length} 个词，答错词会在本轮末尾再出现。`;
     $("#trainingFeedback").innerHTML = "";
     training.answered = Boolean(item?.answered);
     $("#submitTraining").classList.toggle("hidden", !item || training.answered);
@@ -820,9 +882,13 @@ window.IELTSDatabaseReady.then((database) => {
     $("#trainingProgress").textContent = `Week ${training.week} · Day ${training.day} · 第 ${training.current + 1} / ${training.queue.length} 题${item.retry ? " · 错题重做" : ""}`;
     $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p></div></div>`;
     $("#trainingAnswerArea").innerHTML = `<div class="training-answer"><label class="answer-label" for="trainingInput">输入英文单词或词组</label><input id="trainingInput" class="text-input" type="text" autocomplete="off" placeholder="输入答案后按 Enter 提交" /></div>`;
-    if (item.answer) $("#trainingInput").value = item.answer;
+    if (item.answer || item.draft) $("#trainingInput").value = item.answer || item.draft;
     if (item.feedbackHtml) $("#trainingFeedback").innerHTML = item.feedbackHtml;
     if (!item.answered) $("#trainingInput").focus();
+    $("#trainingInput").addEventListener("input", () => {
+      item.draft = $("#trainingInput").value;
+      persistDailyTraining();
+    });
     $("#trainingInput").addEventListener("keydown", (event) => { if (event.key === "Enter") submitDailyTraining(); });
   }
 
@@ -840,6 +906,8 @@ window.IELTSDatabaseReady.then((database) => {
     training.answered = true;
     item.answered = true;
     item.answer = input;
+    item.draft = "";
+    item.correct = correct;
     if (correct) training.correct += 1;
     else {
       training.wrong += item.retry ? 0 : 1;
@@ -850,12 +918,14 @@ window.IELTSDatabaseReady.then((database) => {
     $("#trainingFeedback").innerHTML = item.feedbackHtml;
     $("#submitTraining").classList.add("hidden");
     $("#nextTraining").classList.remove("hidden");
+    persistDailyTraining();
   }
 
   function previousDailyTraining() {
     const training = state.dailyTraining;
     if (!training || training.current <= 0) return;
     training.current -= 1;
+    persistDailyTraining();
     renderDailyTraining();
   }
 
@@ -864,6 +934,7 @@ window.IELTSDatabaseReady.then((database) => {
     if (!training || !training.queue[training.current]?.answered) return;
     training.current += 1;
     training.answered = false;
+    persistDailyTraining();
     renderDailyTraining();
   }
 
@@ -871,6 +942,7 @@ window.IELTSDatabaseReady.then((database) => {
     if (!$("#trainingWeek").options.length) populateTrainingOptions();
     renderTrainingDays();
     if (!state.dailyTraining.queue.length || state.dailyTraining.week !== Number($("#trainingWeek").value) || state.dailyTraining.day !== Number($("#trainingDay").value)) startDailyTraining();
+    else renderDailyTraining();
     showView("training", { updateUrl, route: "study/training" });
   }
 
@@ -1025,6 +1097,7 @@ window.IELTSDatabaseReady.then((database) => {
   window.addEventListener("hashchange", routeFromHash);
   populateWeekOptions();
   renderHistory();
+  restoreDailyTraining();
   routeFromHash();
 })();
 });
