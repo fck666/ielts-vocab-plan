@@ -17,20 +17,7 @@
     </header>
 
     <main class="app-shell">
-      <section id="setupView" class="view active" aria-labelledby="setupTitle">
-        <div class="intro-grid">
-          <div>
-            <p class="eyebrow accent">ACTIVE RECALL · CONTEXT · OUTPUT</p>
-            <h2 id="setupTitle">用不同方式检查，才知道自己真的会了。</h2>
-            <p class="lead">本系统不只考默写：它会混合词义识别、中译英、拼写和语境填空，覆盖“认识、掌握、会用”三个层次。</p>
-          </div>
-          <div class="principle-card">
-            <span class="principle-number">01</span>
-            <strong>先回忆，再看答案</strong>
-            <span>每题提交后才显示搭配、例句和使用提醒。</span>
-          </div>
-        </div>
-
+      <section id="setupView" class="view active" aria-label="首页">
         <div class="home-primary-grid">
           <form id="setupForm" class="panel setup-panel home-primary-module">
             <div class="panel-heading">
@@ -226,13 +213,13 @@
         <div class="training-layout">
           <article class="panel training-card">
             <div class="training-controls"><label><span>选择周</span><select id="trainingWeek"></select></label><label><span>选择天</span><select id="trainingDay"></select></label><button id="startTraining" class="secondary-button" type="button">开始本日训练</button></div>
+            <div id="trainingSummary" class="training-summary"></div>
             <div id="trainingProgress" class="training-progress"></div>
             <div id="trainingPrompt"></div>
             <div id="trainingAnswerArea"></div>
             <div id="trainingFeedback" class="feedback" aria-live="polite"></div>
             <div class="question-actions"><button id="submitTraining" class="primary-button" type="button">提交答案 <span>↵</span></button><button id="nextTraining" class="secondary-button hidden" type="button">下一题 <span>→</span></button></div>
           </article>
-          <aside class="panel training-guide"><p class="eyebrow">训练规则</p><h3>先回忆，再查看词条</h3><p>中文释义和例句用于提示；提交后查看反馈。英美拼写差异和一字符以内的拼写错误可接受。</p><ul><li>当天词汇按顺序出现</li><li>错词在本轮末尾重做</li><li>自动更新熟练度</li></ul><div id="trainingSummary" class="training-summary"></div></aside>
         </div>
       </section>
 
