@@ -10,6 +10,7 @@ import signal
 import subprocess
 import sys
 import time
+import fcntl
 from pathlib import Path
 from urllib.request import urlopen
 
@@ -21,6 +22,7 @@ PROJECT_KEY = hashlib.sha256(str(PROJECT_ROOT).encode()).hexdigest()[:16]
 RUNTIME_FILE = RUNTIME_DIR / f"{PROJECT_KEY}.json"
 LEGACY_RUNTIME_FILE = RUNTIME_DIR / "runtime.json"
 LOG_FILE = Path.home() / "Library" / "Logs" / APP_NAME / "server.log"
+LOCK_FILE = RUNTIME_DIR / f"{PROJECT_KEY}.lock"
 
 
 def read_runtime(path: Path) -> dict | None:
@@ -76,14 +78,15 @@ def owned_runtime() -> tuple[dict | None, Path | None]:
     return None, None
 
 
-def start() -> None:
+def start(open_browser: bool = True) -> str:
     runtime, runtime_path = owned_runtime()
     if runtime and is_our_process(runtime) and site_is_ready(runtime.get("url", "")):
         if runtime_path != RUNTIME_FILE:
             RUNTIME_FILE.write_text(json.dumps(runtime))
             remove_runtime(runtime_path)
-        subprocess.Popen(["open", runtime["url"]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return
+        if open_browser:
+            subprocess.Popen(["open", runtime["url"]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return runtime["url"]
     if runtime_path:
         remove_runtime(runtime_path)
 
@@ -116,7 +119,9 @@ def start() -> None:
             pass
         remove_runtime(RUNTIME_FILE)
         raise RuntimeError(f"The local server did not start. See {LOG_FILE}")
-    subprocess.Popen(["open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if open_browser:
+        subprocess.Popen(["open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return url
 
 
 def stop() -> None:
@@ -139,10 +144,29 @@ def stop() -> None:
         remove_runtime(path)
 
 
+def status() -> dict:
+    runtime, _ = owned_runtime()
+    running = bool(runtime and is_our_process(runtime) and site_is_ready(runtime.get("url", "")))
+    return {"running": running, "url": runtime.get("url") if running else None}
+
+
 def main() -> None:
-    if len(sys.argv) != 2 or sys.argv[1] not in {"start", "stop"}:
-        raise SystemExit("Usage: launcher.py start|stop")
-    (start if sys.argv[1] == "start" else stop)()
+    if len(sys.argv) < 2 or sys.argv[1] not in {"start", "stop", "status"}:
+        raise SystemExit("Usage: launcher.py start [--no-open]|stop|status")
+    command = sys.argv[1]
+    if command == "status":
+        print(json.dumps(status()))
+        return
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    with LOCK_FILE.open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        if command == "stop":
+            stop()
+            return
+        if len(sys.argv) > 3 or (len(sys.argv) == 3 and sys.argv[2] != "--no-open"):
+            raise SystemExit("Usage: launcher.py start [--no-open]")
+        url = start(open_browser="--no-open" not in sys.argv[2:])
+        print(json.dumps({"running": True, "url": url}))
 
 
 if __name__ == "__main__":
