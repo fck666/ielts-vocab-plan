@@ -9,3 +9,4 @@ node_modules/
 .playwright/
 coverage/
 __pycache__/
+*.pyc

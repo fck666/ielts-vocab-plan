@@ -27,7 +27,7 @@
 - `db.js`、`vendor/sql-wasm.js`、`vendor/sql-wasm.wasm`：在浏览器内运行 SQLite 的持久化层，不需要启动数据库服务。
 - `data/ielts-vocab.sqlite`：可提交到 Git 的词库种子数据库，包含词条表和学习数据表结构。
 
-macOS 用户可以双击项目目录中的 `start.command` 启动本地静态服务。脚本会自动选择 `8765` 起的可用端口、打开浏览器，并在 Terminal 窗口保持服务运行；关闭服务时按 `Ctrl+C`。也可以在本目录运行 `python3 serve.py`。这样浏览器可以正常读取仓库中的 SQLite 种子文件。部分浏览器也能直接双击 `index.html` 打开；如果 `file://` 环境限制数据库文件读取，页面会自动用内置词条数据初始化，但仍建议使用静态服务器。
+macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启动本地静态服务并打开浏览器，不会打开 Terminal。再次双击会复用已经运行的服务；双击 `Stop IELTS Vocabulary Lab.app` 可停止后台服务。服务日志保存在 `~/Library/Logs/IELTS Vocabulary Lab/server.log`。需要查看启动日志或开发调试时，再使用 `start.command`，它会在 Terminal 中前台运行；也可以在本目录运行 `python3 serve.py`。这样浏览器可以正常读取仓库中的 SQLite 种子文件。部分浏览器也能直接双击 `index.html` 打开；如果 `file://` 环境限制数据库文件读取，页面会自动用内置词条数据初始化，但仍建议使用静态服务器。
 
 页面使用静态 hash 路由，因此不同功能可以使用不同链接，不需要后端路由配置：
 

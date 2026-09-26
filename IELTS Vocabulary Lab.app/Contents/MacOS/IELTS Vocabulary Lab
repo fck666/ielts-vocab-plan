@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+set -e
+SCRIPT_DIR="${0:A:h}"
+PROJECT_DIR="${SCRIPT_DIR:h:h:h}"
+PYTHON="$(command -v python3 || true)"
+for candidate in /usr/local/bin/python3 /opt/homebrew/bin/python3 /Library/Frameworks/Python.framework/Versions/Current/bin/python3 /usr/bin/python3; do
+  if [[ -x "$candidate" ]]; then PYTHON="$candidate"; break; fi
+done
+
+if [[ -z "$PYTHON" ]]; then
+  /usr/bin/osascript -e 'display dialog "需要安装 Python 3 才能启动本地服务。" buttons {"好"} with title "IELTS Vocabulary Lab"' >/dev/null 2>&1 || true
+  exit 1
+fi
+
+exec "$PYTHON" "$PROJECT_DIR/launcher.py" start
