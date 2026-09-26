@@ -13,6 +13,7 @@ final class MenuBarAppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate 
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        installFinderIcon()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "book.closed.fill", accessibilityDescription: "IELTS Vocabulary Lab")
@@ -219,6 +220,12 @@ final class MenuBarAppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate 
         alert.alertStyle = .warning
         alert.addButton(withTitle: "好")
         alert.runModal()
+    }
+
+    private func installFinderIcon() {
+        guard let iconPath = Bundle.main.path(forResource: "IELTSVocabularyLab", ofType: "icns"),
+              let icon = NSImage(contentsOfFile: iconPath) else { return }
+        NSWorkspace.shared.setIcon(icon, forFile: Bundle.main.bundlePath, options: [])
     }
 }
 

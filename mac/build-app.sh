@@ -23,4 +23,11 @@ lipo -create \
   -output "$APP/Contents/MacOS/IELTS Vocabulary Lab"
 
 chmod +x "$APP/Contents/MacOS/IELTS Vocabulary Lab"
+
+touch "$APP/Contents/Info.plist" "$APP/Contents/Resources/IELTSVocabularyLab.icns" "$APP"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+if [[ -x "$LSREGISTER" ]]; then
+  "$LSREGISTER" -f "$APP"
+fi
+
 echo "Built $APP"

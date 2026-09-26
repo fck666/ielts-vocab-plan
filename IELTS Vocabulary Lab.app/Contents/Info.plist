@@ -7,15 +7,17 @@
   <key>CFBundleExecutable</key>
   <string>IELTS Vocabulary Lab</string>
   <key>CFBundleIdentifier</key>
-  <string>local.ielts.vocabulary.lab</string>
+  <string>local.ielts.vocabulary.lab.menubar</string>
   <key>CFBundleName</key>
   <string>IELTS Vocabulary Lab</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleIconFile</key>
-  <string>AppIcon</string>
-  <key>CFBundleIconName</key>
-  <string>AppIcon</string>
+  <string>IELTSVocabularyLab.icns</string>
+  <key>CFBundleIconFiles</key>
+  <array>
+    <string>IELTSVocabularyLab.icns</string>
+  </array>
   <key>LSUIElement</key>
   <true/>
   <key>LSMultipleInstancesProhibited</key>
@@ -23,8 +25,8 @@
   <key>NSHighResolutionCapable</key>
   <true/>
   <key>CFBundleShortVersionString</key>
-  <string>1.0</string>
+  <string>1.1</string>
   <key>CFBundleVersion</key>
-  <string>1</string>
+  <string>2</string>
 </dict>
 </plist>
