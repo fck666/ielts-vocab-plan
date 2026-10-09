@@ -44,6 +44,7 @@ window.IELTSDatabaseReady.then((database) => {
     practicePromptIndex: { speaking: 0, writing: 0 },
     practiceSelection: { speaking: { type: "part3", week: 1 }, writing: { type: "task2", week: 1 } },
     dailyTraining: { week: 1, day: 1, queue: [], current: 0, correct: 0, wrong: 0, answered: false },
+    studyDictation: {},
     studyWeek: 1,
     studyDay: 1,
     studyFilter: "all",
@@ -687,6 +688,47 @@ window.IELTSDatabaseReady.then((database) => {
     return { label: "需要巩固", className: "needs" };
   }
 
+  function studyDictationState(wordId) {
+    return state.studyDictation[wordId] || { mode: "view", answered: false, input: "", correct: null, feedback: "" };
+  }
+
+  function setStudyDictationMode(word, mode) {
+    const current = studyDictationState(word.id);
+    state.studyDictation[word.id] = {
+      ...current,
+      mode,
+      answered: mode === "typing" ? false : current.answered,
+      correct: mode === "typing" ? null : current.correct,
+      feedback: mode === "typing" ? "" : current.feedback,
+    };
+    renderStudyWords();
+    if (mode === "typing") {
+      const escapedId = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(word.id) : word.id.replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+      const input = document.querySelector(`[data-study-dictation-input="${escapedId}"]`);
+      input?.focus();
+    }
+  }
+
+  function submitStudyDictation(word) {
+    const current = studyDictationState(word.id);
+    if (current.mode !== "typing" || current.answered) return;
+    const input = String(current.input || "").trim();
+    if (!input) {
+      state.studyDictation[word.id] = { ...current, feedback: "请先输入英文单词或词组。" };
+      renderStudyWords();
+      return;
+    }
+    const correct = isCorrect({ type: "spell", answer: word.term }, input);
+    state.studyDictation[word.id] = {
+      ...current,
+      answered: true,
+      correct,
+      feedback: correct ? "回答正确" : `正确答案：${word.term}`,
+    };
+    updateWordProgress(word, correct, "study-dictation", input);
+    renderStudyWords();
+  }
+
   function updateStudyLevel(word, level, source = "study") {
     const progress = loadProgress();
     const existing = progress[word.id] || { attempts: 0, correct: 0, wrong: 0, streak: 0, level: 0, lastReviewedAt: null, nextReviewAt: null, history: [] };
@@ -746,23 +788,27 @@ window.IELTSDatabaseReady.then((database) => {
     const label = day === "all" ? `Week ${week} · 全部词汇` : `Week ${week} · Day ${day}`;
     const dueCount = pool.filter((word) => isDue(word)).length;
     $("#studyProgressSummary").textContent = `${label} · ${pool.length} 个词`;
-    $("#studyProgressHint").textContent = pool.length ? `${dueCount} 个词今天到期；看完后可直接调整熟练度。` : "当前筛选下没有词汇。可以切换筛选条件。";
+    $("#studyProgressHint").textContent = pool.length ? `${dueCount} 个词今天到期；可在单词卡上切换“默写模式”，左右键移动卡片。` : "当前筛选下没有词汇。可以切换筛选条件。";
     if (!pool.length) {
       container.innerHTML = `<div class="panel study-empty"><strong>没有匹配的词汇</strong><p>换一个学习日或显示条件，继续复习。</p></div>`;
       return;
     }
     container.innerHTML = pool.map((word) => {
       const record = studyRecord(word);
+      const dictation = studyDictationState(word.id);
+      const typing = dictation.mode === "typing";
+      const revealed = !typing || dictation.answered;
       const status = studyStatus(record);
       const nextReview = record.nextReviewAt ? new Date(record.nextReviewAt).toLocaleDateString("zh-CN") : "尚未安排";
       const levelStars = [1, 2, 3, 4, 5].map((level) => `<button class="study-star${level <= record.level ? " is-active" : ""}" type="button" data-study-level="${level}" aria-label="${escapeHtml(word.term)} 熟练度 ${level} / 5" aria-pressed="${level <= record.level ? "true" : "false"}" title="${level} / 5">★</button>`).join("");
-      return `<article class="study-card panel" data-word-id="${escapeHtml(word.id)}">
-        <div class="study-card-head"><div><span class="study-day-label">Day ${word.day} · ${escapeHtml(word.dayTitle)}</span><h3>${escapeHtml(word.term)}</h3><p class="study-pronunciation">${escapeHtml(word.ipa)} <span>·</span> ${escapeHtml(word.partOfSpeech)}</p>${pronunciationControls(word)}</div><span class="study-status ${status.className}">${status.label}</span></div>
+      return `<article class="study-card panel${typing ? " study-card-typing" : ""}${typing && revealed ? " study-card-revealed" : ""}" data-word-id="${escapeHtml(word.id)}" tabindex="-1">
+        <div class="study-card-head"><div><span class="study-day-label">Day ${word.day} · ${escapeHtml(word.dayTitle)}</span><h3 class="${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.term) : "输入英文词汇"}</h3><p class="study-pronunciation ${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.ipa) + " · " + escapeHtml(word.partOfSpeech) : "英文答案暂时隐藏"}</p>${revealed ? pronunciationControls(word) : ""}</div><span class="study-status ${status.className}">${status.label}</span></div>
         <div class="study-meaning"><strong>${escapeHtml(word.meaningZh)}</strong><span>下次复习：${escapeHtml(nextReview)}</span></div>
         <div class="study-detail-grid"><div><small>常用搭配</small><p>${escapeHtml(word.collocations.join(" · "))}</p></div><div><small>词族</small><p>${escapeHtml(word.wordFamily || "暂无")}</p></div></div>
         <div class="study-example"><small>例句</small><p>${escapeHtml(word.exampleEn)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p></div>
         <div class="study-note"><strong>使用提醒</strong><span>${escapeHtml(word.note || "")}</span></div>
-        <div class="study-card-actions"><div class="study-rating" role="group" aria-label="${escapeHtml(word.term)} 熟练度"><span>熟练度</span><span class="study-stars">${levelStars}</span></div><button class="study-action-button" data-study-action="mastered" type="button">标记已会</button><button class="study-action-button subtle" data-study-action="review" type="button">安排复习</button></div>
+        <div class="study-dictation-panel${typing ? "" : " hidden"}"><div class="study-dictation-clue"><small>语境提示</small><p>${escapeHtml(word.maskedExample)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p></div><label class="answer-label" for="study-dictation-${escapeHtml(word.id)}">输入英文单词或词组</label><div class="study-dictation-row"><input id="study-dictation-${escapeHtml(word.id)}" class="text-input" data-study-dictation-input="${escapeHtml(word.id)}" value="${escapeHtml(dictation.input || "")}" type="text" autocomplete="off" placeholder="输入后按 Enter 提交" ${dictation.answered ? "disabled" : ""} /><button class="study-action-button" data-study-dictation-submit="true" type="button" ${dictation.answered ? "disabled" : ""}>${dictation.answered ? "已提交" : "提交"}</button></div>${dictation.feedback ? "<p class=\"study-dictation-feedback " + (dictation.correct ? "is-correct" : "is-wrong") + "\">" + escapeHtml(dictation.feedback) + "</p>" : ""}</div>
+        <div class="study-card-actions"><div class="study-rating" role="group" aria-label="${escapeHtml(word.term)} 熟练度"><span>熟练度</span><span class="study-stars">${levelStars}</span></div><button class="study-mode-button" data-study-mode="${typing ? "view" : "typing"}" type="button">${typing ? "查看词条" : "默写模式"}</button><button class="study-action-button" data-study-action="mastered" type="button">标记已会</button><button class="study-action-button subtle" data-study-action="review" type="button">安排复习</button></div>
       </article>`;
     }).join("");
   }
@@ -1092,6 +1138,20 @@ window.IELTSDatabaseReady.then((database) => {
     if (word) speakWord(word, button.dataset.speakAccent, button);
   });
   $("#studyWords").addEventListener("click", (event) => {
+    const modeButton = event.target.closest("[data-study-mode]");
+    if (modeButton) {
+      const card = modeButton.closest("[data-word-id]");
+      const word = words.find((item) => item.id === card?.dataset.wordId);
+      if (word) setStudyDictationMode(word, modeButton.dataset.studyMode);
+      return;
+    }
+    const dictationSubmit = event.target.closest("[data-study-dictation-submit]");
+    if (dictationSubmit) {
+      const card = dictationSubmit.closest("[data-word-id]");
+      const word = words.find((item) => item.id === card?.dataset.wordId);
+      if (word) submitStudyDictation(word);
+      return;
+    }
     const levelButton = event.target.closest("[data-study-level]");
     if (levelButton) {
       const card = levelButton.closest("[data-word-id]");
@@ -1107,7 +1167,36 @@ window.IELTSDatabaseReady.then((database) => {
     if (button.dataset.studyAction === "mastered") updateStudyLevel(word, 5, "study-mastered");
     else scheduleStudyReview(word);
   });
+  $("#studyWords").addEventListener("input", (event) => {
+    const input = event.target.closest("[data-study-dictation-input]");
+    if (!input) return;
+    const wordId = input.dataset.studyDictationInput;
+    const current = studyDictationState(wordId);
+    state.studyDictation[wordId] = { ...current, input: input.value, feedback: "" };
+  });
+  $("#studyWords").addEventListener("keydown", (event) => {
+    const input = event.target.closest("[data-study-dictation-input]");
+    if (!input || event.key !== "Enter") return;
+    event.preventDefault();
+    const word = words.find((item) => item.id === input.dataset.studyDictationInput);
+    if (word) submitStudyDictation(word);
+  });
   document.addEventListener("keydown", (event) => {
+    if (views.study.classList.contains("active") && !event.target.closest("input, textarea, select, [contenteditable='true']") && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+      const cards = $$("#studyWords .study-card");
+      if (!cards.length) return;
+      const activeCard = document.activeElement?.closest?.(".study-card");
+      const currentIndex = activeCard ? cards.indexOf(activeCard) : (event.key === "ArrowLeft" ? 0 : -1);
+      const nextIndex = event.key === "ArrowLeft" ? currentIndex - 1 : currentIndex + 1;
+      if (nextIndex < 0 || nextIndex >= cards.length) return;
+      event.preventDefault();
+      const nextCard = cards[nextIndex];
+      nextCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      nextCard.focus({ preventScroll: true });
+      const input = nextCard.querySelector("[data-study-dictation-input]");
+      input?.focus();
+      return;
+    }
     if (views.training.classList.contains("active") && !event.target.closest("input, textarea, select, [contenteditable='true']")) {
       if (event.key === "ArrowLeft") {
         event.preventDefault();
