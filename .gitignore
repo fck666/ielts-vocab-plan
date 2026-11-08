@@ -10,3 +10,8 @@ node_modules/
 coverage/
 __pycache__/
 *.pyc
+
+# Xcode per-user and build output
+mac/.build/
+**/xcuserdata/
+*.xcuserstate

@@ -28,10 +28,15 @@
     "partOfSpeech": { "type": "string" },
     "meaningZh": { "type": "string" },
     "collocations": { "type": "array", "items": { "type": "string" } },
+    "collocationsSource": { "type": "string", "enum": ["", "example"] },
+    "examTags": { "type": "array", "items": { "type": "string", "enum": ["IELTS", "CET-6", "TOEFL", "GRE"] } },
     "exampleEn": { "type": "string" },
     "exampleZh": { "type": "string" },
     "wordFamily": { "type": "string" },
     "note": { "type": "string" },
+    "exampleSource": { "type": "string" },
+    "exampleSourceUrl": { "type": "string", "format": "uri" },
+    "exampleLicenseUrl": { "type": "string", "format": "uri" },
     "maskedExample": { "type": "string" }
   },
   "additionalProperties": true

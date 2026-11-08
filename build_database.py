@@ -28,7 +28,11 @@ CREATE TABLE words (
   example_en TEXT NOT NULL,
   example_zh TEXT NOT NULL,
   word_family TEXT NOT NULL,
-  note TEXT NOT NULL
+  note TEXT NOT NULL,
+  example_source TEXT NOT NULL DEFAULT '',
+  example_source_url TEXT NOT NULL DEFAULT '',
+  example_license_url TEXT NOT NULL DEFAULT '',
+  exam_tags_json TEXT NOT NULL DEFAULT '[]'
 );
 CREATE TABLE word_progress (
   word_id TEXT PRIMARY KEY,
@@ -74,8 +78,9 @@ def main() -> None:
             """
             INSERT INTO words (
               id, week, day, day_title, term, ipa, part_of_speech, meaning_zh,
-              collocations_json, example_en, example_zh, word_family, note
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              collocations_json, example_en, example_zh, word_family, note,
+              example_source, example_source_url, example_license_url, exam_tags_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
                 (
@@ -92,6 +97,10 @@ def main() -> None:
                     word["exampleZh"],
                     word.get("wordFamily", ""),
                     word.get("note", ""),
+                    word.get("exampleSource", ""),
+                    word.get("exampleSourceUrl", ""),
+                    word.get("exampleLicenseUrl", ""),
+                    json.dumps(word.get("examTags", []), ensure_ascii=False),
                 )
                 for word in words
             ],

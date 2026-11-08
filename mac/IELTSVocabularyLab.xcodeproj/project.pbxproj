@@ -1,0 +1,515 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		29E0C1B244E54A5A97300401 /* VocabularySpeech.swift in App Sources */ = {isa = PBXBuildFile; fileRef = 29E0C1B244E54A5A97300501; };
+		29E0C1B244E54A5A97300402 /* VocabularySpeech.swift in Widget Sources */ = {isa = PBXBuildFile; fileRef = 29E0C1B244E54A5A97300501; };
+		29E0C1B244E54A5A97300403 /* VocabularySpeechIntent.swift in App Sources */ = {isa = PBXBuildFile; fileRef = 29E0C1B244E54A5A97300502; };
+		29E0C1B244E54A5A97300404 /* VocabularySpeechIntent.swift in Widget Sources */ = {isa = PBXBuildFile; fileRef = 29E0C1B244E54A5A97300502; };
+		D812A7A04E5D42709AEB4103 /* LearningWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812A7A04E5D42709AEB4104; };
+		4369B0086A5658C1203F35EC /* VocabularyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C66E551156CB2E8C09BBFDD8 /* VocabularyWidget.swift */; };
+		6BA5AA84781B0476F554EC0B /* MenuBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BD9158CFDD29BEDE4ECE382 /* MenuBarApp.swift */; };
+		A646442C4068BBB6C3919A53 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E1921D836EB88A67D06ECD /* main.swift */; };
+		A9710920CC847BEC0949CDB1 /* ../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns in Resources */ = {isa = PBXBuildFile; fileRef = 67A337E086E04B92A7139AF8 /* ../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns */; };
+		ACF81226EE05E8AEC1250AB2 /* IELTSVocabularyWidget.appex in Embed Widget Extension */ = {isa = PBXBuildFile; fileRef = 18955311190F344D4E27148D /* IELTSVocabularyWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B50D3F8D75F2B7A6D34EFD65 /* WidgetVocabularyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484C4C3C3AD54C98EF27B92D /* WidgetVocabularyStore.swift */; };
+		BAE7BCC1D05FE97FEC5545FB /* ../data/words.json in Resources */ = {isa = PBXBuildFile; fileRef = 73CA42D1B6D3E69485B871D4 /* ../data/words.json */; };
+		C75D4E9610B746C99A27F581 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C75D4E9610B746C99A27F582 /* PrivacyInfo.xcprivacy */; };
+		BC4C03E2470A4F0DCA876A58 /* DesktopVocabularyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11DDF57C2E1EB074087B0DDA /* DesktopVocabularyCard.swift */; };
+		F10000000000000000000001 /* NativeLearningStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000011 /* NativeLearningStore.swift */; };
+		F10000000000000000000002 /* NativeLearningViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000012 /* NativeLearningViews.swift */; };
+		F10000000000000000000003 /* words.json in App Resources */ = {isa = PBXBuildFile; fileRef = 73CA42D1B6D3E69485B871D4 /* ../data/words.json */; };
+		F10000000000000000000004 /* native-speaking-plan.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000013 /* native-speaking-plan.json */; };
+		F10000000000000000000005 /* native-writing-plan.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000014 /* native-writing-plan.json */; };
+		F10000000000000000000006 /* zh-CN.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000015 /* zh-CN.json */; };
+		F10000000000000000000007 /* ja.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000016 /* ja.json */; };
+		F10000000000000000000008 /* ko.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000017 /* ko.json */; };
+		F10000000000000000000009 /* fr.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000018 /* fr.json */; };
+		F1000000000000000000000A /* es.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000019 /* es.json */; };
+		F1000000000000000000000B /* ar.json in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001A /* ar.json */; };
+		F1000000000000000000000C /* NativeVocabularyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001B /* NativeVocabularyViews.swift */; };
+		F1000000000000000000000D /* NativeExpressionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001C /* NativeExpressionViews.swift */; };
+		F1000000000000000000000E /* NativeWritingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001D /* NativeWritingViews.swift */; };
+		F1000000000000000000000F /* NativeStatisticsSettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001E /* NativeStatisticsSettingsViews.swift */; };
+		F10000000000000000000020 /* NativeSettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* NativeSettingsViews.swift */; };
+		F10000000000000000000022 /* NativeTrainingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* NativeTrainingSession.swift */; };
+		F10000000000000000000024 /* NativeControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* NativeControls.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		428E8D717EEA7D40A7074C6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30CAB11CF3B753377331F990 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D7A6754EADC156966D233088;
+			remoteInfo = IELTSVocabularyWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		51F5BB569D1080997C918E61 /* Embed Widget Extension */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ACF81226EE05E8AEC1250AB2 /* IELTSVocabularyWidget.appex in Embed Widget Extension */,
+			);
+			name = "Embed Widget Extension";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		29E0C1B244E54A5A97300501 /* VocabularySpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularySpeech.swift; sourceTree = "<group>"; };
+		29E0C1B244E54A5A97300502 /* VocabularySpeechIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularySpeechIntent.swift; sourceTree = "<group>"; };
+		D812A7A04E5D42709AEB4104 /* LearningWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningWindowController.swift; sourceTree = "<group>"; };
+		D812A7A04E5D42709AEB4105 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		11DDF57C2E1EB074087B0DDA /* DesktopVocabularyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopVocabularyCard.swift; sourceTree = "<group>"; };
+		18955311190F344D4E27148D /* IELTSVocabularyWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IELTSVocabularyWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2293999F9A3F86DD6BDE5313 /* App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = "<group>"; };
+		42966A35F2B688E00CB88B2B /* Widget-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Widget-Info.plist"; sourceTree = "<group>"; };
+		484C4C3C3AD54C98EF27B92D /* WidgetVocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetVocabularyStore.swift; sourceTree = "<group>"; };
+		67A337E086E04B92A7139AF8 /* ../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns"; sourceTree = "<group>"; };
+		73CA42D1B6D3E69485B871D4 /* ../data/words.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/words.json; sourceTree = "<group>"; };
+		7BD9158CFDD29BEDE4ECE382 /* MenuBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarApp.swift; sourceTree = "<group>"; };
+		93E1921D836EB88A67D06ECD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BABCF57552B044B38E05A1FB /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
+		C66E551156CB2E8C09BBFDD8 /* VocabularyWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyWidget.swift; sourceTree = "<group>"; };
+		C75D4E9610B746C99A27F582 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DE6F68E2AD852D34C59507AF /* IELTS Vocabulary Lab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IELTS Vocabulary Lab.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8A4F9469961A12293DDEDAB /* bundle-site.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "bundle-site.sh"; sourceTree = "<group>"; };
+		F10000000000000000000011 /* NativeLearningStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLearningStore.swift; sourceTree = "<group>"; };
+		F10000000000000000000012 /* NativeLearningViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLearningViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000013 /* native-speaking-plan.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/native-speaking-plan.json; sourceTree = "<group>"; };
+		F10000000000000000000014 /* native-writing-plan.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/native-writing-plan.json; sourceTree = "<group>"; };
+		F10000000000000000000015 /* zh-CN.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/zh-CN.json; sourceTree = "<group>"; };
+		F10000000000000000000016 /* ja.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/ja.json; sourceTree = "<group>"; };
+		F10000000000000000000017 /* ko.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/ko.json; sourceTree = "<group>"; };
+		F10000000000000000000018 /* fr.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/fr.json; sourceTree = "<group>"; };
+		F10000000000000000000019 /* es.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/es.json; sourceTree = "<group>"; };
+		F1000000000000000000001A /* ar.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ../data/language-packs/ar.json; sourceTree = "<group>"; };
+		F1000000000000000000001B /* NativeVocabularyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeVocabularyViews.swift; sourceTree = "<group>"; };
+		F1000000000000000000001C /* NativeExpressionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeExpressionViews.swift; sourceTree = "<group>"; };
+		F1000000000000000000001D /* NativeWritingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWritingViews.swift; sourceTree = "<group>"; };
+		F1000000000000000000001E /* NativeStatisticsSettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStatisticsSettingsViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000021 /* NativeSettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSettingsViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000023 /* NativeTrainingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTrainingSession.swift; sourceTree = "<group>"; };
+		F10000000000000000000025 /* NativeControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeControls.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		49E1E21B1B80C557E0C52018 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FE9F768FE402B8DFCF11161 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		56BE642821365A701B86CDDA = {
+			isa = PBXGroup;
+			children = (
+				29E0C1B244E54A5A97300501 /* VocabularySpeech.swift */,
+				29E0C1B244E54A5A97300502 /* VocabularySpeechIntent.swift */,
+				D812A7A04E5D42709AEB4104 /* LearningWindowController.swift */,
+				F10000000000000000000011 /* NativeLearningStore.swift */,
+				F10000000000000000000012 /* NativeLearningViews.swift */,
+				F1000000000000000000001B /* NativeVocabularyViews.swift */,
+				F1000000000000000000001C /* NativeExpressionViews.swift */,
+				F1000000000000000000001D /* NativeWritingViews.swift */,
+				F1000000000000000000001E /* NativeStatisticsSettingsViews.swift */,
+				F10000000000000000000021 /* NativeSettingsViews.swift */,
+				F10000000000000000000023 /* NativeTrainingSession.swift */,
+				F10000000000000000000025 /* NativeControls.swift */,
+				D812A7A04E5D42709AEB4105 /* App.entitlements */,
+				C75D4E9610B746C99A27F582 /* PrivacyInfo.xcprivacy */,
+				93E1921D836EB88A67D06ECD /* main.swift */,
+				7BD9158CFDD29BEDE4ECE382 /* MenuBarApp.swift */,
+				11DDF57C2E1EB074087B0DDA /* DesktopVocabularyCard.swift */,
+				C66E551156CB2E8C09BBFDD8 /* VocabularyWidget.swift */,
+				484C4C3C3AD54C98EF27B92D /* WidgetVocabularyStore.swift */,
+				2293999F9A3F86DD6BDE5313 /* App-Info.plist */,
+				42966A35F2B688E00CB88B2B /* Widget-Info.plist */,
+				BABCF57552B044B38E05A1FB /* Widget.entitlements */,
+				73CA42D1B6D3E69485B871D4 /* ../data/words.json */,
+				F10000000000000000000013 /* native-speaking-plan.json */,
+				F10000000000000000000014 /* native-writing-plan.json */,
+				F10000000000000000000015 /* zh-CN.json */,
+				F10000000000000000000016 /* ja.json */,
+				F10000000000000000000017 /* ko.json */,
+				F10000000000000000000018 /* fr.json */,
+				F10000000000000000000019 /* es.json */,
+				F1000000000000000000001A /* ar.json */,
+				67A337E086E04B92A7139AF8 /* ../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns */,
+				E8A4F9469961A12293DDEDAB /* bundle-site.sh */,
+				F079051898F8CD739AF202E9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F079051898F8CD739AF202E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DE6F68E2AD852D34C59507AF /* IELTS Vocabulary Lab.app */,
+				18955311190F344D4E27148D /* IELTSVocabularyWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		708C40EA1CABDDD04A22B2F4 /* IELTS Vocabulary Lab */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E5F15198188C0961A98C24DA /* Build configuration list for PBXNativeTarget "IELTS Vocabulary Lab" */;
+			buildPhases = (
+				A7CB7186E915FD7125199978 /* Sources */,
+				4FE9F768FE402B8DFCF11161 /* Frameworks */,
+				A378DD9CCC33D47C696D1A42 /* Resources */,
+				51F5BB569D1080997C918E61 /* Embed Widget Extension */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A3D2D4022E10AE243470D4E8 /* PBXTargetDependency */,
+			);
+			name = "IELTS Vocabulary Lab";
+			productName = "IELTS Vocabulary Lab";
+			productReference = DE6F68E2AD852D34C59507AF /* IELTS Vocabulary Lab.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D7A6754EADC156966D233088 /* IELTSVocabularyWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A63DA2AEBA8B423528E8236 /* Build configuration list for PBXNativeTarget "IELTSVocabularyWidget" */;
+			buildPhases = (
+				80E48858C2E50B16F7A8E3CA /* Sources */,
+				49E1E21B1B80C557E0C52018 /* Frameworks */,
+				7535FA44D278361DEA52979A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IELTSVocabularyWidget;
+			productName = IELTSVocabularyWidget;
+			productReference = 18955311190F344D4E27148D /* IELTSVocabularyWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		30CAB11CF3B753377331F990 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					708C40EA1CABDDD04A22B2F4 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					D7A6754EADC156966D233088 = {
+						CreatedOnToolsVersion = 16.0;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 292F37D32C81897A83F28119 /* Build configuration list for PBXProject "IELTSVocabularyLab" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				"zh-Hans",
+				en,
+				Base,
+			);
+			mainGroup = 56BE642821365A701B86CDDA;
+			productRefGroup = F079051898F8CD739AF202E9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				708C40EA1CABDDD04A22B2F4 /* IELTS Vocabulary Lab */,
+				D7A6754EADC156966D233088 /* IELTSVocabularyWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7535FA44D278361DEA52979A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAE7BCC1D05FE97FEC5545FB /* ../data/words.json in Resources */,
+				C75D4E9610B746C99A27F581 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A378DD9CCC33D47C696D1A42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9710920CC847BEC0949CDB1 /* ../IELTS Vocabulary Lab.app/Contents/Resources/IELTSVocabularyLab.icns in Resources */,
+				C75D4E9610B746C99A27F581 /* PrivacyInfo.xcprivacy in Resources */,
+				F10000000000000000000003 /* words.json in App Resources */,
+				F10000000000000000000004 /* native-speaking-plan.json in Resources */,
+				F10000000000000000000005 /* native-writing-plan.json in Resources */,
+				F10000000000000000000006 /* zh-CN.json in Resources */,
+				F10000000000000000000007 /* ja.json in Resources */,
+				F10000000000000000000008 /* ko.json in Resources */,
+				F10000000000000000000009 /* fr.json in Resources */,
+				F1000000000000000000000A /* es.json in Resources */,
+				F1000000000000000000000B /* ar.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A2AC3C162DF02541C29E0350 /* Bundle learning website */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle learning website";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/site",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$SRCROOT/bundle-site.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		80E48858C2E50B16F7A8E3CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				29E0C1B244E54A5A97300402 /* VocabularySpeech.swift in Widget Sources */,
+				29E0C1B244E54A5A97300404 /* VocabularySpeechIntent.swift in Widget Sources */,
+				4369B0086A5658C1203F35EC /* VocabularyWidget.swift in Sources */,
+				B50D3F8D75F2B7A6D34EFD65 /* WidgetVocabularyStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7CB7186E915FD7125199978 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				29E0C1B244E54A5A97300401 /* VocabularySpeech.swift in App Sources */,
+				29E0C1B244E54A5A97300403 /* VocabularySpeechIntent.swift in App Sources */,
+				D812A7A04E5D42709AEB4103 /* LearningWindowController.swift in Sources */,
+				F10000000000000000000001 /* NativeLearningStore.swift in Sources */,
+				F10000000000000000000002 /* NativeLearningViews.swift in Sources */,
+				F1000000000000000000000C /* NativeVocabularyViews.swift in Sources */,
+				F1000000000000000000000D /* NativeExpressionViews.swift in Sources */,
+				F1000000000000000000000E /* NativeWritingViews.swift in Sources */,
+				F1000000000000000000000F /* NativeStatisticsSettingsViews.swift in Sources */,
+				F10000000000000000000020 /* NativeSettingsViews.swift in Sources */,
+				F10000000000000000000022 /* NativeTrainingSession.swift in Sources */,
+				F10000000000000000000024 /* NativeControls.swift in Sources */,
+				A646442C4068BBB6C3919A53 /* main.swift in Sources */,
+				6BA5AA84781B0476F554EC0B /* MenuBarApp.swift in Sources */,
+				BC4C03E2470A4F0DCA876A58 /* DesktopVocabularyCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A3D2D4022E10AE243470D4E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D7A6754EADC156966D233088 /* IELTSVocabularyWidget */;
+			targetProxy = 428E8D717EEA7D40A7074C6F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1B8D85566FD406F4104AD8B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 19;
+				DEVELOPMENT_TEAM = 73Y9G8QD3H;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "App-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = local.ielts.vocabulary.lab.menubar;
+				PRODUCT_NAME = "IELTS Vocabulary Lab";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		31ADFEE499695FAC7EEF2BC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7BFBD600D9470FCE83C67A77 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 19;
+				DEVELOPMENT_TEAM = 73Y9G8QD3H;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Widget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = local.ielts.vocabulary.lab.menubar.widget;
+				PRODUCT_NAME = IELTSVocabularyWidget;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		914F5778E91A022A32B58E53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 19;
+				DEVELOPMENT_TEAM = 73Y9G8QD3H;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Widget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = local.ielts.vocabulary.lab.menubar.widget;
+				PRODUCT_NAME = IELTSVocabularyWidget;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A743BE90234F36B157E7BC6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F8E7576FEA47DFD37B20039D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 19;
+				DEVELOPMENT_TEAM = 73Y9G8QD3H;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "App-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = local.ielts.vocabulary.lab.menubar;
+				PRODUCT_NAME = "IELTS Vocabulary Lab";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		292F37D32C81897A83F28119 /* Build configuration list for PBXProject "IELTSVocabularyLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31ADFEE499695FAC7EEF2BC3 /* Debug */,
+				A743BE90234F36B157E7BC6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A63DA2AEBA8B423528E8236 /* Build configuration list for PBXNativeTarget "IELTSVocabularyWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				914F5778E91A022A32B58E53 /* Debug */,
+				7BFBD600D9470FCE83C67A77 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E5F15198188C0961A98C24DA /* Build configuration list for PBXNativeTarget "IELTS Vocabulary Lab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B8D85566FD406F4104AD8B9 /* Debug */,
+				F8E7576FEA47DFD37B20039D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 30CAB11CF3B753377331F990 /* Project object */;
+}

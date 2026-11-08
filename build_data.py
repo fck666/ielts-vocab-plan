@@ -14,6 +14,7 @@ entry_re = re.compile(
     r"^\d+\. \*\*(?P<term>.+?)\*\* (?P<ipa>/[^/]+/) · \*(?P<pos>[^*]+)\* · (?P<meaning>.+)$"
 )
 day_re = re.compile(r"^## 第 (?P<day>\d+) 天 (?P<title>.+)$")
+tatoeba_re = re.compile(r"^Tatoeba sentence (?P<id>\d+) by (?P<author>.+?) · CC BY (?P<license>[\d.]+)$")
 
 words: list[dict] = []
 week_paths = sorted(
@@ -46,10 +47,15 @@ for week_path in week_paths:
                 "partOfSpeech": entry_match.group("pos"),
                 "meaningZh": entry_match.group("meaning"),
                 "collocations": [],
+                "collocationsSource": "",
+                "examTags": [],
                 "exampleEn": "",
                 "exampleZh": "",
                 "wordFamily": "",
                 "note": "",
+                "exampleSource": "",
+                "exampleSourceUrl": "",
+                "exampleLicenseUrl": "",
                 "source": week_path.name,
             }
             continue
@@ -57,6 +63,7 @@ for week_path in week_paths:
             continue
         for label, field in (
             ("搭配", "collocations"),
+            ("例句片段", "collocations"),
             ("例句", "exampleEn"),
             ("译文", "exampleZh"),
             ("词族", "wordFamily"),
@@ -66,10 +73,27 @@ for week_path in week_paths:
             if line.startswith(prefix):
                 value = line[len(prefix):].strip().replace("`", "")
                 if field == "collocations":
-                    current[field] = [x.strip() for x in value.split(";") if x.strip()]
+                    current[field] = [x.strip() for x in value.split(";") if x.strip() and x.strip() != "暂无合适片段"]
+                    if label == "例句片段":
+                        current["collocationsSource"] = "example"
                 else:
                     current[field] = value
                 break
+        source_prefix = "- **例句来源**："
+        if line.startswith(source_prefix):
+            source_match = tatoeba_re.match(line[len(source_prefix):].strip())
+            if source_match:
+                sentence_id = source_match.group("id")
+                word_license = source_match.group("license")
+                current["exampleSource"] = f"Tatoeba sentence by {source_match.group('author')} (CC BY {word_license})"
+                current["exampleSourceUrl"] = f"https://tatoeba.org/en/sentences/show/{sentence_id}"
+                current["exampleLicenseUrl"] = f"https://creativecommons.org/licenses/by/{word_license}/"
+            elif line[len(source_prefix):].startswith("Princeton WordNet 3.0"):
+                current["exampleSource"] = line[len(source_prefix):].strip()
+                current["exampleSourceUrl"] = "https://wordnet.princeton.edu/"
+        tags_prefix = "- **考试词表**："
+        if line.startswith(tags_prefix):
+            current["examTags"] = [tag.strip() for tag in line[len(tags_prefix):].split("·") if tag.strip()]
     if current:
         words.append(current)
 

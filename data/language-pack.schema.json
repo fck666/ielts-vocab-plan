@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.example/ielts-vocabulary-language-pack.schema.json",
+  "title": "IELTS Vocabulary Language Pack",
+  "type": "object",
+  "required": ["locale", "version", "direction", "words"],
+  "properties": {
+    "locale": { "type": "string", "enum": ["zh-CN", "ja", "ko", "fr", "es", "ar"] },
+    "version": { "type": "integer", "minimum": 1 },
+    "direction": { "type": "string", "enum": ["ltr", "rtl"] },
+    "words": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dayTitle", "meaning", "exampleTranslation", "note", "wordFamily"],
+        "properties": {
+          "dayTitle": { "type": "string", "minLength": 1 },
+          "meaning": { "type": "string", "minLength": 1 },
+          "exampleTranslation": { "type": "string", "minLength": 1 },
+          "note": { "type": "string", "minLength": 1 },
+          "wordFamily": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ui": {
+      "type": "object",
+      "description": "Interface labels and messages for this locale.",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

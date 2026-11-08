@@ -1,0 +1,472 @@
+[
+  {
+    "theme": "教育、学习",
+    "focus": "把学习经历讲具体",
+    "hints": [
+      "pick up a skill",
+      "a hands-on approach",
+      "keep me motivated"
+    ],
+    "p1": [
+      [
+        "Do you enjoy learning new things?",
+        "你喜欢学习新事物吗？"
+      ],
+      [
+        "What was your favourite subject at school?",
+        "你在学校最喜欢什么科目？"
+      ],
+      [
+        "Do you prefer studying alone or with other people?",
+        "你喜欢独自学习还是和别人一起学习？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a teacher who had a positive influence on you.",
+      "zh": "描述一位对你有积极影响的老师。",
+      "cues": [
+        "who this teacher was",
+        "when and where you studied with them",
+        "what they did that helped you"
+      ],
+      "explain": "and explain why their influence was important to you."
+    },
+    "p3": [
+      [
+        "How can schools help students become more independent learners?",
+        "学校如何帮助学生成为更独立的学习者？"
+      ],
+      [
+        "Is practical experience as valuable as classroom learning?",
+        "实践经验是否与课堂学习同样有价值？"
+      ],
+      [
+        "Why do some adults find it difficult to return to education?",
+        "为什么一些成年人觉得重返校园很困难？"
+      ]
+    ]
+  },
+  {
+    "theme": "工作、职场",
+    "focus": "用一次经历说明能力",
+    "hints": [
+      "transferable skills",
+      "work-life balance",
+      "learn on the job"
+    ],
+    "p1": [
+      [
+        "What do you enjoy most about your work or studies?",
+        "你最喜欢工作或学习的哪一点？"
+      ],
+      [
+        "Would you prefer to work in a team or on your own?",
+        "你更喜欢团队工作还是独自工作？"
+      ],
+      [
+        "What kind of work would you like to do in the future?",
+        "你将来想从事什么工作？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a useful skill you learned for work or study.",
+      "zh": "描述一项对工作或学习有用的技能。",
+      "cues": [
+        "what the skill was",
+        "how you learned it",
+        "when you used it"
+      ],
+      "explain": "and explain how this skill helped you."
+    },
+    "p3": [
+      [
+        "What skills are becoming more important in the workplace?",
+        "哪些技能在职场上变得更重要？"
+      ],
+      [
+        "How can employers help staff maintain a healthy work-life balance?",
+        "雇主如何帮助员工平衡工作与生活？"
+      ],
+      [
+        "Should companies invest more in training existing employees?",
+        "企业是否应该更多投资于现有员工培训？"
+      ]
+    ]
+  },
+  {
+    "theme": "科技、数字生活",
+    "focus": "比较改变前后的生活",
+    "hints": [
+      "stay connected",
+      "digital distractions",
+      "protect personal data"
+    ],
+    "p1": [
+      [
+        "Which digital device do you use most often?",
+        "你最常用哪种数字设备？"
+      ],
+      [
+        "Do you ever take a break from using your phone?",
+        "你会暂时放下手机休息吗？"
+      ],
+      [
+        "Has technology changed the way you study?",
+        "科技改变了你的学习方式吗？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a piece of technology that is useful in your daily life.",
+      "zh": "描述一件对你日常生活有用的科技产品。",
+      "cues": [
+        "what it is",
+        "how you use it",
+        "when you started using it"
+      ],
+      "explain": "and explain how it has changed your daily routine."
+    },
+    "p3": [
+      [
+        "Has technology improved the quality of communication?",
+        "科技是否提升了沟通的质量？"
+      ],
+      [
+        "Who should be responsible for protecting personal information online?",
+        "谁应负责保护网络上的个人信息？"
+      ],
+      [
+        "Why might some people struggle to adapt to new technology?",
+        "为什么有些人难以适应新技术？"
+      ]
+    ]
+  },
+  {
+    "theme": "环境、能源",
+    "focus": "从具体行动谈到更大影响",
+    "hints": [
+      "reduce waste",
+      "renewable energy",
+      "make a small difference"
+    ],
+    "p1": [
+      [
+        "Do you try to save electricity at home?",
+        "你在家会注意节电吗？"
+      ],
+      [
+        "Is there a park or green space near your home?",
+        "你家附近有公园或绿地吗？"
+      ],
+      [
+        "What do you usually do with things you no longer need?",
+        "你通常怎样处理不再需要的东西？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a time when you did something to help the environment.",
+      "zh": "描述一次你为保护环境做事的经历。",
+      "cues": [
+        "what you did",
+        "where and when you did it",
+        "who was involved"
+      ],
+      "explain": "and explain how you felt about the experience."
+    },
+    "p3": [
+      [
+        "How can cities encourage people to use less energy?",
+        "城市如何鼓励人们减少能源消耗？"
+      ],
+      [
+        "Should governments or individuals take greater responsibility for environmental protection?",
+        "政府和个人谁应承担更大的环保责任？"
+      ],
+      [
+        "What makes it difficult for businesses to reduce waste?",
+        "是什么让企业难以减少废弃物？"
+      ]
+    ]
+  },
+  {
+    "theme": "健康、生活方式",
+    "focus": "解释习惯形成的原因",
+    "hints": [
+      "a balanced routine",
+      "stay physically active",
+      "build a healthy habit"
+    ],
+    "p1": [
+      [
+        "What do you do to stay healthy?",
+        "你会做什么来保持健康？"
+      ],
+      [
+        "Do you prefer exercising indoors or outdoors?",
+        "你更喜欢室内还是户外运动？"
+      ],
+      [
+        "Has your daily routine changed in recent years?",
+        "你的日常作息近年有变化吗？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a healthy habit you would like to develop.",
+      "zh": "描述一个你想养成的健康习惯。",
+      "cues": [
+        "what the habit is",
+        "why you want to develop it",
+        "what you would need to change"
+      ],
+      "explain": "and explain what might help you keep this habit."
+    },
+    "p3": [
+      [
+        "Why do some people find it hard to change unhealthy habits?",
+        "为什么有些人难以改变不健康的习惯？"
+      ],
+      [
+        "How can schools encourage children to lead healthier lives?",
+        "学校如何鼓励孩子过更健康的生活？"
+      ],
+      [
+        "Should public health services focus more on prevention?",
+        "公共卫生服务是否应该更重视预防？"
+      ]
+    ]
+  },
+  {
+    "theme": "城市、交通",
+    "focus": "描述地点，比较不同选择",
+    "hints": [
+      "within walking distance",
+      "public transport",
+      "a sense of community"
+    ],
+    "p1": [
+      [
+        "What do you like about the area where you live?",
+        "你喜欢居住地区的哪些方面？"
+      ],
+      [
+        "How do you usually travel around your city?",
+        "你通常在城市里怎样出行？"
+      ],
+      [
+        "Would you like to live somewhere quieter?",
+        "你想住在更安静的地方吗？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a place in a city that you enjoy visiting.",
+      "zh": "描述一个你喜欢去的城市地点。",
+      "cues": [
+        "where it is",
+        "what it is like",
+        "what you do there"
+      ],
+      "explain": "and explain why you enjoy spending time there."
+    },
+    "p3": [
+      [
+        "What is an effective way to reduce traffic congestion?",
+        "什么方式能有效缓解交通拥堵？"
+      ],
+      [
+        "How can cities become more suitable for families?",
+        "城市如何变得更适合家庭居住？"
+      ],
+      [
+        "Should city centres give more space to pedestrians?",
+        "城市中心是否应该给行人更多空间？"
+      ]
+    ]
+  },
+  {
+    "theme": "经济、消费",
+    "focus": "说明选择，不只给结论",
+    "hints": [
+      "value for money",
+      "an impulse purchase",
+      "make an informed choice"
+    ],
+    "p1": [
+      [
+        "Do you prefer saving money or spending it?",
+        "你更喜欢存钱还是花钱？"
+      ],
+      [
+        "Do you compare prices before buying something?",
+        "你购买东西前会比较价格吗？"
+      ],
+      [
+        "Do you enjoy shopping online?",
+        "你喜欢网购吗？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe something you bought that was worth the money.",
+      "zh": "描述一件你认为买得很值的东西。",
+      "cues": [
+        "what it was",
+        "when you bought it",
+        "how you have used it"
+      ],
+      "explain": "and explain why you think it was worth the money."
+    },
+    "p3": [
+      [
+        "Why do people sometimes buy things they do not need?",
+        "为什么人们有时会买不需要的东西？"
+      ],
+      [
+        "How does advertising influence young consumers?",
+        "广告如何影响年轻消费者？"
+      ],
+      [
+        "What can governments do to reduce income inequality?",
+        "政府能做些什么来缩小收入差距？"
+      ]
+    ]
+  },
+  {
+    "theme": "媒体、社会",
+    "focus": "区分事实、看法和例证",
+    "hints": [
+      "a reliable source",
+      "check the facts",
+      "shape public opinion"
+    ],
+    "p1": [
+      [
+        "How do you usually find out about the news?",
+        "你通常如何了解新闻？"
+      ],
+      [
+        "Do you prefer reading news or watching it?",
+        "你更喜欢看文字新闻还是视频新闻？"
+      ],
+      [
+        "What kinds of online content interest you?",
+        "什么类型的网络内容让你感兴趣？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a news story that attracted your attention.",
+      "zh": "描述一则引起你注意的新闻。",
+      "cues": [
+        "what the story was about",
+        "where you heard or read about it",
+        "what you did after learning about it"
+      ],
+      "explain": "and explain why it interested you."
+    },
+    "p3": [
+      [
+        "How can people judge whether online information is reliable?",
+        "人们如何判断网络信息是否可靠？"
+      ],
+      [
+        "Why do negative news stories often attract attention?",
+        "为什么负面新闻常常引起注意？"
+      ],
+      [
+        "What responsibilities do people have when sharing news online?",
+        "人们在网络分享新闻时应承担什么责任？"
+      ]
+    ]
+  },
+  {
+    "theme": "文化、旅游",
+    "focus": "用细节表现体验与差异",
+    "hints": [
+      "cultural heritage",
+      "local traditions",
+      "a memorable experience"
+    ],
+    "p1": [
+      [
+        "What kinds of places do you like visiting on holiday?",
+        "假期你喜欢去什么地方？"
+      ],
+      [
+        "Is there a local tradition that you particularly enjoy?",
+        "你特别喜欢哪项当地传统？"
+      ],
+      [
+        "Do you prefer travelling alone or with other people?",
+        "你喜欢独自旅行还是结伴出游？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a traditional place or event you have experienced.",
+      "zh": "描述一个你去过的传统场所或参与过的传统活动。",
+      "cues": [
+        "what it was",
+        "where and when you experienced it",
+        "what you saw or did there"
+      ],
+      "explain": "and explain what made it memorable."
+    },
+    "p3": [
+      [
+        "Why is it important to preserve historic buildings?",
+        "为什么保护历史建筑很重要？"
+      ],
+      [
+        "How can tourism benefit local communities?",
+        "旅游如何为当地社区带来好处？"
+      ],
+      [
+        "Do you think globalisation makes cultures more similar?",
+        "你认为全球化会使文化变得更相似吗？"
+      ]
+    ]
+  },
+  {
+    "theme": "综合复习",
+    "focus": "串联熟悉话题，减少模板感",
+    "hints": [
+      "what I learned from this",
+      "to some extent",
+      "in the longer term"
+    ],
+    "p1": [
+      [
+        "Which part of your daily routine would you most like to change?",
+        "你最想改变日常作息的哪一部分？"
+      ],
+      [
+        "What is something new you would like to learn?",
+        "你想学什么新东西？"
+      ],
+      [
+        "Where would you like to spend more time in the future?",
+        "你将来希望在什么地方多待一些时间？"
+      ]
+    ],
+    "p2": {
+      "title": "Describe a change you made that improved your daily life.",
+      "zh": "描述一个改善了你日常生活的改变。",
+      "cues": [
+        "what the change was",
+        "why you decided to make it",
+        "how you made it happen"
+      ],
+      "explain": "and explain what difference it has made to your life."
+    },
+    "p3": [
+      [
+        "Why are some people more willing to accept change than others?",
+        "为什么有些人比其他人更愿意接受改变？"
+      ],
+      [
+        "How should governments balance short-term needs with long-term goals?",
+        "政府应如何平衡短期需求与长期目标？"
+      ],
+      [
+        "Can technology solve most of the problems facing society?",
+        "科技能解决社会面临的大部分问题吗？"
+      ]
+    ]
+  }
+]

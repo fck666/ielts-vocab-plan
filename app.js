@@ -2,7 +2,9 @@ window.IELTSDatabaseReady.then((database) => {
 (() => {
   "use strict";
 
-  const words = Array.isArray(window.IELTS_WORDS) ? window.IELTS_WORDS : [];
+  const words = Array.isArray(window.IELTS_WORDS)
+    ? window.IELTS_WORDS.map((word) => window.IELTSLocale?.localizeWord(word) || word)
+    : [];
   const db = database;
   const DAILY_TRAINING_STORAGE_KEY = "ielts-vocabulary-lab-daily-training-v1";
   const $ = (selector) => document.querySelector(selector);
@@ -57,6 +59,18 @@ window.IELTSDatabaseReady.then((database) => {
   const SPEECH_RATE = 1;
   let speechVoices = [];
   let activeSpeechButton = null;
+  let nativeSpeechAvailable = false;
+  const nativeSpeechHandler = window.webkit?.messageHandlers?.ieltsSpeech || null;
+  let nativeSpeechRequestId = null;
+  let nativeSpeechPoll = null;
+
+  if (nativeSpeechHandler) {
+    nativeSpeechAvailable = true;
+  } else if (window.location.protocol === "http:" && ["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+    fetch("/api/speech", { cache: "no-store" }).then((response) => response.ok ? response.json() : null)
+      .then((status) => { nativeSpeechAvailable = Boolean(status?.available); })
+      .catch(() => {});
+  }
   let speechWarmed = false;
 
   function refreshSpeechVoices() {
@@ -88,7 +102,7 @@ window.IELTSDatabaseReady.then((database) => {
   }
 
   function warmSpeechEngine() {
-    if (!speech || speechWarmed || speech.speaking || speech.pending) return;
+    if (nativeSpeechAvailable || !speech || speechWarmed || speech.speaking || speech.pending) return;
     speechWarmed = true;
     speech.resume();
     const warmup = new SpeechSynthesisUtterance(".");
@@ -128,7 +142,7 @@ window.IELTSDatabaseReady.then((database) => {
     button.setAttribute("aria-pressed", "false");
   }
 
-  function speakWord(wordOrText, accent = "uk", sourceButton = null) {
+  function speakBrowserWord(wordOrText, accent = "uk", sourceButton = null) {
     const text = typeof wordOrText === "string" ? wordOrText : wordOrText?.term;
     const wordId = typeof wordOrText === "string" ? sourceButton?.dataset.wordId : wordOrText?.id;
     if (!text) return false;
@@ -167,6 +181,119 @@ window.IELTSDatabaseReady.then((database) => {
     return true;
   }
 
+  function speakLocalServerWord(wordOrText, accent = "uk", sourceButton = null) {
+    if (!nativeSpeechAvailable) return speakBrowserWord(wordOrText, accent, sourceButton);
+    const text = typeof wordOrText === "string" ? wordOrText : wordOrText?.term;
+    const wordId = typeof wordOrText === "string" ? sourceButton?.dataset.wordId : wordOrText?.id;
+    if (!text) return false;
+    if (speech?.speaking || speech?.pending) speech.cancel();
+    if (nativeSpeechPoll) clearTimeout(nativeSpeechPoll);
+    const previousWordId = activeSpeechButton?.dataset.wordId;
+    if (previousWordId && previousWordId !== wordId) setPronunciationStatus(previousWordId, "");
+    resetSpeechButton(activeSpeechButton);
+    activeSpeechButton = sourceButton;
+    const requestID = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+    nativeSpeechRequestId = requestID;
+    if (sourceButton) {
+      sourceButton.dataset.speaking = "true";
+      sourceButton.setAttribute("aria-pressed", "true");
+    }
+    if (wordId) setPronunciationStatus(wordId, accent === "us" ? "美音准备中…" : "英音准备中…");
+    const finish = () => {
+      if (nativeSpeechRequestId !== requestID) return;
+      nativeSpeechRequestId = null;
+      resetSpeechButton(sourceButton);
+      if (activeSpeechButton === sourceButton) activeSpeechButton = null;
+      if (wordId) setPronunciationStatus(wordId, "");
+    };
+    const poll = async (attempt = 0) => {
+      if (nativeSpeechRequestId !== requestID) return;
+      try {
+        const response = await fetch("/api/speech", { cache: "no-store" });
+        const status = await response.json();
+        if (!status.speaking || status.requestID !== requestID || attempt >= 30) return finish();
+      } catch { return finish(); }
+      nativeSpeechPoll = setTimeout(() => poll(attempt + 1), 250);
+    };
+    const requestStarted = performance.now();
+    fetch("/api/speech", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "speak", text, accent, requestID }),
+    }).then(async (response) => {
+      const result = await response.json();
+      if (nativeSpeechRequestId !== requestID) return;
+      if (!response.ok || !result.ok) throw new Error(result.error || "Native speech failed");
+      if (sourceButton) {
+        sourceButton.dataset.startLatencyMs = String(Math.round(performance.now() - requestStarted));
+        sourceButton.dataset.speechBackend = "macos-native";
+      }
+      if (wordId) setPronunciationStatus(wordId, accent === "us" ? "美音朗读中…" : "英音朗读中…");
+      nativeSpeechPoll = setTimeout(() => poll(), 250);
+    }).catch(() => {
+      if (nativeSpeechRequestId !== requestID) return;
+      finish();
+      nativeSpeechAvailable = false;
+      speakBrowserWord(wordOrText, accent, sourceButton);
+    });
+    return true;
+  }
+
+  function speakMacOSWord(wordOrText, accent = "uk", sourceButton = null) {
+    const text = typeof wordOrText === "string" ? wordOrText : wordOrText?.term;
+    const wordId = typeof wordOrText === "string" ? sourceButton?.dataset.wordId : wordOrText?.id;
+    if (!text) return false;
+    if (nativeSpeechPoll) clearTimeout(nativeSpeechPoll);
+    const previousWordId = activeSpeechButton?.dataset.wordId;
+    if (previousWordId && previousWordId !== wordId) setPronunciationStatus(previousWordId, "");
+    resetSpeechButton(activeSpeechButton);
+    activeSpeechButton = sourceButton;
+    const requestID = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+    nativeSpeechRequestId = requestID;
+    if (sourceButton) {
+      sourceButton.dataset.speaking = "true";
+      sourceButton.setAttribute("aria-pressed", "true");
+    }
+    if (wordId) setPronunciationStatus(wordId, accent === "us" ? "美音准备中…" : "英音准备中…");
+    const finish = () => {
+      if (nativeSpeechRequestId !== requestID) return;
+      nativeSpeechRequestId = null;
+      resetSpeechButton(sourceButton);
+      if (activeSpeechButton === sourceButton) activeSpeechButton = null;
+      if (wordId) setPronunciationStatus(wordId, "");
+    };
+    const poll = async (attempt = 0) => {
+      if (nativeSpeechRequestId !== requestID) return;
+      try {
+        const status = await nativeSpeechHandler.postMessage({ action: "status" });
+        if (!status.speaking || status.requestID !== requestID || attempt >= 30) return finish();
+      } catch { return finish(); }
+      nativeSpeechPoll = setTimeout(() => poll(attempt + 1), 250);
+    };
+    const requestStarted = performance.now();
+    nativeSpeechHandler.postMessage({ action: "speak", text, accent, requestID }).then((result) => {
+      if (nativeSpeechRequestId !== requestID) return;
+      if (!result?.ok) throw new Error(result?.error || "Native speech failed");
+      if (sourceButton) {
+        sourceButton.dataset.startLatencyMs = String(Math.round(performance.now() - requestStarted));
+        sourceButton.dataset.speechBackend = "macos-native";
+      }
+      if (wordId) setPronunciationStatus(wordId, accent === "us" ? "美音朗读中…" : "英音朗读中…");
+      nativeSpeechPoll = setTimeout(() => poll(), 250);
+    }).catch(() => {
+      if (nativeSpeechRequestId !== requestID) return;
+      finish();
+      nativeSpeechAvailable = false;
+      speakBrowserWord(wordOrText, accent, sourceButton);
+    });
+    return true;
+  }
+
+  function speakWord(wordOrText, accent = "uk", sourceButton = null) {
+    if (nativeSpeechHandler) return speakMacOSWord(wordOrText, accent, sourceButton);
+    if (!nativeSpeechAvailable) return speakBrowserWord(wordOrText, accent, sourceButton);
+    return speakLocalServerWord(wordOrText, accent, sourceButton);
+  }
+
   function pronunciationControls(word) {
     const id = escapeHtml(word.id);
     const term = escapeHtml(word.term);
@@ -178,7 +305,9 @@ window.IELTSDatabaseReady.then((database) => {
   }
 
   // The study view can reuse these helpers when it renders vocabulary cards.
-  window.IELTSVoice = { speak: speakWord, controls: pronunciationControls, supported: () => Boolean(speech && typeof window.SpeechSynthesisUtterance === "function") };
+  window.IELTSVoice = { speak: speakWord, controls: pronunciationControls,
+    supported: () => nativeSpeechAvailable || Boolean(speech && typeof window.SpeechSynthesisUtterance === "function"),
+    backend: () => nativeSpeechAvailable ? "macos-native" : "browser" };
 
   const viewRoutes = {
     setup: "首页",
@@ -202,8 +331,10 @@ window.IELTSDatabaseReady.then((database) => {
   }
 
   function routeFromHash() {
-    const parts = (window.location.hash.replace(/^#\/?/, "").split("?")[0] || "setup").split("/");
+    const [hashPath, queryString = ""] = window.location.hash.replace(/^#\/?/, "").split("?");
+    const parts = (hashPath || "setup").split("/");
     const route = parts[0];
+    const routeQuery = new URLSearchParams(queryString || window.location.search.slice(1));
     if (route === "speaking" || route === "writing") {
       const types = route === "speaking" ? ["part1", "part2", "part3"] : ["task1", "task2"];
       openPractice(route, types.includes(parts[1]) ? parts[1] : types[types.length - 1], { updateUrl: false });
@@ -214,7 +345,14 @@ window.IELTSDatabaseReady.then((database) => {
       return;
     }
     showView(Object.prototype.hasOwnProperty.call(views, route) ? route : "setup", { updateUrl: false });
-    if (route === "study") openStudy();
+    if (route === "study") {
+      const week = Number(routeQuery.get("week"));
+      const day = Number(routeQuery.get("day"));
+      openStudy({
+        updateUrl: false,
+        selection: week > 0 ? { week, day: day > 0 ? day : null, word: routeQuery.get("word") } : null,
+      });
+    }
     if (route === "stats") openStats();
   }
 
@@ -386,7 +524,7 @@ window.IELTSDatabaseReady.then((database) => {
       content.innerHTML = `<p class="question-heading">${question.prompt}</p><p class="question-term question-term-small">${escapeHtml(word.meaningZh)}</p>${pronunciationControls(word)}<p class="question-ipa">${escapeHtml(word.ipa)} · ${escapeHtml(word.partOfSpeech)}</p>`;
       area.innerHTML = inputTemplate("请输入英文词或词组");
     } else {
-      content.innerHTML = `<p class="question-heading">${question.prompt}</p><p class="sentence-prompt">${escapeHtml(word.maskedExample)}</p><p class="question-meaning">中文提示：${escapeHtml(word.exampleZh)}</p>${pronunciationControls(word)}`;
+      content.innerHTML = `<p class="question-heading">${question.prompt}</p><p class="sentence-prompt">${escapeHtml(word.maskedExample)}</p><p class="question-meaning">中文提示：${escapeHtml(word.exampleZh)}</p>${exampleAttribution(word)}${pronunciationControls(word)}`;
       area.innerHTML = inputTemplate("请根据语境输入目标词");
     }
   }
@@ -450,7 +588,9 @@ window.IELTSDatabaseReady.then((database) => {
     const boxClass = correct ? "feedback-box" : "feedback-box wrong";
     const title = correct ? "回答正确" : "再巩固一次";
     const answerLine = correct ? "" : `<p>正确答案：<strong>${escapeHtml(question.answer)}</strong></p>`;
-    $("#feedback").innerHTML = `<div class="${boxClass}"><div class="feedback-title">${title}</div>${answerLine}${pronunciationControls(question.word)}<p><strong>搭配：</strong>${escapeHtml(question.word.collocations.join(" · "))}</p><p><strong>例句：</strong>${escapeHtml(question.word.exampleEn)}</p><p><strong>译文：</strong>${escapeHtml(question.word.exampleZh)}</p><p><strong>提醒：</strong>${escapeHtml(question.word.note)}</p></div>`;
+    const phraseLabel = question.word.collocationsSource === "example" ? "例句片段" : "搭配";
+    const examTags = question.word.examTags?.length ? `<p><strong>考试词表：</strong>${escapeHtml(question.word.examTags.join(" · "))}</p>` : "";
+    $("#feedback").innerHTML = `<div class="${boxClass}"><div class="feedback-title">${title}</div>${answerLine}${pronunciationControls(question.word)}${examTags}<p><strong>${phraseLabel}：</strong>${escapeHtml(question.word.collocations.join(" · ") || "暂无")}</p><p><strong>例句：</strong>${escapeHtml(question.word.exampleEn)}</p><p><strong>译文：</strong>${escapeHtml(question.word.exampleZh)}</p>${exampleAttribution(question.word)}<p><strong>提醒：</strong>${escapeHtml(question.word.note)}</p></div>`;
     $("#submitAnswer").classList.add("hidden");
     $("#nextQuestion").classList.remove("hidden");
   }
@@ -802,12 +942,12 @@ window.IELTSDatabaseReady.then((database) => {
       const nextReview = record.nextReviewAt ? new Date(record.nextReviewAt).toLocaleDateString("zh-CN") : "尚未安排";
       const levelStars = [1, 2, 3, 4, 5].map((level) => `<button class="study-star${level <= record.level ? " is-active" : ""}" type="button" data-study-level="${level}" aria-label="${escapeHtml(word.term)} 熟练度 ${level} / 5" aria-pressed="${level <= record.level ? "true" : "false"}" title="${level} / 5">★</button>`).join("");
       return `<article class="study-card panel${typing ? " study-card-typing" : ""}${typing && revealed ? " study-card-revealed" : ""}" data-word-id="${escapeHtml(word.id)}" tabindex="-1">
-        <div class="study-card-head"><div><span class="study-day-label">Day ${word.day} · ${escapeHtml(word.dayTitle)}</span><h3 class="${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.term) : "输入英文词汇"}</h3><p class="study-pronunciation ${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.ipa) + " · " + escapeHtml(word.partOfSpeech) : "英文答案暂时隐藏"}</p>${revealed ? pronunciationControls(word) : ""}</div><span class="study-status ${status.className}">${status.label}</span></div>
+        <div class="study-card-head"><div><span class="study-day-label">Day ${word.day} · ${escapeHtml(word.dayTitle)}</span>${word.examTags?.length ? `<span class="study-exam-tags">${escapeHtml(word.examTags.join(" · "))}</span>` : ""}<h3 class="${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.term) : "输入英文词汇"}</h3><p class="study-pronunciation ${revealed ? "" : "study-hidden-answer"}">${revealed ? escapeHtml(word.ipa) + " · " + escapeHtml(word.partOfSpeech) : "英文答案暂时隐藏"}</p>${revealed ? pronunciationControls(word) : ""}</div><span class="study-status ${status.className}">${status.label}</span></div>
         <div class="study-meaning"><strong>${escapeHtml(word.meaningZh)}</strong><span>下次复习：${escapeHtml(nextReview)}</span></div>
-        <div class="study-detail-grid"><div><small>常用搭配</small><p>${escapeHtml(word.collocations.join(" · "))}</p></div><div><small>词族</small><p>${escapeHtml(word.wordFamily || "暂无")}</p></div></div>
-        <div class="study-example"><small>例句</small><p>${escapeHtml(word.exampleEn)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p></div>
+        <div class="study-detail-grid"><div><small>${word.collocationsSource === "example" ? "例句片段" : "常用搭配"}</small><p>${escapeHtml(word.collocations.join(" · ") || "暂无")}</p></div><div><small>词族</small><p>${escapeHtml(word.wordFamily || "暂无")}</p></div></div>
+        <div class="study-example"><small>例句</small><p>${escapeHtml(word.exampleEn)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p>${exampleAttribution(word)}</div>
         <div class="study-note"><strong>使用提醒</strong><span>${escapeHtml(word.note || "")}</span></div>
-        <div class="study-dictation-panel${typing ? "" : " hidden"}"><div class="study-dictation-clue"><small>语境提示</small><p>${escapeHtml(word.maskedExample)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p></div><label class="answer-label" for="study-dictation-${escapeHtml(word.id)}">输入英文单词或词组</label><div class="study-dictation-row"><input id="study-dictation-${escapeHtml(word.id)}" class="text-input" data-study-dictation-input="${escapeHtml(word.id)}" value="${escapeHtml(dictation.input || "")}" type="text" autocomplete="off" placeholder="输入后按 Enter 提交" ${dictation.answered ? "disabled" : ""} /><button class="study-action-button" data-study-dictation-submit="true" type="button" ${dictation.answered ? "disabled" : ""}>${dictation.answered ? "已提交" : "提交"}</button></div>${dictation.feedback ? "<p class=\"study-dictation-feedback " + (dictation.correct ? "is-correct" : "is-wrong") + "\">" + escapeHtml(dictation.feedback) + "</p>" : ""}</div>
+        <div class="study-dictation-panel${typing ? "" : " hidden"}"><div class="study-dictation-clue"><small>语境提示</small><p>${escapeHtml(word.maskedExample)}</p><p class="study-example-zh">${escapeHtml(word.exampleZh)}</p>${exampleAttribution(word)}</div><label class="answer-label" for="study-dictation-${escapeHtml(word.id)}">输入英文单词或词组</label><div class="study-dictation-row"><input id="study-dictation-${escapeHtml(word.id)}" class="text-input" data-study-dictation-input="${escapeHtml(word.id)}" value="${escapeHtml(dictation.input || "")}" type="text" autocomplete="off" placeholder="输入后按 Enter 提交" ${dictation.answered ? "disabled" : ""} /><button class="study-action-button" data-study-dictation-submit="true" type="button" ${dictation.answered ? "disabled" : ""}>${dictation.answered ? "已提交" : "提交"}</button></div>${dictation.feedback ? "<p class=\"study-dictation-feedback " + (dictation.correct ? "is-correct" : "is-wrong") + "\">" + escapeHtml(dictation.feedback) + "</p>" : ""}</div>
         <div class="study-card-actions"><div class="study-rating" role="group" aria-label="${escapeHtml(word.term)} 熟练度"><span>熟练度</span><span class="study-stars">${levelStars}</span></div><button class="study-mode-button" data-study-mode="${typing ? "view" : "typing"}" type="button">${typing ? "查看词条" : "默写模式"}</button><button class="study-action-button" data-study-action="mastered" type="button">标记已会</button><button class="study-action-button subtle" data-study-action="review" type="button">安排复习</button></div>
       </article>`;
     }).join("");
@@ -835,13 +975,32 @@ window.IELTSDatabaseReady.then((database) => {
     renderStudyDays();
   }
 
-  function openStudy() {
+  function openStudy({ updateUrl = true, selection = null } = {}) {
     const weeks = [...new Set(words.map((word) => word.week))].sort((a, b) => a - b);
     const select = $("#studyWeek");
     if (!select.options.length) populateStudyOptions(weeks);
+    const selectedDay = selection?.day && words.some((word) => word.week === selection.week && word.day === selection.day)
+      ? selection.day
+      : null;
+    const selectedWord = selection?.word && words.some((word) =>
+      word.id === selection.word && word.week === selection.week && (!selectedDay || word.day === selectedDay)
+    ) ? selection.word : null;
+    if (selection && weeks.includes(selection.week)) {
+      state.studyWeek = selection.week;
+      state.studyDay = selectedDay || "all";
+      state.studyFilter = "all";
+      $("#studyFilter").value = "all";
+      select.value = String(selection.week);
+    }
     renderStudyDays();
+    if (selectedDay) $("#studyDay").value = String(selectedDay);
     renderStudyWords();
-    showView("study");
+    showView("study", { updateUrl });
+    if (selectedWord) {
+      requestAnimationFrame(() => {
+        document.querySelector(`[data-word-id="${CSS.escape(selectedWord)}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
   function trainingWeeks() {
@@ -957,7 +1116,7 @@ window.IELTSDatabaseReady.then((database) => {
     }
     const word = item.word;
     $("#trainingProgress").textContent = `Week ${training.week} · Day ${training.day} · 第 ${training.current + 1} / ${training.queue.length} 题${item.retry ? " · 错题重做" : ""}`;
-    $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p></div></div>`;
+    $("#trainingPrompt").innerHTML = `<div class="training-prompt"><span class="eyebrow accent">中文释义与语境提示</span><div class="training-meaning">${escapeHtml(word.meaningZh)}</div><div class="training-example"><small>例句</small><p>${escapeHtml(word.maskedExample)}</p><p class="training-example-zh">${escapeHtml(word.exampleZh)}</p>${exampleAttribution(word)}</div></div>`;
     $("#trainingAnswerArea").innerHTML = `<div class="training-answer"><label class="answer-label" for="trainingInput">输入英文单词或词组</label><input id="trainingInput" class="text-input" type="text" autocomplete="off" placeholder="输入答案后按 Enter 提交" /></div>`;
     if (item.answer || item.draft) $("#trainingInput").value = item.answer || item.draft;
     if (item.feedbackHtml) $("#trainingFeedback").innerHTML = item.feedbackHtml;
@@ -1046,6 +1205,17 @@ window.IELTSDatabaseReady.then((database) => {
     return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
   }
 
+  function exampleAttribution(word) {
+    if (!word.exampleSource) return "";
+    const source = word.exampleSourceUrl
+      ? `<a href="${escapeHtml(word.exampleSourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(word.exampleSource)}</a>`
+      : escapeHtml(word.exampleSource);
+    const license = word.exampleLicenseUrl
+      ? ` · <a href="${escapeHtml(word.exampleLicenseUrl)}" target="_blank" rel="noopener noreferrer">许可</a>`
+      : "";
+    return `<p class="example-attribution">例句来源：${source}${license}</p>`;
+  }
+
   $("#setupForm").addEventListener("submit", (event) => { event.preventDefault(); startExam(); });
   $("#submitAnswer").addEventListener("click", submitAnswer);
   $("#nextQuestion").addEventListener("click", () => { state.current += 1; renderQuestion(); });
@@ -1096,9 +1266,14 @@ window.IELTSDatabaseReady.then((database) => {
   $("#backFromStudy").addEventListener("click", () => showView("setup"));
   $("#openStats").addEventListener("click", openStats);
   $("#backFromStats").addEventListener("click", () => showView("setup"));
-  $("#exportData").addEventListener("click", () => {
-    const exported = typeof db.download === "function" && db.download();
-    $("#statsDataHint").textContent = exported ? "已开始下载 SQLite 学习数据文件。" : "当前浏览器无法导出数据库文件。";
+  $("#exportData").addEventListener("click", async () => {
+    try {
+      const exported = typeof db.download === "function" && await db.download();
+      $("#statsDataHint").textContent = exported === null ? "已取消导出，原有数据不受影响。" : exported ? "SQLite 学习数据已导出。" : "当前环境无法导出数据库文件。";
+    } catch (error) {
+      console.error("Failed to export learning data", error);
+      $("#statsDataHint").textContent = `导出失败：${error?.message || "请重试并选择可写的位置。"}`;
+    }
   });
   $("#importData").addEventListener("click", () => $("#importDataFile").click());
   $("#importDataFile").addEventListener("change", async (event) => {

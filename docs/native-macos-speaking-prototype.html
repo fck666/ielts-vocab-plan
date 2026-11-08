@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IELTS Vocabulary Lab · 口语原型</title>
+<link rel="stylesheet" href="native-macos-speaking-prototype.css">
+<script src="native-macos-speaking-prototype.js" defer></script>
+</head>
+<body>
+<div class="window">
+<header class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span>IELTS Vocabulary Lab</span><span class="prototype-label">原型 03 · 口语</span></header>
+<aside class="sidebar">
+  <div class="brand"><span class="brand-mark">V</span><div><strong>IELTS Vocabulary</strong><small>个人学习</small></div></div>
+  <div class="nav-label">学习</div>
+  <nav aria-label="学习模块"><a href="native-macos-prototype.html"><span aria-hidden="true">◷</span>今天与每日训练<span class="external">↗</span></a><a href="native-macos-vocab-prototype.html"><span aria-hidden="true">Aa</span>词库与考试<span class="external">↗</span></a></nav>
+  <div class="nav-label">表达练习</div>
+  <nav aria-label="口语导航"><button data-nav="practice" aria-current="page"><span aria-hidden="true">◌</span>口语练习</button><button data-nav="plan"><span aria-hidden="true">▦</span>十周计划</button><button data-nav="history"><span aria-hidden="true">↺</span>练习记录<span class="count" id="historyCount">0</span></button></nav>
+  <div class="sidebar-foot"><strong>先说，再回听，最后改一处。</strong><p>交互演示 · 不使用麦克风<br>记录仅保留在当前页面</p><button class="text-button" id="aboutButton">题目与计时说明</button></div>
+</aside>
+<main>
+<section class="page active" id="practicePage" aria-labelledby="practiceTitle">
+  <div class="page-heading"><div><p class="eyebrow">SPEAKING PRACTICE</p><h1 id="practiceTitle">把想法说出来</h1><p class="subtitle">从熟悉的话题开始，逐步练到完整表达。</p></div><div class="goal-chip">目标 <strong>6.5</strong><span>每次专注一个改进点</span></div></div>
+  <div class="top-tools"><div class="segmented" aria-label="口语部分"><button data-part="1" aria-pressed="true">Part 1 <span>日常问答</span></button><button data-part="2" aria-pressed="false">Part 2 <span>个人陈述</span></button><button data-part="3" aria-pressed="false">Part 3 <span>深入讨论</span></button></div><label class="week-label">主题周<select id="weekSelect" aria-label="选择主题周"></select></label></div>
+  <div class="part-overview"><div><p class="eyebrow" id="partEyebrow">FAMILIAR TOPICS</p><h2 id="partTitle">先回答，再补一个细节。</h2><p id="partDescription" class="body-copy"></p></div><div class="timing-info"><span id="officialTiming"></span><small id="practiceTiming"></small></div></div>
+  <div class="section-heading"><h2 id="questionListTitle">本周题目</h2><span id="questionCount"></span></div>
+  <div id="questionList" class="question-list"></div>
+  <div class="practice-footer"><span>自编练习题 · 参考考试结构，不是官方真题或预测题库</span><button class="button primary" id="startGroup">开始这一组 →</button></div>
+  <div class="quiet-note"><span aria-hidden="true">↳</span><p><strong>词汇在回答里用起来</strong><br>需要时可以展开本周表达提示。练习中默认收起，避免看着模板背答案。</p><button class="text-button" data-nav="plan">看十周安排 →</button></div>
+</section>
+
+<section class="page" id="planPage" aria-labelledby="planTitle">
+  <div class="page-heading"><div><p class="eyebrow">TEN-WEEK PATH</p><h1 id="planTitle">每周一个话题，反复开口</h1><p class="subtitle">学习日分开练三个 Part，周末回听与串联。</p></div><button class="button secondary" data-nav="practice">返回练习</button></div>
+  <div class="weekly-rhythm"><div><span>周一 / 周二</span><strong>Part 1 · 熟悉话题</strong><small>直接回答，补充原因或例子</small></div><div><span>周三 / 周四</span><strong>Part 2 · 讲一段经历</strong><small>列关键词，完成一次连续陈述</small></div><div><span>周五</span><strong>Part 3 · 解释与比较</strong><small>观点、理由、例证和限定</small></div><div><span>周末</span><strong>回听 → 重练 → 串联</strong><small>重练最薄弱题，第十周集中整合</small></div></div>
+  <div id="planList" class="plan-list"></div>
+  <p class="footnote">这是学习节奏建议，不是每日固定题量。当前原型每周提供 3 道 Part 1、1 张 Part 2 题卡、3 道 Part 3 题，供核对流程。</p>
+</section>
+
+<section class="page" id="historyPage" aria-labelledby="historyTitle">
+  <div class="page-heading"><div><p class="eyebrow">REFLECT & REPEAT</p><h1 id="historyTitle">让每次练习留下一个改进</h1><p class="subtitle">自评与笔记仅在本次原型会话保留；刷新会清空。</p></div><button class="button secondary" data-nav="practice">再练一次</button></div>
+  <div id="historyList"></div>
+</section>
+
+<section class="page" id="sessionPage" aria-labelledby="sessionQuestion">
+  <div class="session-header"><button class="text-button" id="exitSession">← 返回题目</button><div class="session-location"><strong id="sessionLocation"></strong><span id="sessionNumber"></span></div></div>
+  <div class="step-row" aria-label="练习步骤"><span id="stepPrepare">1 准备</span><span id="stepAnswer">2 回答</span><span id="stepReflect">3 回听与自评</span></div>
+  <div class="session-grid"><div class="question-sheet"><div class="sheet-meta"><span id="sessionPart"></span><span>自编练习题</span></div><h1 id="sessionQuestion" lang="en"></h1><div id="cueContent" lang="en"></div><button class="text-button" id="translationToggle" aria-expanded="false">显示中文题意</button><p id="questionTranslation" class="translation" hidden></p><div class="notes-block"><label for="prepNotes" id="notesLabel">思路便笺</label><textarea id="prepNotes" placeholder="写下关键词，不用写完整答案…"></textarea><small>仅作练习辅助；不影响自评结果。</small></div><details id="hintDetails"><summary>需要一点表达提示？</summary><div id="expressionHints"></div><p class="footnote">选 1–2 个自然使用即可，不必把所有表达塞进答案。</p></details></div>
+  <aside class="session-side"><div class="recorder"><div class="recorder-top"><span id="phaseLabel">准备回答</span><span class="demo-tag">流程演示</span></div><div class="timer" id="timerText" role="timer" aria-label="练习时间">00:00</div><div class="timer-track"><span id="timerFill"></span></div><p id="timerHelp" class="recorder-help"></p><div class="voice-strip" id="voiceStrip" aria-hidden="true"></div><div class="recording-status" id="recordingStatus" role="status">未调用麦克风</div><button class="button primary full" id="mainAction">开始回答</button><div class="recorder-secondary"><button class="text-button" id="pauseAction" hidden>暂停</button><button class="text-button" id="skipPreparation" hidden>准备好了</button></div><button class="text-button demo-forward" id="demoForward" hidden>演示快进：结束当前阶段 →</button></div><div class="session-tip"><span>这次只做一件事</span><p id="focusTip"></p></div><p class="footnote">原型只演示录音与回听的操作状态，不录制声音、不生成转写或评分。</p></aside></div>
+</section>
+
+<section class="page" id="reviewPage" aria-labelledby="reviewTitle">
+  <div class="page-heading"><div><p class="eyebrow">LISTEN · NOTICE · RETRY</p><h1 id="reviewTitle">先回听，再决定改哪里</h1><p id="reviewSubtitle" class="subtitle"></p></div><span class="demo-tag">录音与回听均为流程演示</span></div>
+  <div class="review-grid"><div><article class="review-recording"><p class="eyebrow" id="reviewPart"></p><h2 id="reviewQuestion" lang="en"></h2><div class="playback"><button class="play-button" id="playButton" aria-label="演示播放状态">▶</button><div class="playback-main"><label class="sr-only" for="playbackProgress">演示回放进度</label><input type="range" id="playbackProgress" value="0" min="0" max="100"><div><span id="playbackTime">00:00 / 00:00</span><button class="text-button" id="speedButton" aria-label="演示播放速度">1×</button></div></div></div><p class="footnote">无真实音频；此处展示播放、暂停、拖动与倍速交互。</p><details><summary>查看本题思路便笺</summary><p id="reviewNotes" class="saved-notes"></p></details></article><div class="reflection"><label for="improvementNote">下次想改的一件事</label><textarea id="improvementNote" placeholder="例如：先直接回答问题，再给一个具体例子。"></textarea><div class="suggestions"><button data-suggestion="减少无意义的重复，用短暂停顿组织语言。">减少重复</button><button data-suggestion="每个观点补一个自己的具体例子。">补一个例子</button><button data-suggestion="用熟悉的词表达清楚，再尝试准确的替换。">用词更自然</button></div></div></div><aside class="assessment"><h2>回听自评</h2><p class="body-copy">参照四个维度反思，不折算雅思分数。</p><div id="assessmentList"></div><p class="footnote">可以暂不评价；先记下最明显的一个问题。</p></aside></div>
+  <div class="review-footer"><button class="button secondary" id="retryQuestion">重练同一题</button><span id="reviewSaveHint">保存的是自评与笔记演示记录</span><button class="button primary" id="saveReview">保存并继续 →</button></div>
+</section>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="aboutDialog"><div class="dialog-head"><h2>题目与计时说明</h2><button class="text-button" data-close="aboutDialog">关闭</button></div><p>题目是按十周主题编写的练习内容，不是官方真题、机经或预测。题量用于确认原型体验，不代表正式版题库规模。</p><p>正式考试：Part 1 为 4–5 分钟；Part 2 准备 1 分钟，陈述 1–2 分钟，该部分共 3–4 分钟；Part 3 为 4–5 分钟。这些是部分时长，不是每道题的限时。</p><p>本应用单题练习参考：Part 1 为 45 秒、Part 3 为 90 秒，达到参考时间后可以继续。这是训练安排，不是考试规定。Part 2 演示 60 秒准备和最多 120 秒陈述。</p><p>原型不调用麦克风、不保存真实音频、不做语音识别或自动评分。正式原生 App 的录音权限、音频保存与回放会在统一开发时实现。</p><div class="sources"><a href="https://ielts.org/take-a-test/test-types/ielts-academic-test/ielts-academic-format-speaking" target="_blank" rel="noreferrer">IELTS 官方 · 口语结构 ↗</a><a href="https://ielts.org/cdn/Guides/ielts-speaking-key-assessment-criteria.pdf" target="_blank" rel="noreferrer">IELTS 官方 · 评分维度 ↗</a></div></dialog>
+<dialog id="leaveDialog"><h2>离开这次练习？</h2><p>尚未保存的计时、便笺和自评会丢弃。</p><div class="dialog-actions"><button class="button secondary" id="keepPracticing">继续练习</button><button class="button primary" id="confirmLeave">离开练习</button></div></dialog>
+</body>
+</html>

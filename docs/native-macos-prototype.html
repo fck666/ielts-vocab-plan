@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Vocabulary Lab · macOS Study Prototype</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --window: #f4f4f6;
+      --sidebar: #ebebee;
+      --surface: #ffffff;
+      --surface-soft: #f8f8f9;
+      --ink: #25252b;
+      --muted: #77777f;
+      --line: #e4e4e8;
+      --green: #34785b;
+      --green-soft: #e6f2eb;
+      --blue: #446f9c;
+      --blue-soft: #e9f0f8;
+      --orange: #b95f3f;
+      --orange-soft: #fbede7;
+      --yellow: #b18838;
+      --yellow-soft: #f7f0da;
+      --shadow: 0 18px 50px rgba(28, 30, 40, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 360px;
+      min-height: 100vh;
+      padding: 28px;
+      background: #d9d9dd;
+      color: var(--ink);
+      font: 13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible { outline: 3px solid rgba(68, 111, 156, .32); outline-offset: 2px; }
+    .window {
+      width: min(1320px, 100%);
+      min-height: min(820px, calc(100vh - 56px));
+      margin: auto;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.75);
+      border-radius: 12px;
+      background: var(--window);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      grid-template-rows: 48px minmax(0, 1fr);
+    }
+    .titlebar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #dedee2;
+      background: #f5f5f7;
+      color: #64646d;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .traffic-lights { position: absolute; left: 14px; display: flex; gap: 7px; }
+    .traffic-lights i { width: 11px; height: 11px; border-radius: 50%; background: #ff6058; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+    .traffic-lights i:nth-child(2) { background: #febc2e; }
+    .traffic-lights i:nth-child(3) { background: #28c840; }
+    .prototype-tag { position: absolute; right: 17px; color: #888891; font-size: 10px; font-weight: 500; }
+    .sidebar {
+      padding: 20px 12px 14px;
+      border-right: 1px solid #dedee2;
+      background: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 2px 8px 22px; }
+    .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: #3d6556; font-size: 12px; font-weight: 700; }
+    .brand-name { font-size: 12px; font-weight: 700; line-height: 1.2; }
+    .brand-sub { margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .nav-label { padding: 12px 10px 6px; color: #898990; font-size: 10px; font-weight: 650; }
+    .nav { display: grid; gap: 2px; }
+    .nav button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #57575f;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .nav button:hover { background: rgba(255,255,255,.55); }
+    .nav button[aria-current="page"] { color: #2c5c47; background: #dce9e0; font-weight: 650; }
+    .nav-mark { width: 19px; color: #787880; font-size: 11px; text-align: center; }
+    .nav-count { margin-left: auto; color: #7d7d85; font-size: 10px; }
+    .sidebar-bottom { margin-top: auto; padding: 13px 10px 3px; border-top: 1px solid #dadade; color: #6f6f77; font-size: 11px; }
+    .goal-line { display: flex; justify-content: space-between; margin-bottom: 7px; }
+    .mini-track, .progress-track { height: 5px; overflow: hidden; border-radius: 8px; background: #e7e7eb; }
+    .mini-track span, .progress-track span { height: 100%; display: block; border-radius: inherit; background: var(--green); transition: width .24s ease; }
+    .main { min-width: 0; padding: 34px 42px 42px; overflow: auto; }
+    .page { display: none; max-width: 1010px; margin: 0 auto; animation: appear .2s ease-out; }
+    .page.active { display: block; }
+    @keyframes appear { from { opacity: .3; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 7px; font-size: 27px; font-weight: 680; line-height: 1.2; }
+    h2 { margin-bottom: 0; font-size: 19px; font-weight: 650; }
+    h3 { margin-bottom: 0; font-size: 14px; font-weight: 650; }
+    .page-subtitle { margin-bottom: 0; color: var(--muted); font-size: 12px; }
+    .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .week-select { border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; color: #4e4e56; background: var(--surface); font-size: 11px; }
+    .metric-strip { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); margin: 25px 0 32px; padding: 15px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .metric { padding: 0 18px; border-right: 1px solid var(--line); }
+    .metric:first-child { padding-left: 0; }
+    .metric:last-child { border-right: 0; }
+    .metric strong { display: block; font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .metric span { color: var(--muted); font-size: 10px; }
+    .daily-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 13px; }
+    .daily-count { color: var(--muted); font-size: 11px; }
+    .daily-count strong { color: var(--ink); font-weight: 650; }
+    .path { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0; margin: 0 0 28px; padding: 0; list-style: none; }
+    .path-step { position: relative; min-width: 0; padding: 0 16px 0 0; }
+    .path-step:not(:last-child)::after { content: ""; position: absolute; top: 14px; left: 39px; right: 17px; height: 1px; background: #d9d9de; }
+    .step-top { position: relative; z-index: 1; display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+    .step-no { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid #d4d4d9; border-radius: 50%; color: #74747c; background: var(--window); font-size: 10px; font-weight: 650; }
+    .path-step.done .step-no { border-color: #49866a; color: white; background: #49866a; }
+    .path-step.current .step-no { border: 2px solid var(--green); color: var(--green); background: var(--surface); }
+    .step-state { color: #85858d; font-size: 9px; }
+    .path-step.done .step-state { color: var(--green); }
+    .path-step.current .step-state { color: var(--green); font-weight: 650; }
+    .step-title { margin-bottom: 2px; font-size: 12px; font-weight: 650; }
+    .step-detail { color: var(--muted); font-size: 10px; }
+    .section-divider { height: 1px; margin: 24px 0; background: var(--line); }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 11px; }
+    .section-heading button, .quiet-button { border: 0; padding: 4px 0; color: var(--blue); background: transparent; font-size: 11px; cursor: pointer; }
+    .word-list { border-top: 1px solid var(--line); }
+    .word-row { display: grid; grid-template-columns: minmax(170px,1fr) minmax(180px,1.1fr) 90px; align-items: center; gap: 18px; min-height: 54px; border-bottom: 1px solid var(--line); }
+    .word-term { font-size: 12px; font-weight: 620; }
+    .word-term small { margin-left: 8px; color: var(--muted); font-size: 10px; font-weight: 400; }
+    .word-meaning { color: #5f5f67; font-size: 11px; }
+    .word-status { justify-self: end; color: #7a7a82; font-size: 10px; }
+    .word-status.review { color: var(--orange); }
+    .home-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 25px; }
+    .keyboard-hint { color: #87878f; font-size: 10px; }
+    .primary-button, .secondary-button {
+      min-height: 36px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 15px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform .1s ease, background .15s ease;
+    }
+    .primary-button { color: white; background: #34785b; }
+    .primary-button:hover { background: #2a684d; }
+    .secondary-button { color: #45454d; background: #e8e8ec; }
+    .secondary-button:hover { background: #dedee3; }
+    .primary-button:active, .secondary-button:active { transform: scale(.98); }
+    .session-top { display: flex; align-items: center; gap: 18px; margin-bottom: 29px; }
+    .back-button { border: 0; padding: 5px 0; color: #66666e; background: transparent; cursor: pointer; }
+    .session-progress { flex: 1; }
+    .session-progress-meta { display: flex; justify-content: space-between; margin-bottom: 7px; color: var(--muted); font-size: 10px; }
+    .progress-track { height: 7px; background: #e4e4e8; }
+    .progress-track span { background: #4d8c6a; }
+    .session-title { margin-bottom: 20px; }
+    .session-title h1 { font-size: 23px; }
+    .mode-segment { display: inline-flex; gap: 2px; margin-bottom: 23px; padding: 3px; border: 1px solid #e0e0e4; border-radius: 7px; background: #e9e9ed; }
+    .mode-segment button { min-width: 76px; border: 0; border-radius: 5px; padding: 6px 12px; color: #66666e; background: transparent; font-size: 11px; cursor: pointer; }
+    .mode-segment button[aria-pressed="true"] { color: #2e2e34; background: white; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+    .exercise {
+      max-width: 700px;
+      min-height: 365px;
+      padding: 27px 30px 25px;
+      border: 1px solid #e1e1e5;
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 2px 6px rgba(20,20,30,.035);
+    }
+    .exercise-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; color: var(--muted); font-size: 10px; }
+    .exercise-meta label { display: inline-flex; align-items: center; gap: 7px; }
+    .toggle { appearance: none; width: 28px; height: 16px; margin: 0; border-radius: 9px; background: #c9c9cf; position: relative; cursor: pointer; transition: background .16s; }
+    .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: white; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .16s; }
+    .toggle:checked { background: #4d8c6a; }
+    .toggle:checked::after { transform: translateX(12px); }
+    .prompt-label { margin-bottom: 7px; color: #85858d; font-size: 10px; font-weight: 620; }
+    .prompt { min-height: 45px; margin-bottom: 20px; font-size: 18px; font-weight: 560; line-height: 1.4; }
+    .sentence { margin: 17px 0 22px; padding: 14px 15px; border-left: 2px solid #c5d7ca; color: #4f4f57; background: #f8f9f8; font-family: Georgia, "Times New Roman", serif; font-size: 15px; line-height: 1.65; }
+    .sentence .blank { display: inline-block; min-width: 65px; border-bottom: 1px solid #888; color: var(--green); text-align: center; }
+    .answer-input { width: 100%; height: 43px; border: 1px solid #d6d6dc; border-radius: 6px; padding: 0 12px; color: var(--ink); background: white; font-size: 15px; }
+    .answer-input::placeholder { color: #a2a2aa; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 17px 0 20px; }
+    .choices[hidden] { display: none; }
+    .choice { min-height: 39px; border: 1px solid #dedee3; border-radius: 6px; padding: 7px 10px; background: #fff; text-align: left; cursor: pointer; }
+    .choice:hover { border-color: #a9b7ad; background: #f7faf8; }
+    .choice.selected { border-color: #4e8668; background: #eef5f0; }
+    .choice.correct { border-color: #4e8668; color: #28583f; background: var(--green-soft); }
+    .choice.wrong { border-color: #cf876c; color: #8e452a; background: var(--orange-soft); }
+    .feedback { display: none; margin-top: 16px; border-top: 1px solid var(--line); padding-top: 13px; animation: appear .18s ease-out; }
+    .feedback.show { display: block; }
+    .feedback-title { margin-bottom: 3px; color: var(--green); font-size: 12px; font-weight: 700; }
+    .feedback.error .feedback-title { color: var(--orange); }
+    .feedback-copy { margin-bottom: 0; color: #65656d; font-size: 11px; }
+    .feedback-word { color: #2d6549; font-weight: 700; }
+    .audio-row { display: flex; align-items: center; gap: 8px; margin-top: 17px; }
+    .audio-button { border: 1px solid #e0e0e4; border-radius: 5px; padding: 5px 9px; color: #52525a; background: white; font-size: 10px; cursor: pointer; }
+    .audio-button:hover { background: #f4f4f6; }
+    .audio-hint { margin-left: 3px; color: #898991; font-size: 10px; }
+    .exercise-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 21px; }
+    .reveal-button { border: 0; padding: 6px 0; color: var(--blue); background: transparent; font-size: 11px; cursor: pointer; }
+    .session-bottom { display: flex; align-items: center; justify-content: space-between; max-width: 700px; margin-top: 17px; color: var(--muted); font-size: 10px; }
+    .session-bottom kbd { min-width: 20px; display: inline-block; margin: 0 2px; border: 1px solid #d6d6db; border-radius: 4px; padding: 1px 5px; color: #6c6c74; background: #f9f9fa; font: inherit; text-align: center; }
+    .progress-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin: 28px 0; }
+    .progress-stat { border-top: 1px solid var(--line); padding-top: 15px; }
+    .progress-stat strong { display: block; margin-bottom: 4px; font-size: 28px; font-weight: 650; }
+    .progress-stat span { color: var(--muted); font-size: 11px; }
+    .week-bars { display: grid; gap: 13px; margin-top: 22px; }
+    .week-row { display: grid; grid-template-columns: 82px 1fr 45px; gap: 12px; align-items: center; color: #62626a; font-size: 11px; }
+    .week-bar { height: 8px; overflow: hidden; border-radius: 8px; background: #e4e4e8; }
+    .week-bar span { height: 100%; display: block; border-radius: inherit; background: #739881; }
+    .week-row em { color: #77777f; font-size: 10px; font-style: normal; text-align: right; }
+    .toast { position: fixed; right: 28px; bottom: 24px; padding: 9px 13px; border: 1px solid #d1e3d6; border-radius: 6px; color: #315f45; background: #f3faf5; box-shadow: 0 6px 20px rgba(20,30,25,.1); opacity: 0; transform: translateY(5px); pointer-events: none; transition: .2s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 850px) {
+      body { padding: 0; background: var(--window); }
+      .window { min-height: 100vh; grid-template-columns: 190px minmax(0,1fr); border: 0; border-radius: 0; }
+      .main { padding: 28px 25px; }
+    }
+    @media (max-width: 620px) {
+      .window { grid-template-columns: 1fr; grid-template-rows: 48px auto minmax(0,1fr); }
+      .titlebar { grid-row: 1; }
+      .sidebar { grid-row: 2; border-right: 0; border-bottom: 1px solid #dedee2; padding: 7px 9px; }
+      .brand, .nav-label, .sidebar-bottom { display: none; }
+      .nav { grid-template-columns: repeat(3,1fr); }
+      .nav button { justify-content: center; padding: 8px 4px; font-size: 10px; }
+      .nav-mark, .nav-count { display: none; }
+      .main { grid-row: 3; padding: 25px 18px; }
+      .metric { padding: 0 9px; }
+      .metric strong { font-size: 17px; }
+      .path { grid-template-columns: 1fr; gap: 14px; }
+      .path-step { display: grid; grid-template-columns: 30px 1fr; gap: 0 9px; padding: 0; }
+      .path-step:not(:last-child)::after { top: 29px; bottom: -13px; left: 13px; right: auto; width: 1px; height: auto; }
+      .step-top { grid-row: 1 / 3; align-items: start; margin: 0; }
+      .word-row { grid-template-columns: 1fr auto; gap: 4px 12px; padding: 9px 0; }
+      .word-meaning { grid-column: 1; }
+      .word-status { grid-column: 2; grid-row: 1 / 3; }
+      .home-footer, .page-heading { align-items: flex-start; flex-direction: column; }
+      .home-footer .primary-button { width: 100%; }
+      .exercise { padding: 20px 17px; }
+      .choices { grid-template-columns: 1fr; }
+      .progress-summary { gap: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <header class="titlebar">
+      <div class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      IELTS Vocabulary Lab
+      <span class="prototype-tag">INTERACTION PREVIEW</span>
+    </header>
+
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">V</span><div><div class="brand-name">IELTS Vocabulary</div><div class="brand-sub">个人学习</div></div></div>
+      <div class="nav-label">学习</div>
+      <nav class="nav" aria-label="主导航">
+        <button type="button" data-page="today" aria-current="page"><span class="nav-mark">01</span>今天</button>
+        <button type="button" data-page="session"><span class="nav-mark">02</span>每日训练</button>
+        <button type="button" data-page="progress"><span class="nav-mark">03</span>学习进度</button>
+      </nav>
+      <div class="nav-label">快捷入口</div>
+      <nav class="nav" aria-label="快捷入口">
+        <button type="button" data-page="session" data-mode="meaning"><span class="nav-mark">A</span>认词</button>
+        <button type="button" data-page="session" data-mode="spell"><span class="nav-mark">B</span>默写</button>
+        <button type="button" data-page="session" data-mode="context"><span class="nav-mark">C</span>语境</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="goal-line"><span>今日目标</span><span id="sidebarGoal">0 / 20</span></div>
+        <div class="mini-track"><span id="sidebarBar" style="width:0%"></span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section id="todayPage" class="page active" aria-labelledby="todayTitle">
+        <div class="page-heading">
+          <div><p class="eyebrow">SATURDAY · OCTOBER 31</p><h1 id="todayTitle">今天</h1><p class="page-subtitle">Week 1 <span aria-hidden="true">/</span> Day 1 · 教育</p></div>
+          <select class="week-select" aria-label="选择学习周"><option>Week 1</option><option>Week 2</option><option>Week 3</option></select>
+        </div>
+
+        <div class="metric-strip" aria-label="今日概况">
+          <div class="metric"><strong id="todayProgress">0 / 20</strong><span>今日新词</span></div>
+          <div class="metric"><strong>4</strong><span>待复习</span></div>
+          <div class="metric"><strong>6,000</strong><span>词汇总量</span></div>
+        </div>
+
+        <div class="daily-header"><h2>今日学习路径</h2><span class="daily-count"><strong>约 15 分钟</strong> · 分三段完成</span></div>
+        <ol class="path" aria-label="今日学习阶段">
+          <li class="path-step current" id="stepMeaning"><div class="step-top"><span class="step-no">1</span><span class="step-state">现在</span></div><div><div class="step-title">认词义</div><div class="step-detail">英文与中文快速配对</div></div></li>
+          <li class="path-step" id="stepSpell"><div class="step-top"><span class="step-no">2</span><span class="step-state">随后</span></div><div><div class="step-title">默写拼写</div><div class="step-detail">看到提示，主动回忆</div></div></li>
+          <li class="path-step" id="stepContext"><div class="step-top"><span class="step-no">3</span><span class="step-state">最后</span></div><div><div class="step-title">放进语境</div><div class="step-detail">用例句确认会使用</div></div></li>
+        </ol>
+
+        <div class="section-divider"></div>
+        <div class="section-heading"><h3>今天的词</h3><button type="button" data-page="session">查看全部 20 个</button></div>
+        <div class="word-list">
+          <div class="word-row"><div class="word-term">access <small>n. / v.</small></div><div class="word-meaning">机会；使用权；进入</div><span class="word-status" id="rowStatus0">待学习</span></div>
+          <div class="word-row"><div class="word-term">curriculum <small>n.</small></div><div class="word-meaning">课程；课程体系</div><span class="word-status">待学习</span></div>
+          <div class="word-row"><div class="word-term">literacy <small>n.</small></div><div class="word-meaning">读写能力；某方面的素养</div><span class="word-status review">待复习</span></div>
+        </div>
+
+        <div class="home-footer"><span class="keyboard-hint">每次完成一个词，进度会即时保存</span><button class="primary-button" type="button" id="startSession">开始今日训练 <span aria-hidden="true">→</span></button></div>
+      </section>
+
+      <section id="sessionPage" class="page" aria-labelledby="sessionHeading">
+        <div class="session-top">
+          <button class="back-button" type="button" id="backToday">← 今天</button>
+          <div class="session-progress"><div class="session-progress-meta"><span>Week 1 · Day 1</span><span id="sessionCounter">第 1 / 20 个</span></div><div class="progress-track"><span id="sessionBar" style="width:5%"></span></div></div>
+        </div>
+        <div class="session-title"><p class="eyebrow">教育 · 每日词汇</p><h1 id="sessionHeading">认词义</h1></div>
+        <div class="mode-segment" role="group" aria-label="训练方式">
+          <button type="button" data-mode="meaning" aria-pressed="true">认词</button><button type="button" data-mode="spell" aria-pressed="false">默写</button><button type="button" data-mode="context" aria-pressed="false">语境</button>
+        </div>
+
+        <article class="exercise" aria-live="polite">
+          <div class="exercise-meta"><span id="exerciseType">词义选择</span><label>中文提示 <input class="toggle" id="meaningToggle" type="checkbox" checked aria-label="显示中文提示"></label></div>
+          <div class="prompt-label" id="promptLabel">选择最贴近的释义</div>
+          <div class="prompt" id="wordPrompt">access</div>
+          <div id="choiceArea" class="choices">
+            <button class="choice" type="button" data-answer="false">机会；使用权；进入</button>
+            <button class="choice" type="button" data-answer="false">责任；義務</button>
+            <button class="choice" type="button" data-answer="false">课程体系</button>
+            <button class="choice" type="button" data-answer="false">识字率；文化</button>
+          </div>
+          <div id="inputArea" hidden>
+            <div class="sentence" id="sentencePrompt" hidden>All children should have equal <span class="blank">_____</span> to quality education.</div>
+            <input class="answer-input" id="answerInput" autocomplete="off" spellcheck="false" placeholder="输入英文单词" aria-label="输入答案">
+          </div>
+          <div class="feedback" id="feedback" role="status"><div class="feedback-title" id="feedbackTitle"></div><p class="feedback-copy" id="feedbackCopy"></p></div>
+          <div class="audio-row"><button class="audio-button" type="button" data-accent="en-GB">UK 发音</button><button class="audio-button" type="button" data-accent="en-US">US 发音</button><span class="audio-hint" id="audioHint">access · /ˈækses/</span></div>
+          <div class="exercise-actions"><button class="reveal-button" type="button" id="revealAnswer">显示答案</button><button class="primary-button" type="button" id="checkAnswer">检查答案 <span aria-hidden="true">↵</span></button></div>
+        </article>
+        <div class="session-bottom"><span>方向键切换单词</span><span><kbd>←</kbd> 上一个 <kbd>→</kbd> 下一个</span></div>
+      </section>
+
+      <section id="progressPage" class="page" aria-labelledby="progressTitle">
+        <div class="page-heading"><div><p class="eyebrow">YOUR LEARNING</p><h1 id="progressTitle">学习进度</h1><p class="page-subtitle">Week 1 · 教育</p></div><button class="secondary-button" type="button" data-page="today">回到今天</button></div>
+        <div class="metric-strip"><div class="metric"><strong id="progressLearned">0</strong><span>今日完成</span></div><div class="metric"><strong>4</strong><span>待复习</span></div><div class="metric"><strong>0%</strong><span>本周掌握</span></div></div>
+        <h2>每周节奏</h2><div class="week-bars">
+          <div class="week-row"><span>周一</span><div class="week-bar"><span style="width:78%"></span></div><em>16 / 20</em></div>
+          <div class="week-row"><span>周二</span><div class="week-bar"><span style="width:56%"></span></div><em>11 / 20</em></div>
+          <div class="week-row"><span>周三</span><div class="week-bar"><span style="width:93%"></span></div><em>19 / 20</em></div>
+          <div class="week-row"><span>周四</span><div class="week-bar"><span style="width:37%"></span></div><em>7 / 20</em></div>
+          <div class="week-row"><span>今天</span><div class="week-bar"><span id="todayWeekBar" style="width:0%"></span></div><em id="todayWeekLabel">0 / 20</em></div>
+        </div>
+        <div class="section-divider"></div><p class="page-subtitle">错词会自动加入复习队列，并在后续练习中再次出现。</p>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (() => {
+      const words = [
+        { term: "access", ipa: "/ˈækses/", meaning: "机会；使用权；进入", example: "All children should have equal access to quality education.", before: "All children should have equal", after: "to quality education." },
+        { term: "curriculum", ipa: "/kəˈrɪkjələm/", meaning: "课程；课程体系", example: "Schools should include financial education in the curriculum.", before: "Schools should include financial education in the", after: "." },
+        { term: "literacy", ipa: "/ˈlɪtərəsi/", meaning: "读写能力；某方面的素养", example: "A high literacy rate is essential for economic development.", before: "A high", after: "rate is essential for economic development." },
+      ];
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+      let page = "today";
+      let mode = "meaning";
+      let index = 0;
+      let completed = 0;
+      let selected = null;
+      let answered = false;
+      let reveal = false;
+      let toastTimer;
+
+      function showPage(next) {
+        page = next;
+        $$(".page").forEach((element) => element.classList.toggle("active", element.id === next + "Page"));
+        $$(".nav [data-page]").forEach((button) => {
+          const selected = button.dataset.page === next && (!button.dataset.mode || button.dataset.mode === mode);
+          if (selected) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        if (next === "session") renderQuestion();
+      }
+
+      function setMode(next) {
+        mode = next;
+        selected = null;
+        answered = false;
+        reveal = false;
+        $$(".mode-segment button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.mode === next)));
+        if (page === "session") {
+          $$(".nav [data-page]").forEach((button) => {
+            const selected = button.dataset.page === "session" && (!button.dataset.mode || button.dataset.mode === mode);
+            if (selected) button.setAttribute("aria-current", "page");
+            else button.removeAttribute("aria-current");
+          });
+        }
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const word = words[index % words.length];
+        const currentNumber = Math.min(completed + 1, 20);
+        $("#sessionCounter").textContent = `第 ${currentNumber} / 20 个`;
+        $("#sessionBar").style.width = `${Math.max(5, completed / 20 * 100)}%`;
+        $("#sessionHeading").textContent = mode === "meaning" ? "认词义" : mode === "spell" ? "默写拼写" : "放进语境";
+        $("#exerciseType").textContent = mode === "meaning" ? "词义选择" : mode === "spell" ? "主动回忆" : "语境填空";
+        $("#promptLabel").textContent = mode === "meaning" ? "选择最贴近的释义" : mode === "spell" ? "根据中文提示写出英文" : "根据句意补全目标词";
+        $("#wordPrompt").textContent = mode === "meaning" ? word.term : $("#meaningToggle").checked ? word.meaning : "中文提示已隐藏";
+        $("#audioHint").textContent = `${word.term} · ${word.ipa}`;
+        $("#choiceArea").hidden = mode !== "meaning";
+        $("#inputArea").hidden = mode === "meaning";
+        $("#sentencePrompt").hidden = mode !== "context";
+        $("#sentencePrompt").innerHTML = `${word.before} <span class="blank">${reveal ? word.term : "_____"}</span> ${word.after}`;
+        $("#revealAnswer").textContent = reveal ? `答案：${word.term} · 收起` : "显示答案";
+        $("#feedback").classList.remove("show", "error");
+        $("#checkAnswer").textContent = answered ? "下一个单词 →" : "检查答案 ↵";
+        $$(".choice").forEach((button, choiceIndex) => {
+          const labels = [word.meaning, "责任；义务", "课程体系", "读写能力；某方面的素养"];
+          button.textContent = labels[choiceIndex];
+          button.classList.remove("selected", "correct", "wrong");
+          button.dataset.answer = String(choiceIndex === 0);
+          button.disabled = answered;
+        });
+        if (mode !== "meaning") { $("#answerInput").value = ""; $("#answerInput").disabled = answered; }
+        $$(".audio-button").forEach((button) => { button.dataset.word = word.term; });
+      }
+
+      function showFeedback(correct, copy) {
+        const feedback = $("#feedback");
+        feedback.classList.toggle("error", !correct);
+        feedback.classList.add("show");
+        $("#feedbackTitle").textContent = correct ? "答对了" : "再看一眼";
+        $("#feedbackCopy").innerHTML = copy;
+      }
+
+      function checkAnswer() {
+        if (answered) { nextWord(); return; }
+        const word = words[index % words.length];
+        let correct = false;
+        if (mode === "meaning") {
+          if (selected === null) { toast("先选一个释义"); return; }
+          correct = selected === 0;
+          $$(".choice").forEach((button, i) => {
+            if (i === 0) button.classList.add("correct");
+            else if (i === selected) button.classList.add("wrong");
+            button.disabled = true;
+          });
+        } else {
+          const entered = $("#answerInput").value.trim().toLowerCase().replace(/[\s-]+/g, "");
+          if (!entered) { $("#answerInput").focus(); return; }
+          correct = entered === word.term.toLowerCase().replace(/[\s-]+/g, "");
+        }
+        answered = true;
+        if (correct) {
+          completed = Math.min(20, completed + 1);
+          updateProgress();
+          showFeedback(true, `答案是 <span class="feedback-word">${word.term}</span>。这次完成进度 +1。`);
+        } else {
+          showFeedback(false, `正确答案是 <span class="feedback-word">${word.term}</span>。已加入稍后复习。`);
+          toast("已加入复习队列");
+        }
+        $("#checkAnswer").textContent = "下一个单词 →";
+      }
+
+      function nextWord() {
+        index = (index + 1) % words.length;
+        selected = null;
+        answered = false;
+        reveal = false;
+        renderQuestion();
+      }
+
+      function updateProgress() {
+        $("#todayProgress").textContent = `${completed} / 20`;
+        $("#sidebarGoal").textContent = `${completed} / 20`;
+        $("#sidebarBar").style.width = `${completed / 20 * 100}%`;
+        $("#progressLearned").textContent = completed;
+        $("#todayWeekBar").style.width = `${completed / 20 * 100}%`;
+        $("#todayWeekLabel").textContent = `${completed} / 20`;
+        $("#rowStatus0").textContent = completed ? "刚刚练过" : "待学习";
+        $("#stepMeaning").classList.toggle("done", completed > 0);
+        $("#stepSpell").classList.toggle("current", completed > 0);
+        $("#stepMeaning").classList.toggle("current", completed === 0);
+      }
+
+      function toast(message) {
+        const element = $("#toast");
+        element.textContent = message;
+        element.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => element.classList.remove("show"), 1500);
+      }
+
+      $$('[data-page]').forEach((button) => button.addEventListener("click", () => {
+        if (button.dataset.mode) setMode(button.dataset.mode);
+        showPage(button.dataset.page);
+      }));
+      $$(".mode-segment button").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+      $$(".choice").forEach((button, choiceIndex) => button.addEventListener("click", () => {
+        if (answered) return;
+        selected = choiceIndex;
+        $$(".choice").forEach((item, i) => item.classList.toggle("selected", i === choiceIndex));
+      }));
+      $("#startSession").addEventListener("click", () => showPage("session"));
+      $("#backToday").addEventListener("click", () => showPage("today"));
+      $("#checkAnswer").addEventListener("click", checkAnswer);
+      $("#revealAnswer").addEventListener("click", () => { reveal = !reveal; renderQuestion(); });
+      $("#meaningToggle").addEventListener("change", renderQuestion);
+      $("#answerInput").addEventListener("keydown", (event) => { if (event.key === "Enter") checkAnswer(); });
+      $$(".audio-button").forEach((button) => button.addEventListener("click", () => {
+        const word = words[index % words.length].term;
+        if (!window.speechSynthesis) { toast(`${button.dataset.accent === "en-GB" ? "UK" : "US"} 发音`); return; }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = button.dataset.accent;
+        utterance.rate = .92;
+        window.speechSynthesis.speak(utterance);
+      }));
+      document.addEventListener("keydown", (event) => {
+        if (page !== "session" || event.target.matches("input,textarea,select")) return;
+        if (event.key === "ArrowRight") nextWord();
+        if (event.key === "ArrowLeft") { index = (index + words.length - 1) % words.length; answered = false; renderQuestion(); }
+        if (event.key === "Escape") showPage("today");
+      });
+      renderQuestion();
+    })();
+  </script>
+</body>
+</html>

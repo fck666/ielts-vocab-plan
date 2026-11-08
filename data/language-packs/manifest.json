@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "sourceLocale": "zh-CN",
+  "locales": [
+    { "locale": "zh-CN", "nativeName": "简体中文", "direction": "ltr", "status": "source", "file": "zh-CN.json" },
+    { "locale": "ja", "nativeName": "日本語", "direction": "ltr", "status": "draft", "file": "ja.json" },
+    { "locale": "ko", "nativeName": "한국어", "direction": "ltr", "status": "draft", "file": "ko.json" },
+    { "locale": "fr", "nativeName": "Français", "direction": "ltr", "status": "draft", "file": "fr.json" },
+    { "locale": "es", "nativeName": "Español", "direction": "ltr", "status": "draft", "file": "es.json" },
+    { "locale": "ar", "nativeName": "العربية", "direction": "rtl", "status": "draft", "file": "ar.json" }
+  ]
+}

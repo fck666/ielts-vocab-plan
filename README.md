@@ -1,6 +1,6 @@
-# 雅思六点五十周高频词汇计划
+# 雅思 6.5 五十周词汇计划
 
-这套资料面向雅思目标 6.5，适合目前大约雅思 4.5–5 的学习者，安排为每周 6 天新词、1 天复习。每天 20 个词或词组，十周共 1200 个学习词汇单位。词条已按标准化英文形式去重，优先覆盖 Task 2 高频主题、Task 1 图表表达、听力场景和口语 Part 3 讨论。
+这套词库有 6000 个学习词汇单位，但不是官方雅思 6000 词表。前 1200 个按常见雅思主题编排；后 4800 个来自 ECDICT 的 IELTS、CET-6、TOEFL、GRE 标签候选词，其中 2644 个带 IELTS 标签，另 2156 个作为跨考试拓展。标签来自第三方词库，不代表官方认证。原生 App 的默认学习路径按“主题核心 + IELTS 标签扩展”排列，共 3844 词；其余词仍可在“全部 6000 词”中查找。新增条目的词典义项及例句译文为机器翻译初稿，Tatoeba 例句保留逐条署名和许可链接，详见[数据来源与署名](./data/THIRD-PARTY-NOTICES.md)。
 
 ## 文件导航
 
@@ -14,9 +14,13 @@
 - [第八周 文化、旅游与人与自然](./week-8.md)
 - [第九周 学术阅读、图表与数据](./week-9.md)
 - [第十周 综合复习与主动输出](./week-10.md)
+- [第十一周 进阶词汇拓展](./week-11.md)
+- [第五十周 进阶词汇拓展](./week-50.md)
 - [打开前端考试系统](./index.html)
 
 ## 前端考试系统
+
+多语言学习包正按简体中文、日语、韩语、法语、西班牙语和阿拉伯语拆分；数据格式、覆盖校验和当前进度见[语言包说明](./docs/language-packs.md)。
 
 当前 Markdown 适合人阅读，但不适合前端直接消费：词条信息分散在多行文本中，字段名称也依赖中文标签。因此目录中同时提供了结构化数据和静态页面：
 
@@ -27,7 +31,13 @@
 - `db.js`、`vendor/sql-wasm.js`、`vendor/sql-wasm.wasm`：在浏览器内运行 SQLite 的持久化层，不需要启动数据库服务。
 - `data/ielts-vocab.sqlite`：可提交到 Git 的词库种子数据库，包含词条表和学习数据表结构。
 
-macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启动本地静态服务并打开浏览器，不会打开 Terminal。应用会常驻菜单栏：点击菜单栏的书本图标可以重新打开学习页面，也可以从同一个菜单停止服务或退出应用；再次打开应用会复用已经运行的服务。服务日志保存在 `~/Library/Logs/IELTS Vocabulary Lab/server.log`。需要查看启动日志或开发调试时，再使用 `start.command`，它会在 Terminal 中前台运行；也可以在本目录运行 `python3 serve.py`。这样浏览器可以正常读取仓库中的 SQLite 种子文件。部分浏览器也能直接双击 `index.html` 打开；如果 `file://` 环境限制数据库文件读取，页面会自动用内置词条数据初始化，但仍建议使用静态服务器。
+macOS App Store 目标版是标准窗口应用：网页界面作为离线资源嵌入 `WKWebView`，不启动 Python、localhost 服务或外部浏览器；菜单栏和桌面词卡作为快捷入口保留。主应用已启用 App Sandbox，学习数据库写入容器内的 `Application Support/IELTS Vocabulary Lab/learning.sqlite`，退出时会等待数据保存；保存失败会给出提示。首次启动不会自行开启登录启动，可由用户在菜单栏选择。工程含 App Privacy Manifest；App Store Connect 上架仍需确认 ASC 登记过的 Bundle ID、配置分发签名和应用元数据。运行 `./mac/build-app.sh`（完整 Xcode）可构建，`./mac/install-app.sh` 会校验并替换当前安装，不会留下旧版副本。原来的独立静态网页仍可通过 `python3 serve.py` 运行。详情见 [Mac App Store 准备说明](./docs/mac-app-store.md)。
+
+原生页面统一遵循[界面外观与窗口适配规范](./docs/native-ui-guidelines.md)：使用系统语义色适配浅色、深色及跟随系统；根据可用宽度和高度切换布局。仓库根目录的 `AGENTS.md` 会让后续 SwiftUI 功能继续应用这套规范。
+
+桌面单词卡片可从菜单栏图标中选择“显示桌面单词卡”；卡片采用透明窗口与半透明磨砂背景，可配置 Week/Day、显示/收起释义、切换上一词/下一词、每批 10 词并自动每分钟切换，以及跳转到对应网页默写词条。卡片被隐藏或其他窗口遮挡时暂停自动切词；重新露出、手动切词或换批后重新计满 60 秒。卡片放在桌面层，其他应用窗口能盖住它；按住顶部“拖动这里移动”区域可自由移动，位置和显隐状态会在重启后恢复。右上角关闭按钮或菜单栏“隐藏桌面单词卡”可以收起卡片。卡片由菜单栏应用管理，无需在 macOS 小组件图库中添加。需求说明和可交互原型见 [桌面词卡文档](./docs/desktop-widget-requirements.md) 与 [HTML 原型](./docs/desktop-widget-prototype.html)。
+
+系统 WidgetKit 小组件与原生桌面词卡仍可用，提供英美发音、换批和学习页深链。WidgetKit 的刷新由 macOS 调度，无法保证无遮挡时每分钟切词；严格计时仍使用桌面卡片。构建、安装和接入步骤见 [系统小组件接入](./docs/native-widget-setup.md)。
 
 页面使用静态 hash 路由，因此不同功能可以使用不同链接，不需要后端路由配置：
 
@@ -47,15 +57,15 @@ macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启�
 
 在 `#/study` 的词条卡片中也可以直接切换“默写模式”。每张卡独立切换，默写时隐藏英文单词、音标、词性和搭配，只保留中文释义与挖空例句；提交后显示答案和反馈。非输入状态下可用左右方向键在当前词条卡之间移动，输入框聚焦时方向键仍用于编辑文本。
 
-### 后续添加 Week 或词汇
+### 扩展 Week 或词汇
 
-数据格式已经按扩展设计。以后可以：
+当前词库包含 Week 1–50。新增周次或词汇时可以：
 
 1. 新建下一个 `week-*.md`，沿用现有词条格式；或者在已有周的某一天继续添加编号。
 2. 运行 `python3 build_data.py`，脚本会扫描所有 `week-*.md`，重新生成 `data/words.json` 和 `data/words.js`。
-3. 重新打开页面。周选择器会根据数据自动出现 Week 4–10 等新选项，不需要修改 HTML 或 JavaScript。
+3. 运行 `python3 build_database.py` 更新 SQLite 种子库，再运行 `node scripts/sync-source-language-pack.mjs` 更新中文源语言包。网页周选择器会按词库数据自动生成，不需要修改 HTML 或 JavaScript；若新增超过 Week 50，还需扩展 WidgetKit 的周次选项。
 
-词条格式的关键是保留以下字段标签：`搭配`、`例句`、`译文`、`词族`、`提醒`。如果未来改用其他数据源，也可以直接按照 `data/schema.json` 生成 JSON。
+词条格式的关键是保留以下字段标签：`搭配`（或 `例句片段`）、`考试词表`、`例句`、`译文`、`词族`、`提醒` 和来源署名。如果未来改用其他数据源，也可以直接按照 `data/schema.json` 生成 JSON。
 
 考试系统支持：
 
@@ -70,14 +80,16 @@ macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启�
 - 拼写题忽略大小写、空格和连字符，兼容常见英美拼写变体，并允许长词 1 个字符的轻微错误
 - 口语 Part 3 与 Task 2 输出练习，保存回答、自评分和日期
 - 页面内学习模式：按 Week、Day 和复习状态筛选词条，直接查看词性、音标、释义、搭配、词族、例句和使用提醒
+- 新增词条显示对应的 IELTS、CET-6、TOEFL、GRE 词表标签；自动从例句截取的短语会标为“例句片段”，不冒充校对过的固定搭配
+- Tatoeba 例句显示贡献者、原句链接和 CC BY 2.0 许可信息
 - 学习模式可以把词条标记为“已会”、安排次日复习，或直接调整 0–5 级熟练度
-- 单词学习卡片和考试题支持英音（UK）/美音（US）朗读，使用浏览器 Web Speech API 自动选择可用英文 voice
+- 单词学习卡片和考试题支持英音（UK）/美音（US）朗读；本机安装版网页优先使用已预热的 macOS 原生语音，其他环境兼容浏览器 Web Speech API
 
 ### 数据库与保存说明
 
-项目目前不需要后端或正在运行的数据库服务。页面加载 `data/ielts-vocab.sqlite` 作为初始词库，并用 SQL.js 在浏览器内读写 SQLite；学习进度、熟练度、错题、复习日期、考试记录和口语/写作记录会保存为 SQLite 快照，再由 IndexedDB 持久化到当前浏览器。因此刷新页面或重新打开同一地址，数据仍会保留。
+静态网页不需要后端或数据库服务：SQL.js 在页面内处理 SQLite，并由 IndexedDB 持久化到当前浏览器。在 Mac App Store 版中，同一 SQL.js 数据层通过受限的 WebKit 消息桥，将 SQLite 快照写到 App Sandbox 内的 `learning.sqlite` 文件；熟练度、错题、复习日期、考试、口语/写作记录都留在这台 Mac。
 
-`data/ielts-vocab.sqlite` 是仓库中的种子文件，不会被浏览器自动改写。统计面板的“导出 SQLite”会下载当前最新快照；把文件复制回 `data/ielts-vocab.sqlite` 后再提交，才能把某次学习状态保存进 Git。也可以在另一台设备用“导入 SQLite”恢复数据。项目不会上传数据，也不会自动跨浏览器或设备同步。
+`data/ielts-vocab.sqlite` 是仓库中的种子文件，不会被自动改写。统计面板的“导出学习数据”可保存当前 SQLite 快照；“导入学习数据”可从另一台设备恢复。Mac App 版本使用系统文件面板，由用户明确选择导入或导出位置。项目不会上传数据，也不会自动跨浏览器或设备同步。
 
 如果浏览器禁用了 IndexedDB（例如某些无痕或严格隐私环境），页面会退回到兼容性的 `localStorage` 保存方式；这时仍可使用考试系统，但不建议把它作为长期备份。
 
@@ -106,13 +118,17 @@ macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启�
 
 练习题保存在前端静态代码中，不需要后端或联网题库；以后可以直接在 `app.js` 的 `weeklyOutputPlan` 中增加或调整十周题目，保存记录的数据库结构无需改变。
 
-词库变更后可运行 `python3 build_data.py` 生成 JSON/JS 数据，再运行 `python3 build_database.py` 重建 Git 中的 SQLite 种子文件。数据库表包括 `words`、`word_progress`、`exams` 和 `practice_records`，后续添加 Week 不需要修改表结构。
+词库变更后可运行 `python3 build_data.py` 生成 JSON/JS 数据，再运行 `python3 build_database.py` 重建 Git 中的 SQLite 种子文件。数据库表包括 `words`、`word_progress`、`exams` 和 `practice_records`；新增来源字段可由页面自动迁移旧数据库。
 
-`vendor/sql-wasm.js` 和 `vendor/sql-wasm.wasm` 来自 [sql.js](https://github.com/sql-js/sql.js)，按其 MIT License 分发。
+`vendor/sql-wasm.js` 和 `vendor/sql-wasm.wasm` 来自 [sql.js](https://github.com/sql-js/sql.js)，按其 MIT License 分发；许可文本随 App 和网页放在 `vendor/THIRD-PARTY-LICENSES.txt`。
 
 ### 发音说明
 
-英音和美音朗读不需要后端或数据库。页面会把词条传给浏览器的 `SpeechSynthesisUtterance`，并优先请求 `en-GB` 或 `en-US` voice。实际可选的声音由操作系统和浏览器决定；如果系统没有对应的英文 voice，浏览器会使用可用的英语 voice，完全不支持 Web Speech API 时会在按钮旁提示。词条目前保留一个通用 `ipa` 字段，英美音频通过语音引擎区分。
+Mac App、系统小组件和原生桌面卡片提供英音、美音按钮，直接调用 macOS `AVSpeechSynthesizer`。Mac App 通过 `WKScriptMessageHandler` 调用原生发音；小组件通过 `AudioPlaybackIntent` 执行，无需打开浏览器。引擎在应用启动后静音预热并常驻，英音优先 Daniel，美音优先 Samantha，均使用已安装的对应口音声音，不需要下载每个词的音频或修改数据库。
+
+Mac App 内页面直接使用原生引擎，不经过 HTTP 或本机 socket。单独运行静态网页时，使用浏览器 `SpeechSynthesisUtterance`。快速点击会替换正在播放的内容；实际音色取决于系统已安装的声音，词条仍保留一个通用 `ipa` 字段。
+
+本机验证中，网页点击到原生引擎 `didStart` 回执约 26–70 毫秒；直接本机请求约 2–10 毫秒。这是引擎启动回执，不包括系统音频设备、蓝牙或扬声器输出延迟，也不是其他机器的性能保证。
 
 ### JSON 字段约定
 
@@ -127,10 +143,14 @@ macOS 用户可以双击项目目录中的 `IELTS Vocabulary Lab.app` 静默启�
   "partOfSpeech": "n./v.",
   "meaningZh": "机会；使用权；进入",
   "collocations": ["access to education"],
+  "examTags": [],
   "exampleEn": "All children should have equal access to quality education.",
   "exampleZh": "所有儿童都应该有平等机会接受优质教育。",
   "wordFamily": "accessible adj.; accessibility n.",
-  "note": "通常说 access to，不要说 access of。"
+  "note": "通常说 access to，不要说 access of。",
+  "exampleSource": "Tatoeba sentence by contributor (CC BY 2.0)",
+  "exampleSourceUrl": "https://tatoeba.org/en/sentences/show/12345",
+  "exampleLicenseUrl": "https://creativecommons.org/licenses/by/2.0/"
 }
 ```
 

@@ -1,19 +1,79 @@
 import AppKit
 import Foundation
+import ServiceManagement
 
+@MainActor
 final class MenuBarAppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
+    private let cardVisibilityKey = "desktopCard.isVisible"
     private var statusItem: NSStatusItem!
-    private var statusTimer: Timer?
-    private var isRunning = false
-    private var isBusy = false
-    private var serverURL: URL?
     private var statusLine: NSMenuItem!
     private var openItem: NSMenuItem!
-    private var stopItem: NSMenuItem!
+    private var cardItem: NSMenuItem!
+    private var loginItem: NSMenuItem!
+    private var cardController: DesktopVocabularyCardWindowController?
+    private var learningWindowController: LearningWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
-        installFinderIcon()
+        NSApp.setActivationPolicy(.regular)
+        VocabularySpeech.shared.warmUp()
+        buildMenu()
+        updateLoginItemMenu()
+        showMainWindow()
+        if UserDefaults.standard.object(forKey: cardVisibilityKey) as? Bool == true {
+            showVocabularyCard()
+        }
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls where url.scheme == "ieltsvocab" {
+            switch url.host {
+            case "study":
+                let query = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+                let week = query.first(where: { $0.name == "week" })?.value.flatMap(Int.init) ?? 1
+                let day = query.first(where: { $0.name == "day" })?.value.flatMap(Int.init) ?? 1
+                let word = query.first(where: { $0.name == "word" })?.value
+                showStudyRoute(week: min(max(week, 1), 50), day: min(max(day, 1), 6), word: word)
+            case "card":
+                toggleVocabularyCard()
+            default:
+                break
+            }
+        }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        if !hasVisibleWindows { showMainWindow() }
+        return true
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        VocabularySpeech.shared.stop()
+    }
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard let learningWindowController else { return .terminateNow }
+        learningWindowController.flushLearningData { saved in
+            if saved {
+                sender.reply(toApplicationShouldTerminate: true)
+            } else {
+                let alert = NSAlert()
+                alert.messageText = "最新学习进度尚未保存"
+                alert.informativeText = "可以取消退出后重试，或先导出学习数据。仍然退出可能丢失最近的修改。"
+                alert.addButton(withTitle: "取消退出")
+                alert.addButton(withTitle: "仍然退出")
+                sender.reply(toApplicationShouldTerminate: alert.runModal() == .alertSecondButtonReturn)
+            }
+        }
+        return .terminateLater
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        updateStatus()
+        updateLoginItemMenu()
+    }
+
+    private func buildMenu() {
+        buildApplicationMenu()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "book.closed.fill", accessibilityDescription: "IELTS Vocabulary Lab")
@@ -28,189 +88,169 @@ final class MenuBarAppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate 
         menu.addItem(heading)
         menu.addItem(.separator())
 
-        statusLine = NSMenuItem(title: "正在检查服务…", action: nil, keyEquivalent: "")
+        statusLine = NSMenuItem(title: "离线可用 · 数据保存在本机", action: nil, keyEquivalent: "")
         statusLine.isEnabled = false
         menu.addItem(statusLine)
 
-        openItem = NSMenuItem(title: "打开学习页面", action: #selector(openStudyPage), keyEquivalent: "o")
+        openItem = NSMenuItem(title: "打开学习窗口", action: #selector(openStudyPage), keyEquivalent: "o")
         openItem.target = self
         menu.addItem(openItem)
 
-        stopItem = NSMenuItem(title: "停止服务", action: #selector(stopServer), keyEquivalent: "")
-        stopItem.target = self
-        menu.addItem(stopItem)
+        cardItem = NSMenuItem(title: "显示桌面单词卡", action: #selector(toggleVocabularyCard), keyEquivalent: "")
+        cardItem.target = self
+        menu.addItem(cardItem)
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: "退出并停止服务", action: #selector(quitApp), keyEquivalent: "q")
+        loginItem = NSMenuItem(title: "登录时启动", action: #selector(toggleLoginAtLogin), keyEquivalent: "")
+        loginItem.target = self
+        menu.addItem(loginItem)
+
+        let quitItem = NSMenuItem(title: "退出 IELTS Vocabulary Lab", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
         statusItem.menu = menu
-
-        statusTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
-            self?.refreshStatus()
-        }
-        refreshStatus()
-        runLauncher(["start", "--no-open"]) { [weak self] result, error in
-            guard let self else { return }
-            if let error {
-                self.showError("启动失败", detail: error)
-            } else if let urlString = result?["url"] as? String, let url = URL(string: urlString) {
-                self.serverURL = url
-                NSWorkspace.shared.open(url)
-            }
-            self.refreshStatus()
-        }
+        updateStatus()
     }
 
-    func menuWillOpen(_ menu: NSMenu) {
-        refreshStatus()
-    }
+    private func buildApplicationMenu() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        let appMenu = NSMenu()
+        appMenu.addItem(withTitle: "关于 IELTS Vocabulary Lab", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: "隐藏 IELTS Vocabulary Lab", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        appMenu.addItem(withTitle: "退出 IELTS Vocabulary Lab", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenuItem.submenu = appMenu
+        mainMenu.addItem(appMenuItem)
 
-    func applicationWillTerminate(_ notification: Notification) {
-        statusTimer?.invalidate()
-        runLauncherSynchronously(["stop"])
+        let editMenuItem = NSMenuItem()
+        let editMenu = NSMenu(title: "编辑")
+        editMenu.addItem(withTitle: "撤销", action: Selector(("undo:")), keyEquivalent: "z")
+        editMenu.addItem(withTitle: "重做", action: Selector(("redo:")), keyEquivalent: "Z")
+        editMenu.addItem(.separator())
+        editMenu.addItem(withTitle: "剪切", action: Selector(("cut:")), keyEquivalent: "x")
+        editMenu.addItem(withTitle: "拷贝", action: Selector(("copy:")), keyEquivalent: "c")
+        editMenu.addItem(withTitle: "粘贴", action: Selector(("paste:")), keyEquivalent: "v")
+        editMenu.addItem(withTitle: "全选", action: Selector(("selectAll:")), keyEquivalent: "a")
+        editMenuItem.submenu = editMenu
+        mainMenu.addItem(editMenuItem)
+
+        let windowMenuItem = NSMenuItem()
+        let windowMenu = NSMenu(title: "窗口")
+        windowMenu.addItem(withTitle: "最小化", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        windowMenu.addItem(withTitle: "缩放", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: "")
+        windowMenuItem.submenu = windowMenu
+        mainMenu.addItem(windowMenuItem)
+        NSApp.mainMenu = mainMenu
+        NSApp.windowsMenu = windowMenu
     }
 
     @objc private func openStudyPage() {
-        guard !isBusy else { return }
-        if isRunning, let serverURL {
-            NSWorkspace.shared.open(serverURL)
-            return
-        }
-        isBusy = true
-        updateMenu()
-        runLauncher(["start", "--no-open"]) { [weak self] result, error in
-            guard let self else { return }
-            self.isBusy = false
-            if let error {
-                self.showError("启动失败", detail: error)
-            } else if let urlString = result?["url"] as? String, let url = URL(string: urlString) {
-                self.serverURL = url
-                NSWorkspace.shared.open(url)
-            }
-            self.refreshStatus()
-        }
-    }
-
-    @objc private func stopServer() {
-        guard !isBusy, isRunning else { return }
-        isBusy = true
-        updateMenu()
-        runLauncher(["stop"]) { [weak self] _, error in
-            guard let self else { return }
-            self.isBusy = false
-            self.serverURL = nil
-            if let error {
-                self.showError("停止失败", detail: error)
-            }
-            self.refreshStatus()
-        }
+        showMainWindow()
     }
 
     @objc private func quitApp() {
         NSApp.terminate(nil)
     }
 
-    private func refreshStatus() {
-        runLauncher(["status"]) { [weak self] result, _ in
-            guard let self, let result else { return }
-            self.isRunning = result["running"] as? Bool ?? false
-            if let urlString = result["url"] as? String {
-                self.serverURL = URL(string: urlString)
-            } else {
-                self.serverURL = nil
-            }
-            self.updateMenu()
+    private func showMainWindow() {
+        if learningWindowController == nil {
+            learningWindowController = LearningWindowController()
         }
+        learningWindowController?.showMainWindow()
     }
 
-    private func updateMenu() {
-        if isBusy {
-            statusLine.title = "正在处理…"
-        } else if isRunning {
-            let port = serverURL?.port.map(String.init) ?? ""
-            statusLine.title = port.isEmpty ? "服务运行中" : "服务运行中 · \(port)"
-        } else {
-            statusLine.title = "服务已停止"
+    private func showStudyRoute(week: Int, day: Int, word: String?) {
+        if learningWindowController == nil {
+            learningWindowController = LearningWindowController()
         }
-        openItem.isEnabled = !isBusy
-        stopItem.isEnabled = isRunning && !isBusy
+        learningWindowController?.showStudy(week: week, day: day, word: word)
     }
 
-    private var projectRoot: URL {
-        Bundle.main.bundleURL.deletingLastPathComponent()
-    }
-
-    private var launcherPath: URL {
-        projectRoot.appendingPathComponent("launcher.py")
-    }
-
-    private func pythonPath() -> String? {
-        let candidates = [
-            "/opt/homebrew/bin/python3",
-            "/usr/local/bin/python3",
-            "/Library/Frameworks/Python.framework/Versions/Current/bin/python3",
-            "/usr/bin/python3",
-        ]
-        return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
-    }
-
-    private func runLauncher(
-        _ arguments: [String],
-        completion: @escaping ([String: Any]?, String?) -> Void
-    ) {
-        guard let python = pythonPath() else {
-            completion(nil, "找不到 Python 3。请安装 Python 3 后重试。")
+    @objc private func toggleVocabularyCard() {
+        if let cardController, cardController.window?.isVisible == true {
+            cardController.close()
             return
         }
-        guard FileManager.default.fileExists(atPath: launcherPath.path) else {
-            completion(nil, "启动器文件不存在：\(launcherPath.path)")
-            return
-        }
+        showVocabularyCard()
+    }
 
-        let process = Process()
-        let output = Pipe()
-        let errors = Pipe()
-        process.executableURL = URL(fileURLWithPath: python)
-        process.arguments = [launcherPath.path] + arguments
-        process.currentDirectoryURL = projectRoot
-        process.standardOutput = output
-        process.standardError = errors
-        process.terminationHandler = { process in
-            let stdout = output.fileHandleForReading.readDataToEndOfFile()
-            let stderr = errors.fileHandleForReading.readDataToEndOfFile()
-            let outputText = String(data: stdout, encoding: .utf8) ?? ""
-            let errorText = String(data: stderr, encoding: .utf8) ?? ""
-            var payload: [String: Any]?
-            if let data = outputText.data(using: .utf8) {
-                payload = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
-            }
-            DispatchQueue.main.async {
-                if process.terminationStatus == 0 {
-                    completion(payload, nil)
-                } else {
-                    let detail = errorText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    completion(nil, detail.isEmpty ? "启动器退出代码：\(process.terminationStatus)" : detail)
-                }
-            }
+    private func showVocabularyCard() {
+        let controller = cardController ?? DesktopVocabularyCardWindowController()
+        controller.onClose = { [weak self, weak controller] in
+            guard let self else { return }
+            if self.cardController === controller { self.cardController = nil }
+            UserDefaults.standard.set(false, forKey: self.cardVisibilityKey)
+            self.updateCardMenu()
         }
+        cardController = controller
+        controller.showCard()
+        UserDefaults.standard.set(true, forKey: cardVisibilityKey)
+        updateCardMenu()
+    }
+
+    private func updateStatus() {
+        statusLine.title = "离线可用 · 数据保存在本机"
+        openItem.title = learningWindowController?.window?.isVisible == true ? "显示学习窗口" : "打开学习窗口"
+        updateCardMenu()
+    }
+
+    private func updateCardMenu() {
+        let isVisible = cardController?.window?.isVisible == true
+        cardItem.title = isVisible ? "隐藏桌面单词卡" : "显示桌面单词卡"
+        cardItem.state = isVisible ? .on : .off
+    }
+
+    @objc private func toggleLoginAtLogin() {
+        let service = SMAppService.mainApp
         do {
-            try process.run()
+            if service.status == .enabled {
+                try service.unregister()
+            } else if service.status == .requiresApproval {
+                openLoginItemsSettings()
+                return
+            } else {
+                try service.register()
+            }
+            updateLoginItemMenu()
+            if service.status == .requiresApproval {
+                openLoginItemsSettings()
+                showError("需要允许登录启动", detail: "请在“系统设置 > 通用 > 登录项”中允许 IELTS Vocabulary Lab。")
+            }
         } catch {
-            completion(nil, error.localizedDescription)
+            showError("设置登录启动失败", detail: error.localizedDescription)
         }
     }
 
-    private func runLauncherSynchronously(_ arguments: [String]) {
-        guard let python = pythonPath() else { return }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: python)
-        process.arguments = [launcherPath.path] + arguments
-        process.currentDirectoryURL = projectRoot
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        try? process.run()
-        process.waitUntilExit()
+    private func updateLoginItemMenu() {
+        switch SMAppService.mainApp.status {
+        case .enabled:
+            loginItem.title = "登录时启动"
+            loginItem.state = .on
+            loginItem.isEnabled = true
+        case .requiresApproval:
+            loginItem.title = "在系统设置中允许登录启动…"
+            loginItem.state = .off
+            loginItem.isEnabled = true
+        case .notRegistered:
+            loginItem.title = "登录时启动"
+            loginItem.state = .off
+            loginItem.isEnabled = true
+        case .notFound:
+            loginItem.title = "登录时启动不可用"
+            loginItem.state = .off
+            loginItem.isEnabled = false
+        @unknown default:
+            loginItem.title = "登录时启动"
+            loginItem.state = .off
+            loginItem.isEnabled = false
+        }
+    }
+
+    private func openLoginItemsSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     private func showError(_ title: String, detail: String) {
@@ -221,15 +261,4 @@ final class MenuBarAppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate 
         alert.addButton(withTitle: "好")
         alert.runModal()
     }
-
-    private func installFinderIcon() {
-        guard let iconPath = Bundle.main.path(forResource: "IELTSVocabularyLab", ofType: "icns"),
-              let icon = NSImage(contentsOfFile: iconPath) else { return }
-        NSWorkspace.shared.setIcon(icon, forFile: Bundle.main.bundlePath, options: [])
-    }
 }
-
-let app = NSApplication.shared
-let delegate = MenuBarAppDelegate()
-app.delegate = delegate
-app.run()

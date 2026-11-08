@@ -4,6 +4,8 @@
   const DB_NAME = "ielts-vocabulary-lab-sqlite-v1";
   const DB_STORE = "snapshots";
   const SNAPSHOT_KEY = "main";
+  const nativeDatabase = window.webkit?.messageHandlers?.ieltsDatabase || null;
+  const nativeFiles = window.webkit?.messageHandlers?.ieltsFiles || null;
   const LEGACY_KEYS = [
     "ielts-vocabulary-lab-records-v1",
     "ielts-vocabulary-lab-progress-v1",
@@ -30,7 +32,11 @@
       example_en TEXT NOT NULL,
       example_zh TEXT NOT NULL,
       word_family TEXT NOT NULL,
-      note TEXT NOT NULL
+      note TEXT NOT NULL,
+      example_source TEXT NOT NULL DEFAULT '',
+      example_source_url TEXT NOT NULL DEFAULT '',
+      example_license_url TEXT NOT NULL DEFAULT '',
+      exam_tags_json TEXT NOT NULL DEFAULT '[]'
     );
     CREATE TABLE IF NOT EXISTS word_progress (
       word_id TEXT PRIMARY KEY,
@@ -103,6 +109,46 @@
     });
   }
 
+  function bytesToBase64(bytes) {
+    let binary = "";
+    const chunkSize = 0x8000;
+    for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+    }
+    return btoa(binary);
+  }
+
+  function base64ToBytes(value) {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return bytes;
+  }
+
+  async function readNativeSnapshot() {
+    const result = await nativeDatabase.postMessage({ action: "load" });
+    if (!result?.ok || typeof result.base64 !== "string") throw new Error("Unable to load the app database");
+    return base64ToBytes(result.base64);
+  }
+
+  async function saveNativeSnapshot(bytes) {
+    const result = await nativeDatabase.postMessage({ action: "save", base64: bytesToBase64(bytes) });
+    if (!result?.ok) throw new Error(result?.error || "Unable to save the app database");
+    return true;
+  }
+
+  function reportStorageError(message) {
+    let warning = document.querySelector("#databaseWarning");
+    if (!warning) {
+      warning = document.createElement("p");
+      warning.id = "databaseWarning";
+      warning.setAttribute("role", "alert");
+      warning.style.cssText = "margin:16px 20px;padding:16px;border:1px solid #b64a32;border-radius:12px;background:#fff3e8;color:#7a2818;";
+      document.body.prepend(warning);
+    }
+    warning.textContent = message;
+  }
+
   function readSnapshot(idb) {
     if (!idb) return Promise.resolve(null);
     return new Promise((resolve) => {
@@ -136,15 +182,31 @@
       for (const word of words) {
         db.run(
           `INSERT OR IGNORE INTO words
-            (id, week, day, day_title, term, ipa, part_of_speech, meaning_zh, collocations_json, example_en, example_zh, word_family, note)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [word.id, word.week, word.day, word.dayTitle, word.term, word.ipa, word.partOfSpeech, word.meaningZh, JSON.stringify(word.collocations || []), word.exampleEn, word.exampleZh, word.wordFamily || "", word.note || ""],
+            (id, week, day, day_title, term, ipa, part_of_speech, meaning_zh, collocations_json, example_en, example_zh, word_family, note, example_source, example_source_url, example_license_url, exam_tags_json)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [word.id, word.week, word.day, word.dayTitle, word.term, word.ipa, word.partOfSpeech, word.meaningZh, JSON.stringify(word.collocations || []), word.exampleEn, word.exampleZh, word.wordFamily || "", word.note || "", word.exampleSource || "", word.exampleSourceUrl || "", word.exampleLicenseUrl || "", JSON.stringify(word.examTags || [])],
+        );
+        db.run(
+          "UPDATE words SET example_source = ?, example_source_url = ?, example_license_url = ?, exam_tags_json = ? WHERE id = ?",
+          [word.exampleSource || "", word.exampleSourceUrl || "", word.exampleLicenseUrl || "", JSON.stringify(word.examTags || []), word.id],
         );
       }
       db.run("COMMIT");
     } catch (error) {
       db.run("ROLLBACK");
       throw error;
+    }
+  }
+
+  function ensureWordSourceColumns(db) {
+    const columns = new Set((db.exec("PRAGMA table_info(words)")[0]?.values || []).map((row) => row[1]));
+    for (const [name, declaration] of [
+      ["example_source", "TEXT NOT NULL DEFAULT ''"],
+      ["example_source_url", "TEXT NOT NULL DEFAULT ''"],
+      ["example_license_url", "TEXT NOT NULL DEFAULT ''"],
+      ["exam_tags_json", "TEXT NOT NULL DEFAULT '[]'"],
+    ]) {
+      if (!columns.has(name)) db.run(`ALTER TABLE words ADD COLUMN ${name} ${declaration}`);
     }
   }
 
@@ -213,6 +275,7 @@
       exportBytes: () => null,
       importBytes: async () => false,
       download: () => false,
+      flush: async () => false,
       getStats: (allWords) => summarize(fallback.getProgressMap(), fallback.getExamRecords(), fallback.getPracticeRecords(), allWords),
     };
     return fallback;
@@ -246,19 +309,20 @@
 
   async function initialize() {
     if (typeof window.initSqlJs !== "function") return makeFallback();
-    const idb = await openIndexedDb();
+    const idb = nativeDatabase ? null : await openIndexedDb();
     // SQLite snapshots need IndexedDB for persistence. Keep the legacy backend
     // when it is unavailable so a private/blocked browser cannot lose progress.
-    if (!idb) return makeFallback();
+    if (!nativeDatabase && !idb) return makeFallback();
     const SQL = await window.initSqlJs({
       locateFile: (file) => new URL(file, new URL("vendor/", document.baseURI)).toString(),
     });
-    const stored = await readSnapshot(idb);
+    const stored = nativeDatabase ? await readNativeSnapshot() : await readSnapshot(idb);
     let db;
     if (stored) {
       db = new SQL.Database(stored);
     } else {
       try {
+        if (nativeDatabase) throw new Error("Native database seed was not returned");
         const response = await fetch("data/ielts-vocab.sqlite", { cache: "no-store" });
         if (!response.ok) throw new Error(`Seed database returned ${response.status}`);
         db = new SQL.Database(new Uint8Array(await response.arrayBuffer()));
@@ -267,6 +331,7 @@
       }
     }
     db.exec(schemaSql);
+    ensureWordSourceColumns(db);
     seedWords(db);
 
     const hasMigrated = db.exec("SELECT value FROM metadata WHERE key = 'legacy_migration_v1'")[0]?.values[0]?.[0] === "done";
@@ -296,8 +361,19 @@
       exportBytes: () => db.export(),
       importBytes: async (bytes) => {
         const imported = new SQL.Database(bytes);
-        imported.exec(schemaSql);
-        seedWords(imported);
+        try {
+          if (imported.exec("PRAGMA quick_check")[0]?.values[0]?.[0] !== "ok") throw new Error("Invalid SQLite database");
+          if (!imported.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='words'")[0]?.values.length) throw new Error("Not a vocabulary database");
+          imported.exec(schemaSql);
+          ensureWordSourceColumns(imported);
+          seedWords(imported);
+          progressMapFromDb(imported);
+          recordsFromDb(imported);
+          practiceFromDb(imported);
+        } catch (error) {
+          imported.close();
+          throw error;
+        }
         const previous = db;
         clearTimeout(persistTimer);
         db = imported;
@@ -310,8 +386,19 @@
         previous.close();
         return true;
       },
-      download: () => {
-        const blob = new Blob([db.export()], { type: "application/vnd.sqlite3" });
+      download: async () => {
+        const bytes = db.export();
+        if (nativeFiles) {
+          const result = await nativeFiles.postMessage({
+            action: "saveDatabase",
+            base64: bytesToBase64(bytes),
+            fileName: `ielts-vocab-${new Date().toISOString().slice(0, 10)}.sqlite`,
+          });
+          if (result?.cancelled) return null;
+          if (!result?.ok) throw new Error(result?.error || "Unable to export database");
+          return true;
+        }
+        const blob = new Blob([bytes], { type: "application/vnd.sqlite3" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -321,13 +408,22 @@
         return true;
       },
       getStats: () => summarize(progressMapFromDb(db), recordsFromDb(db), practiceFromDb(db), words),
+      flush: () => { clearTimeout(persistTimer); return persist(); },
     };
     let persistTimer = null;
     let persistChain = Promise.resolve();
     function persist() {
-      if (!idb) return Promise.resolve(false);
       const bytes = db.export();
-      persistChain = persistChain.then(() => saveSnapshot(idb, bytes));
+      persistChain = persistChain.catch(() => false).then(() => nativeDatabase ? saveNativeSnapshot(bytes) : saveSnapshot(idb, bytes))
+        .then((saved) => {
+          if (!saved) throw new Error("Unable to persist database");
+          document.querySelector("#databaseWarning")?.remove();
+          return true;
+        }).catch((error) => {
+          console.error("Database save failed", error);
+          reportStorageError("最新学习进度尚未保存，请重试或导出学习数据备份后再退出。");
+          return false;
+        });
       return persistChain;
     }
     function queuePersist() {
@@ -341,6 +437,7 @@
     const persisted = await persist();
     if (!persisted) {
       // Do not delete the source data unless the SQLite snapshot is durable.
+      if (nativeDatabase) throw new Error("Unable to save the app database");
       return makeFallback();
     }
     if (migratedLegacy) {
@@ -366,6 +463,7 @@
 
   window.IELTSDatabaseReady = initialize().catch((error) => {
     console.error("SQLite initialization failed; using browser fallback.", error);
+    if (nativeDatabase) reportStorageError("学习数据库加载失败，当前使用兼容存储。请关闭并重新打开应用；在问题解决前，请勿依赖本次学习进度。");
     return makeFallback();
   });
 })();

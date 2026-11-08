@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>IELTS Vocabulary Lab</title>
-    <link rel="stylesheet" href="styles.css?v=20260923-stars-v2" />
+    <link rel="stylesheet" href="styles.css?v=20261031-vocabulary-6000" />
   </head>
   <body>
     <header class="site-header">
@@ -13,7 +13,7 @@
         <p class="eyebrow">IELTS 6.5 VOCABULARY LAB</p>
         <h1>雅思词汇考试系统</h1>
       </div>
-      <div class="header-stat" id="headerStat">1200 个词汇单位</div>
+      <div class="header-stat" id="headerStat">6000 个词汇单位</div>
     </header>
 
     <main class="app-shell">
@@ -119,7 +119,7 @@
               </section>
 
               <section class="practice-teaser panel" aria-label="口语和写作练习">
-                <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
+                <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，保存在当前设备。</p></div>
                 <div class="practice-entry-actions"><button id="openSpeaking" class="secondary-button" type="button">口语练习 <span>→</span></button><button id="openWriting" class="secondary-button" type="button">写作练习 <span>→</span></button></div>
               </section>
             </div>
@@ -263,11 +263,19 @@
         </article>
       </section>
     </main>
-    <footer class="site-footer">本地静态页面 · SQLite 数据保存在浏览器本机，不会上传</footer>
+    <footer class="site-footer">本地学习应用 · SQLite 数据保存在本机，不会上传</footer>
 
     <script src="vendor/sql-wasm.js"></script>
-    <script src="data/words.js"></script>
+    <script src="data/words.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/manifest.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/zh-CN.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/ja.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/ko.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/fr.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/es.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs/ar.js?v=20261031-vocabulary-6000"></script>
+    <script src="data/language-packs.js?v=20261031-vocabulary-6000"></script>
     <script src="db.js"></script>
-    <script src="app.js?v=20260923-stars"></script>
+    <script src="app.js?v=20261031-vocabulary-6000"></script>
   </body>
 </html>

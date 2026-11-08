@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Vocabulary Lab · 写作原型</title>
+<link rel="stylesheet" href="native-macos-speaking-prototype.css">
+<link rel="stylesheet" href="native-macos-writing-prototype.css">
+<script src="native-macos-writing-prototype.js" defer></script>
+</head>
+<body>
+<div class="window">
+<header class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span>IELTS Vocabulary Lab</span><span class="prototype-label">原型 04 · 写作</span></header>
+<aside class="sidebar">
+  <div class="brand"><span class="brand-mark">V</span><div><strong>IELTS Vocabulary</strong><small>个人学习</small></div></div>
+  <div class="nav-label">学习</div>
+  <nav aria-label="学习模块"><a href="native-macos-prototype.html"><span aria-hidden="true">◷</span>今天与每日训练<span class="external">↗</span></a><a href="native-macos-vocab-prototype.html"><span aria-hidden="true">Aa</span>词库与考试<span class="external">↗</span></a><a href="native-macos-speaking-prototype.html"><span aria-hidden="true">◌</span>口语练习<span class="external">↗</span></a></nav>
+  <div class="nav-label">写作</div>
+  <nav aria-label="写作导航"><button data-nav="practice" aria-current="page"><span aria-hidden="true">✎</span>写作练习</button><button data-nav="plan"><span aria-hidden="true">▦</span>十周计划</button><button data-nav="drafts"><span aria-hidden="true">▤</span>草稿与记录<span class="count" id="draftCount">0</span></button></nav>
+  <div class="sidebar-foot"><strong>写完一篇，认真改一遍。</strong><p>交互原型 · 独立演示数据<br>草稿只暂存在当前页面<br>刷新或关闭页面后清空</p><button class="text-button" id="aboutButton">题目与计时说明</button></div>
+</aside>
+<main>
+<section class="page active" id="practicePage" aria-labelledby="practiceTitle">
+  <div class="page-heading"><div><p class="eyebrow">ACADEMIC WRITING</p><h1 id="practiceTitle">写作练习</h1><p class="subtitle">先审题与组织思路，再完成文章，最后留下修改记录。</p></div><button class="button secondary" id="startFull">60 分钟整套练习 →</button></div>
+  <div class="top-tools"><div class="segmented" aria-label="写作任务"><button data-task="t1" aria-pressed="true">Task 1 <span>图表报告</span></button><button data-task="t2" aria-pressed="false">Task 2 <span>议论文</span></button></div><label class="week-label">主题周<select id="weekSelect" aria-label="选择主题周"></select></label></div>
+  <div class="writing-overview"><div><span id="taskType" class="eyebrow">BAR CHART</span><h2 id="topicHeading"></h2><p id="taskSummary" class="body-copy"></p></div><div class="requirements"><strong id="timeRequirement">建议 20 分钟</strong><span id="wordRequirement">至少 150 词</span></div></div>
+  <article class="prompt-preview"><div><p class="sheet-label" id="previewTaskLabel">WRITING TASK 1</p><h2 id="previewQuestion" lang="en"></h2><p id="previewInstruction" class="exam-instruction" lang="en"></p><button class="text-button" id="previewTranslationToggle" aria-expanded="false">显示中文题意</button><p id="previewTranslation" class="translation" hidden></p><p class="source-note">自编练习题与虚构示意数据 · 非官方真题或预测题</p></div><div id="previewVisual" class="preview-visual"></div></article>
+  <div class="start-panel"><div><span class="field-label">练习方式</span><div class="segmented" aria-label="练习计时方式"><button data-mode="timed" aria-pressed="true">限时练习</button><button data-mode="free" aria-pressed="false">自由写作</button></div><p class="footnote" id="modeHelp">可暂停；计时结束后不会自动交卷。</p></div><button class="button primary" id="startWriting">开始写作 →</button></div>
+  <div class="quiet-note"><span aria-hidden="true">↳</span><p><strong>练习不止于“写完”</strong><br>文章字数、草稿、自评与修订稿放在同一个流程里，方便回头比较。</p><button class="text-button" data-nav="plan">看十周安排 →</button></div>
+</section>
+
+<section class="page" id="planPage" aria-labelledby="planTitle">
+  <div class="page-heading"><div><p class="eyebrow">TEN-WEEK WRITING PLAN</p><h1 id="planTitle">从单项练习到完整写作</h1><p class="subtitle">延续十周主题；用图表类型与议论文题型交叉练习。</p></div><button class="button secondary" data-nav="practice">返回练习</button></div>
+  <div class="weekly-rhythm"><div><span>周一 / 周二</span><strong>读图与概述 → Task 1</strong><small>选重点，写比较，核对数据</small></div><div><span>周三 / 周四</span><strong>审题与提纲 → Task 2</strong><small>立场、理由和具体例证</small></div><div><span>周五</span><strong>回读与修改</strong><small>保留初稿，针对薄弱处修订</small></div><div><span>周末 / 第十周</span><strong>回顾与整套限时</strong><small>练时间分配，避免只练熟题</small></div></div>
+  <div id="planList"></div><p class="footnote">原型每周各 1 道 Task 1 和 Task 2，共 20 道示例题。题库规模与更新策略后续确定，当前不扩充大量题目。</p>
+</section>
+
+<section class="page" id="draftsPage" aria-labelledby="draftsTitle">
+  <div class="page-heading"><div><p class="eyebrow">DRAFTS & REVISIONS</p><h1 id="draftsTitle">草稿与练习记录</h1><p class="subtitle">在当前页面继续写、回看初稿或比较修改。演示记录刷新即清空。</p></div><button class="button secondary" data-nav="practice">新建练习</button></div>
+  <div id="draftList"></div>
+</section>
+
+<section class="page" id="editorPage" aria-labelledby="editorHeading">
+  <div class="editor-heading"><div><button class="text-button" id="backFromEditor">← 保存并返回</button><h1 id="editorHeading">Week 1 · 写作</h1></div><div class="editor-heading-actions"><span class="session-save" id="saveState" role="status">当前页面已暂存</span><button class="button secondary" id="saveDraft">保存草稿</button><button class="button primary" id="finishWriting">完成，检查文章 →</button></div></div>
+  <div class="writing-session-bar"><div class="segmented" id="sessionTasks" aria-label="整套练习任务"><button data-editor-task="t1" aria-pressed="true">Task 1</button><button data-editor-task="t2" aria-pressed="false">Task 2</button></div><span id="sessionModeLabel" class="session-mode-label"></span><div class="clock-area"><span id="clockLabel">剩余</span><span id="writingClock" role="timer" aria-label="写作时间">20:00</span><button class="text-button" id="pauseTimer">暂停</button></div><button class="text-button" id="focusToggle" aria-pressed="false">专注写作</button></div>
+  <p id="timerNotice" class="timer-notice" role="status" hidden></p>
+  <div class="writing-layout" id="writingLayout"><div class="writing-prompt" id="writingPrompt"><div class="prompt-heading"><span class="sheet-label" id="sessionTaskLabel">WRITING TASK 1</span><span id="sessionMinWords"></span></div><h2 id="sessionQuestion" lang="en"></h2><p id="sessionInstruction" class="exam-instruction" lang="en"></p><div id="sessionVisual"></div><div class="visual-tools" id="visualTools"><button class="text-button" id="expandVisual">放大图表 ↗</button><button class="text-button" id="dataToggle" aria-expanded="false">查看数据表</button></div><div id="dataTable" hidden></div><button class="text-button" id="sessionTranslationToggle" aria-expanded="false">显示中文题意</button><p id="sessionTranslation" class="translation" hidden></p><p class="source-note">自编练习题 / 示意数据，不代表真实调查结果</p><details class="notes-details"><summary>审题便笺与提纲</summary><label class="sr-only" for="outlineNotes">审题便笺与提纲</label><textarea id="outlineNotes" placeholder="Task 1：总体特征、关键比较、单位…&#10;Task 2：立场、理由、例证…"></textarea><p class="footnote">训练辅助；不计入文章字数。</p></details><details><summary>检查思路提示</summary><ul id="writingHints" class="hint-list"></ul><p class="footnote">仅提示检查方向，不提供整篇范文。</p></details></div>
+  <div class="writing-paper"><div class="paper-toolbar"><label for="essayInput">正文</label><div><button class="text-button font-button" id="smallerText" aria-label="减小正文字号">A−</button><button class="text-button font-button" id="largerText" aria-label="增大正文字号">A+</button></div></div><div class="paused-cover" id="pausedCover" hidden><span>计时已暂停，继续后编辑。</span><button class="button secondary" id="resumeFromCover">继续写作</button></div><textarea id="essayInput" lang="en" spellcheck="false" autocomplete="off" placeholder="Start writing here…"></textarea><div class="paper-footer"><span><strong id="wordCount">0</strong> 词 <span id="wordCountHint">/ 至少 150 词</span></span><span id="paragraphCount">0 段</span></div><p class="word-count-note">原型按英文单词估算字数；提纲和中文不计入。</p></div></div>
+</section>
+
+<section class="page" id="reviewPage" aria-labelledby="reviewTitle">
+  <div class="page-heading"><div><p class="eyebrow">READ · REVISE · REFLECT</p><h1 id="reviewTitle">回读文章，改得更清楚</h1><p class="subtitle" id="reviewSubtitle"></p></div><button class="button secondary" id="returnToWriting">返回编辑</button></div>
+  <div class="review-task-bar"><div class="segmented" id="reviewTasks" aria-label="选择要检查的文章"><button data-review-task="t1" aria-pressed="true">Task 1</button><button data-review-task="t2" aria-pressed="false">Task 2</button></div><span id="reviewTiming"></span><button class="text-button" id="compareToggle" aria-pressed="false">前后对照</button></div>
+  <details class="review-prompt-details"><summary>查看原题与图表</summary><h2 id="reviewPrompt" lang="en"></h2><div id="reviewVisual"></div></details>
+  <div class="writing-review-grid"><div><div class="version-toolbar"><label for="versionSelect">对照稿<select id="versionSelect" aria-label="选择对照稿"></select></label><span id="revisionState" role="status"></span><button class="text-button" id="saveRevision">保存为新修订稿</button></div><div class="revision-layout" id="revisionLayout"><article id="baselinePane" class="baseline-pane" hidden><div class="revision-label"><strong id="baselineLabel">初稿 · v1</strong><span id="baselineCount"></span></div><p id="baselineText" class="baseline-text" lang="en"></p></article><div class="revision-pane"><div class="revision-label"><label for="revisionInput">当前修改稿</label><span id="revisionWordCount"></span></div><textarea id="revisionInput" lang="en" spellcheck="false" placeholder="回读你的文章，在这里修改…"></textarea></div></div><p class="footnote">初稿和已保存版本不会被覆盖；未归档修改仅暂存在当前页面。</p><div class="revision-note"><label for="improvementNote">这次修改最想解决什么？</label><textarea id="improvementNote" placeholder="例如：概述里只保留总体趋势，把细节数据放进主体段。"></textarea></div></div>
+  <aside class="assessment"><h2 id="assessmentTitle">四维自评</h2><p class="body-copy">用于反思，不自动评分，不折算雅思分数。</p><div id="assessmentList"></div><p class="footnote">可以暂不评价。先把一个薄弱点改好即可。</p></aside></div>
+  <div class="review-footer"><span id="reviewSaveHint">自评、文章和修订版本仅在当前原型内保存</span><button class="button primary" id="completeReview">保存自评，查看记录 →</button></div>
+</section>
+</main>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<dialog id="chartDialog" class="chart-dialog"><div class="dialog-head"><h2>Task 1 图表</h2><button class="text-button" data-close="chartDialog">关闭</button></div><div id="largeVisual"></div><p class="footnote">自编练习示意图；数值均为虚构。</p></dialog>
+<dialog id="leaveWritingDialog"><h2>暂存并离开写作？</h2><p>当前计时会暂停，正文和提纲会保留在本页面；刷新后会清空。</p><div class="dialog-actions"><button class="button secondary" id="leaveWritingContinue">继续写作</button><button class="button primary" id="leaveWritingSave">保存草稿并离开</button></div></dialog>
+<dialog id="aboutDialog"><div class="dialog-head"><h2>写作原型说明</h2><button class="text-button" data-close="aboutDialog">关闭</button></div><p>当前展示 Academic Writing：Task 1 图表报告与 Task 2 议论文。Task 1 至少 150 词，建议约 20 分钟；Task 2 至少 250 词，建议约 40 分钟；写作总计 60 分钟，Task 2 权重更高。</p><p>限时模式与整套模式均为可暂停的学习训练。计时结束只提醒，不自动交卷；这不是严格考场模拟。自由写作显示累计用时。</p><p>题目为自编示例，图表和数值均为虚构。不提供官方真题、分数预测或自动语法批改。英文单词计数为原型估算，不代表官方计数规则。</p><p>草稿与修订仅暂存在当前页面内存；刷新或关闭会清空。正式原生 App 将在统一开发时接入本地 SQLite，当前原型不会修改现有学习数据库或安装的 App。</p><div class="sources"><a href="https://ielts.org/take-a-test/test-types/ielts-academic-test/ielts-academic-format-writing" target="_blank" rel="noreferrer">IELTS 官方 · 写作结构与要求 ↗</a></div></dialog>
+</body>
+</html>

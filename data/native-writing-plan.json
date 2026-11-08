@@ -1,0 +1,506 @@
+[
+  {
+    "theme": "教育政策、学校制度",
+    "t1": {
+      "type": "bar",
+      "title": "The bar chart shows the percentage of students choosing four types of school activity in 2000 and 2020.",
+      "zh": "柱状图显示了 2000 年和 2020 年选择四种校园活动的学生比例。",
+      "unit": "%",
+      "categories": [
+        "Sports",
+        "Music",
+        "Reading",
+        "Clubs"
+      ],
+      "series": [
+        {
+          "name": "2000",
+          "values": [
+            42,
+            31,
+            28,
+            19
+          ]
+        },
+        {
+          "name": "2020",
+          "values": [
+            35,
+            39,
+            34,
+            27
+          ]
+        }
+      ],
+      "hints": [
+        "Report the overall pattern before selecting details.",
+        "Group the larger and smaller changes.",
+        "Use the same unit when comparing both years."
+      ]
+    },
+    "t2": {
+      "title": "Some people believe schools should focus mainly on academic subjects, while others think practical skills are equally important. Discuss both views and give your opinion.",
+      "zh": "有人认为学校应主要关注学术科目，也有人认为实践技能同样重要。讨论双方观点并给出你的看法。",
+      "hints": [
+        "Address both views before making your position clear.",
+        "Use one concrete example for each main reason.",
+        "Make the conclusion consistent with your introduction."
+      ]
+    }
+  },
+  {
+    "theme": "工作方式、就业与技能",
+    "t1": {
+      "type": "table",
+      "title": "The table compares average weekly working hours and job satisfaction in five occupations in 2015 and 2025.",
+      "zh": "表格比较了 2015 年和 2025 年五种职业的平均每周工时和工作满意度。",
+      "headers": [
+        "Occupation",
+        "Hours · 2015",
+        "Hours · 2025",
+        "Satisfaction · 2015",
+        "Satisfaction · 2025"
+      ],
+      "rows": [
+        [
+          "Healthcare",
+          42,
+          40,
+          68,
+          75
+        ],
+        [
+          "Education",
+          39,
+          37,
+          72,
+          79
+        ],
+        [
+          "Retail",
+          38,
+          36,
+          55,
+          63
+        ],
+        [
+          "Technology",
+          41,
+          39,
+          74,
+          82
+        ],
+        [
+          "Transport",
+          44,
+          41,
+          61,
+          66
+        ]
+      ],
+      "hints": [
+        "Notice which occupations share a pattern.",
+        "Compare working hours and satisfaction separately.",
+        "Avoid listing every cell in the table."
+      ]
+    },
+    "t2": {
+      "title": "Many people now work from home. Do the advantages outweigh the disadvantages?",
+      "zh": "如今许多人在家工作。这样做的优点是否大于缺点？",
+      "hints": [
+        "Decide clearly which side outweighs the other.",
+        "Compare effects on workers and employers.",
+        "Support your view with a specific example."
+      ]
+    }
+  },
+  {
+    "theme": "科技影响、网络与隐私",
+    "t1": {
+      "type": "line",
+      "title": "The line graph shows the percentage of households with internet access in three countries from 2005 to 2025.",
+      "zh": "折线图显示了 2005 年至 2025 年三个国家拥有互联网接入的家庭比例。",
+      "unit": "%",
+      "categories": [
+        "2005",
+        "2010",
+        "2015",
+        "2020",
+        "2025"
+      ],
+      "series": [
+        {
+          "name": "Country A",
+          "values": [
+            24,
+            42,
+            61,
+            76,
+            88
+          ]
+        },
+        {
+          "name": "Country B",
+          "values": [
+            38,
+            51,
+            66,
+            77,
+            84
+          ]
+        },
+        {
+          "name": "Country C",
+          "values": [
+            12,
+            28,
+            49,
+            68,
+            81
+          ]
+        }
+      ],
+      "hints": [
+        "Identify the overall direction and starting points.",
+        "Compare how quickly the lines change.",
+        "Use approximate language when describing values."
+      ]
+    },
+    "t2": {
+      "title": "Technology makes communication easier, but it can also reduce face-to-face interaction. Discuss both sides and give your opinion.",
+      "zh": "科技让沟通更容易，但也可能减少面对面交流。讨论两方面并给出你的看法。",
+      "hints": [
+        "Explain convenience and its possible social cost.",
+        "Distinguish online contact from in-person interaction.",
+        "Give a balanced position rather than a list."
+      ]
+    }
+  },
+  {
+    "theme": "环境政策、气候变化",
+    "t1": {
+      "type": "process",
+      "title": "The diagram illustrates how household waste is collected and processed for recycling.",
+      "zh": "流程图展示了家庭废弃物如何被收集并处理以供回收利用。",
+      "steps": [
+        "Household sorting",
+        "Local collection",
+        "Sorting facility",
+        "Cleaning & processing",
+        "Recycled materials"
+      ],
+      "hints": [
+        "Describe the stages in the order shown.",
+        "Use passive forms where the agent is not important.",
+        "Do not add a cause or benefit that the diagram does not show."
+      ]
+    },
+    "t2": {
+      "title": "Governments should prioritise environmental protection even when it slows economic growth. To what extent do you agree or disagree?",
+      "zh": "即使环境保护会减缓经济增长，政府也应将其列为优先事项。你在多大程度上同意或不同意？",
+      "hints": [
+        "State the degree of agreement clearly.",
+        "Explain how environmental policy and growth may interact.",
+        "Develop reasons instead of repeating the question."
+      ]
+    }
+  },
+  {
+    "theme": "公共健康、医疗资源",
+    "t1": {
+      "type": "bar",
+      "title": "The bar chart compares healthcare expenditure per person in six countries in 2000 and 2020.",
+      "zh": "柱状图比较了六个国家在 2000 年和 2020 年的人均医疗支出。",
+      "unit": "$ thousands",
+      "categories": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "series": [
+        {
+          "name": "2000",
+          "values": [
+            2.4,
+            1.8,
+            3.2,
+            1.2,
+            2.1,
+            1.5
+          ]
+        },
+        {
+          "name": "2020",
+          "values": [
+            3.8,
+            2.7,
+            4.1,
+            2.2,
+            3.2,
+            2.6
+          ]
+        }
+      ],
+      "hints": [
+        "Find the highest and lowest values.",
+        "Compare the overall level and the size of change.",
+        "Keep the unit clear when reporting numbers."
+      ]
+    },
+    "t2": {
+      "title": "Public money should be spent on preventing illness rather than treating people after they become sick. Do you agree or disagree?",
+      "zh": "公共资金应更多用于预防疾病，而不是在患者患病后进行治疗。你是否同意？",
+      "hints": [
+        "Consider prevention and treatment as complementary needs.",
+        "Explain which public investment should receive priority.",
+        "Use a realistic example, not an absolute claim."
+      ]
+    }
+  },
+  {
+    "theme": "城市规划、住房与交通",
+    "t1": {
+      "type": "maps",
+      "title": "The maps show changes to a town centre before and after a transport redevelopment project.",
+      "zh": "两幅地图展示了交通改造项目实施前后市中心的变化。",
+      "hints": [
+        "Group the changes by area or type.",
+        "Use accurate location language.",
+        "Distinguish what was added, removed or relocated."
+      ]
+    },
+    "t2": {
+      "title": "Some people think cities should be designed for cars, while others support pedestrian-friendly planning. Discuss both views.",
+      "zh": "有人认为城市应以汽车出行为中心设计，也有人支持以行人友好为重点的规划。讨论双方观点。",
+      "hints": [
+        "Discuss mobility needs and effects on public space.",
+        "Compare who benefits from each approach.",
+        "Acknowledge that city needs may differ by area."
+      ]
+    }
+  },
+  {
+    "theme": "消费行为、贫富差距",
+    "t1": {
+      "type": "pie",
+      "title": "The pie charts show how household spending was distributed among six categories in 2000 and 2020.",
+      "zh": "饼图显示了 2000 年和 2020 年家庭支出在六个类别中的分布。",
+      "unit": "%",
+      "categories": [
+        "Housing",
+        "Food",
+        "Transport",
+        "Health",
+        "Leisure",
+        "Other"
+      ],
+      "series": [
+        {
+          "name": "2000",
+          "values": [
+            32,
+            24,
+            14,
+            8,
+            10,
+            12
+          ]
+        },
+        {
+          "name": "2020",
+          "values": [
+            35,
+            18,
+            17,
+            11,
+            9,
+            10
+          ]
+        }
+      ],
+      "hints": [
+        "Compare the largest shares first.",
+        "Describe increases and decreases without naming every slice.",
+        "Check that each year sums to 100 percent."
+      ]
+    },
+    "t2": {
+      "title": "Advertising encourages people to buy things they do not need. Is this a positive or negative development?",
+      "zh": "广告鼓励人们购买不需要的东西。这是积极还是消极的发展？",
+      "hints": [
+        "Choose an overall judgement and sustain it.",
+        "Consider consumers, businesses and wider effects.",
+        "Separate evidence from broad generalisations."
+      ]
+    }
+  },
+  {
+    "theme": "媒体影响、信息可信度",
+    "t1": {
+      "type": "table",
+      "title": "The table gives the number of people using four news sources in 2010 and 2020.",
+      "zh": "表格列出了 2010 年和 2020 年使用四种新闻来源的人数。",
+      "headers": [
+        "News source",
+        "2010 · thousands",
+        "2020 · thousands",
+        "Change · %"
+      ],
+      "rows": [
+        [
+          "Television",
+          840,
+          710,
+          -15
+        ],
+        [
+          "Newspapers",
+          520,
+          310,
+          -40
+        ],
+        [
+          "News websites",
+          260,
+          640,
+          146
+        ],
+        [
+          "Social platforms",
+          140,
+          570,
+          307
+        ]
+      ],
+      "hints": [
+        "Identify the sources that rise and fall.",
+        "Use absolute figures and percentages appropriately.",
+        "Group sources with similar trends."
+      ]
+    },
+    "t2": {
+      "title": "The media has too much influence on how people think. To what extent do you agree or disagree?",
+      "zh": "媒体对人们思维方式的影响过大。你在多大程度上同意或不同意？",
+      "hints": [
+        "Clarify which forms of media you mean.",
+        "Weigh influence against the audience's ability to judge.",
+        "Use a bounded example rather than a universal claim."
+      ]
+    }
+  },
+  {
+    "theme": "文化保护、全球化",
+    "t1": {
+      "type": "line",
+      "title": "The line graph shows the number of international visitors to three cultural sites between 2010 and 2020.",
+      "zh": "折线图显示了 2010 年至 2020 年三处文化景点的国际访客人数。",
+      "unit": "thousands",
+      "categories": [
+        "2010",
+        "2012",
+        "2014",
+        "2016",
+        "2018",
+        "2020"
+      ],
+      "series": [
+        {
+          "name": "Museum",
+          "values": [
+            210,
+            230,
+            260,
+            290,
+            350,
+            410
+          ]
+        },
+        {
+          "name": "Historic fort",
+          "values": [
+            180,
+            195,
+            210,
+            245,
+            270,
+            310
+          ]
+        },
+        {
+          "name": "Heritage village",
+          "values": [
+            90,
+            120,
+            155,
+            205,
+            250,
+            285
+          ]
+        }
+      ],
+      "hints": [
+        "Compare both the final values and the pace of change.",
+        "Notice whether any site catches up with another.",
+        "Avoid speculating about reasons for the trends."
+      ]
+    },
+    "t2": {
+      "title": "International tourism can damage local culture and the environment. What problems does it cause and how can they be solved?",
+      "zh": "国际旅游可能损害当地文化和环境。它会造成哪些问题，又可以怎样解决？",
+      "hints": [
+        "Link each proposed solution to a problem.",
+        "Consider residents as well as visitors.",
+        "Avoid claiming tourism is entirely harmful or beneficial."
+      ]
+    }
+  },
+  {
+    "theme": "混合题型与完整限时练习",
+    "t1": {
+      "type": "bar",
+      "title": "The chart compares the proportion of public spending on education, employment services and housing in 2012 and 2022.",
+      "zh": "图表比较了 2012 年和 2022 年公共支出中教育、就业服务和住房所占的比例。",
+      "unit": "%",
+      "categories": [
+        "Education",
+        "Employment",
+        "Housing"
+      ],
+      "series": [
+        {
+          "name": "2012",
+          "values": [
+            38,
+            24,
+            38
+          ]
+        },
+        {
+          "name": "2022",
+          "values": [
+            42,
+            29,
+            29
+          ]
+        }
+      ],
+      "hints": [
+        "Summarise the overall allocation before the details.",
+        "Compare which category gained or lost share.",
+        "Keep your comparisons within the data shown."
+      ]
+    },
+    "t2": {
+      "title": "Some people believe every major social problem has a technological solution. Discuss this view and give your own opinion.",
+      "zh": "有人认为每个重大社会问题都有技术解决方案。讨论这一观点并给出你的看法。",
+      "hints": [
+        "Distinguish problems technology can address from those needing social change.",
+        "Explain limits as well as benefits.",
+        "Use a specific example and return to your position."
+      ]
+    }
+  }
+]
