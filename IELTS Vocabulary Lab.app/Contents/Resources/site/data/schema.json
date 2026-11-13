@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.example/ielts-vocabulary-word.schema.json",
+  "title": "IELTS Vocabulary Word",
+  "type": "object",
+  "required": [
+    "id",
+    "week",
+    "day",
+    "dayTitle",
+    "term",
+    "ipa",
+    "partOfSpeech",
+    "meaningZh",
+    "collocations",
+    "exampleEn",
+    "exampleZh",
+    "wordFamily",
+    "note"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "week": { "type": "integer", "minimum": 1 },
+    "day": { "type": "integer", "minimum": 1 },
+    "dayTitle": { "type": "string" },
+    "term": { "type": "string" },
+    "ipa": { "type": "string" },
+    "partOfSpeech": { "type": "string" },
+    "meaningZh": { "type": "string" },
+    "collocations": { "type": "array", "items": { "type": "string" } },
+    "exampleEn": { "type": "string" },
+    "exampleZh": { "type": "string" },
+    "wordFamily": { "type": "string" },
+    "note": { "type": "string" },
+    "maskedExample": { "type": "string" }
+  },
+  "additionalProperties": true
+}

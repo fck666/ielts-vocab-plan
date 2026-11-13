@@ -5,6 +5,7 @@
 - 主窗口使用 `WKWebView`，网页、词库、SQL.js 与 SQLite 种子数据库都随 App 离线打包。
 - `appassets://` 资源处理器只读取 App Bundle 内的静态资源，不开放任意文件路径或网络请求。
 - 发音通过 `WKScriptMessageHandler` 调用常驻的 `AVSpeechSynthesizer`。
+- 翻译工具默认调用 macOS Translation framework 在设备本地翻译；可选 DeepL API 在线翻译（包含 API Free 月度字符额度）。停止输入约 0.6 秒后自动翻译，也可手动重试；选择 DeepL 后原文会在自动或手动翻译时发送到 DeepL，API Key 保存于 macOS 钥匙串，原文和译文不写入学习数据库。
 - 学习数据库由 SQL.js 生成 SQLite 快照，通过窄接口原子写入 App Sandbox 的 `Application Support/IELTS Vocabulary Lab/learning.sqlite`。
 - SQLite 导入和导出使用 macOS 文件面板，并由用户选择文件位置。
 - 主 App 启用 App Sandbox 与 Hardened Runtime；为嵌入式 WebKit 进程读取离线资源申请网络客户端沙盒能力，但运行时不启动 Python、不监听 localhost，也不依赖外部浏览器。导航委托阻止学习页发起外部 HTTP/HTTPS 导航。

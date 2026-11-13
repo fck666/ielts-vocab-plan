@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IELTS Vocabulary Lab</title>
+    <link rel="stylesheet" href="styles.css?v=20260923-stars-v2" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-mark" aria-hidden="true">VL</div>
+      <div>
+        <p class="eyebrow">IELTS 6.5 VOCABULARY LAB</p>
+        <h1>雅思词汇考试系统</h1>
+      </div>
+      <div class="header-stat" id="headerStat">1200 个词汇单位</div>
+    </header>
+
+    <main class="app-shell">
+      <section id="setupView" class="view active" aria-label="首页">
+        <div class="home-primary-grid">
+          <form id="setupForm" class="panel setup-panel home-primary-module">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">CONFIGURE</p>
+                <h3>设置本次考试</h3>
+              </div>
+              <span class="pill">离线可用</span>
+            </div>
+
+            <div class="field-row two-col">
+              <label>
+                <span>起始周</span>
+                <select id="weekFrom">
+                  <option value="1">Week 1</option>
+                  <option value="2">Week 2</option>
+                  <option value="3">Week 3</option>
+                  <option value="4">Week 4</option>
+                  <option value="5">Week 5</option>
+                  <option value="6">Week 6</option>
+                  <option value="7">Week 7</option>
+                  <option value="8">Week 8</option>
+                  <option value="9">Week 9</option>
+                  <option value="10">Week 10</option>
+                </select>
+              </label>
+              <label>
+                <span>结束周</span>
+                <select id="weekTo">
+                  <option value="1">Week 1</option>
+                  <option value="2">Week 2</option>
+                  <option value="3">Week 3</option>
+                  <option value="4">Week 4</option>
+                  <option value="5">Week 5</option>
+                  <option value="6">Week 6</option>
+                  <option value="7">Week 7</option>
+                  <option value="8">Week 8</option>
+                  <option value="9">Week 9</option>
+                  <option value="10" selected>Week 10</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field-label">
+              <span>题目数量</span>
+              <select id="questionCount">
+                <option value="10">10 题 · 快速热身</option>
+                <option value="20" selected>20 题 · 推荐</option>
+                <option value="40">40 题 · 完整练习</option>
+                <option value="all">全部词汇</option>
+              </select>
+            </label>
+
+            <fieldset class="type-fieldset">
+              <legend>题型（至少选择一种）</legend>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="meaning" checked />
+                <span class="check-copy"><strong>词义识别</strong><small>英文 → 中文四选一</small></span>
+                <span class="type-code">A</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="reverse" checked />
+                <span class="check-copy"><strong>主动回忆</strong><small>中文 → 英文四选一</small></span>
+                <span class="type-code">B</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="spell" checked />
+                <span class="check-copy"><strong>拼写输出</strong><small>根据释义输入词汇</small></span>
+                <span class="type-code">C</span>
+              </label>
+              <label class="check-card">
+                <input type="checkbox" name="questionType" value="cloze" checked />
+                <span class="check-copy"><strong>语境填空</strong><small>根据例句输入目标词</small></span>
+                <span class="type-code">D</span>
+              </label>
+            </fieldset>
+
+            <button class="primary-button" type="submit">开始考试 <span>→</span></button>
+            <p id="setupHint" class="form-hint" aria-live="polite"></p>
+          </form>
+
+          <div class="home-right-column">
+            <section class="panel study-primary-module" aria-label="背单词学习模式">
+              <div>
+                <p class="eyebrow accent">LEARN BY DAY</p>
+                <h3>按周、按天背单词</h3>
+                <p class="home-module-lead">打开完整词条卡片，查看音标、词性、搭配和例句；每个词的熟练度会和考试进度共用。</p>
+              </div>
+              <div class="study-primary-actions">
+                <button id="openStudy" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>查看词条</strong><small>按天学习完整词条</small></span><span aria-hidden="true">→</span></button>
+                <button id="openTraining" class="secondary-button study-primary-action" type="button"><span class="study-action-copy"><strong>单日输入训练</strong><small>用中文释义和例句回忆英文</small></span><span aria-hidden="true">→</span></button>
+              </div>
+            </section>
+
+            <div class="home-utility-grid">
+              <section class="stats-teaser panel" aria-label="学习数据统计">
+                <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h3>查看完整学习统计</h3><p>按词汇掌握、考试表现、输出练习和每周进度查看自己的学习轨迹。</p></div>
+                <button id="openStats" class="secondary-button" type="button">打开统计面板 <span>→</span></button>
+              </section>
+
+              <section class="practice-teaser panel" aria-label="口语和写作练习">
+                <div><p class="eyebrow accent">OUTPUT PRACTICE</p><h3>把词汇放进自己的表达里</h3><p>口语和写作分别练习，保存回答、自评分和日期。记录会写入 SQLite，并保存在当前浏览器。</p></div>
+                <div class="practice-entry-actions"><button id="openSpeaking" class="secondary-button" type="button">口语练习 <span>→</span></button><button id="openWriting" class="secondary-button" type="button">写作练习 <span>→</span></button></div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <p class="setup-tip">四种题型分别覆盖理解、回忆、拼写和语境应用；第一次建议选择 20 题全题型。</p>
+
+        <section class="history-strip panel" aria-label="历史记录">
+          <div><span class="eyebrow">YOUR RECORD</span><strong id="historySummary">还没有考试记录</strong></div>
+          <div class="history-metrics"><span><b id="dueCount">0</b><small>今日待复习</small></span><span><b id="masteredCount">0</b><small>已稳定掌握</small></span><span><b id="attemptCount">0</b><small>累计答题</small></span><span><b id="bestScore">—</b><small>最高正确率</small></span></div>
+        </section>
+
+      </section>
+
+      <section id="examView" class="view" aria-labelledby="questionTitle">
+        <div class="exam-topbar">
+          <button class="text-button" id="quitExam" type="button">← 返回设置</button>
+          <div class="progress-wrap"><div class="progress-meta"><span id="progressLabel">第 1 / 20 题</span><span id="progressPercent">0%</span></div><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div></div>
+          <div class="exam-score"><span>本轮得分</span><strong id="liveScore">0</strong></div>
+        </div>
+
+        <div class="exam-layout">
+          <article class="question-card panel">
+            <div class="question-meta"><span id="questionTypeLabel" class="question-type">词义识别</span><span id="questionSource">Week 1 · Day 1</span></div>
+            <div id="questionContent"></div>
+            <div id="answerArea" class="answer-area"></div>
+            <div id="feedback" class="feedback" aria-live="polite"></div>
+            <div class="question-actions"><button id="submitAnswer" class="primary-button" type="button">提交答案 <span>↵</span></button><button id="nextQuestion" class="secondary-button hidden" type="button">下一题 <span>→</span></button></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="resultView" class="view" aria-labelledby="resultTitle">
+        <div class="result-hero"><p class="eyebrow accent">SESSION COMPLETE</p><h2 id="resultTitle">本轮练习完成</h2><p id="resultSubtitle" class="lead">下面是这次练习的掌握情况。</p><div class="score-ring"><div><strong id="resultScore">0%</strong><span>正确率</span></div></div></div>
+        <div class="result-grid"><div class="panel result-panel"><div class="panel-heading"><div><p class="eyebrow">BREAKDOWN</p><h3>按题型查看</h3></div></div><div id="typeBreakdown" class="breakdown-list"></div></div><div class="panel result-panel"><div class="panel-heading"><div><p class="eyebrow">REVIEW</p><h3>需要再看一遍</h3></div><span id="wrongCount" class="pill">0 个</span></div><div id="wrongWords" class="wrong-list"></div></div></div>
+        <div id="reviewSummary" class="review-summary panel"></div>
+        <div class="result-actions"><button id="retryWrong" class="primary-button" type="button">只练错题 <span>↻</span></button><button id="newExam" class="secondary-button" type="button">重新设置 <span>→</span></button></div>
+      </section>
+
+      <section id="speakingView" class="view" aria-labelledby="speakingTitle">
+        <div class="practice-topbar"><button class="text-button" id="backFromSpeaking" type="button">← 返回考试设置</button><div><p class="eyebrow accent">SPEAKING OUTPUT</p><h2 id="speakingTitle">口语 Part 3 练习</h2></div><span class="pill">SQLite 本机保存</span></div>
+        <div class="practice-layout">
+          <article class="panel practice-editor">
+            <div class="practice-controls"><label><span>题型</span><select id="speakingType"></select></label><label><span>计划周次</span><select id="speakingWeek"></select></label></div>
+            <div class="practice-prompt-meta"><span id="speakingPromptType" class="question-type">口语 Part 3</span><span id="speakingPromptWeek">观点 · 理由 · 例子</span></div>
+            <h3 id="speakingPromptTitle"></h3><p id="speakingPromptBody" class="practice-prompt-body"></p><div id="speakingHints" class="practice-hints"></div>
+            <label class="answer-label" for="speakingResponse">你的回答</label><textarea id="speakingResponse" class="practice-textarea" placeholder="先用英文组织观点，再开始输入……"></textarea>
+            <div class="practice-toolbar"><span id="speakingWordCount">0 词</span><label>自评分 <select id="speakingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
+            <div class="question-actions"><button id="newSpeakingPrompt" class="secondary-button" type="button">下一个计划题目 ↻</button><button id="saveSpeaking" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="speakingHint" class="form-hint" aria-live="polite"></p>
+          </article>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">十周计划</p><h3>Part 1 · Part 2 · Part 3</h3><p>每周围绕一个主题练习三种口语任务：Part 1 练自然回答，Part 2 练连续表达，Part 3 练观点、理由和例子。</p><ol><li>先选择题型和 Week</li><li>按考试时限完成回答</li><li>保存后复盘词汇和流利度</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT SPEAKING</p><h3>最近练习</h3></div><span id="speakingCount" class="pill">0 次</span></div><div id="speakingHistory" class="practice-history"></div></div></aside>
+        </div>
+      </section>
+
+      <section id="writingView" class="view" aria-labelledby="writingTitle">
+        <div class="practice-topbar"><button class="text-button" id="backFromWriting" type="button">← 返回考试设置</button><div><p class="eyebrow accent">WRITING OUTPUT</p><h2 id="writingTitle">Task 2 写作练习</h2></div><span class="pill">SQLite 本机保存</span></div>
+        <div class="practice-layout">
+          <article class="panel practice-editor">
+            <div class="practice-controls"><label><span>题型</span><select id="writingType"></select></label><label><span>计划周次</span><select id="writingWeek"></select></label></div>
+            <div class="practice-prompt-meta"><span id="writingPromptType" class="question-type">Task 2 写作</span><span id="writingPromptWeek">立场 · 论证 · 搭配</span></div>
+            <h3 id="writingPromptTitle"></h3><p id="writingPromptBody" class="practice-prompt-body"></p><div id="writingHints" class="practice-hints"></div>
+            <label class="answer-label" for="writingResponse">你的回答</label><textarea id="writingResponse" class="practice-textarea" placeholder="先写清楚立场和段落逻辑，再开始输入……"></textarea>
+            <div class="practice-toolbar"><span id="writingWordCount">0 词</span><label>自评分 <select id="writingRating"><option value="3">3 · 还可以</option><option value="4">4 · 较好</option><option value="5">5 · 很好</option><option value="2">2 · 需要重做</option><option value="1">1 · 很困难</option></select></label></div>
+            <div class="question-actions"><button id="newWritingPrompt" class="secondary-button" type="button">下一个计划题目 ↻</button><button id="saveWriting" class="primary-button" type="button">保存这次练习 <span>✓</span></button></div><p id="writingHint" class="form-hint" aria-live="polite"></p>
+          </article>
+          <aside class="practice-side-column"><div class="panel practice-guide"><p class="eyebrow">十周计划</p><h3>Task 1 · Task 2</h3><p>Task 1 每周练习图表、流程或地图概述；Task 2 覆盖观点、讨论、问题解决和综合题型。当前题目是训练题，不冒充官方真题。</p><ol><li>先识别题型和写作任务</li><li>按 20 或 40 分钟限时</li><li>检查结构、连接和例证</li></ol></div><div class="panel practice-history-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT WRITING</p><h3>最近练习</h3></div><span id="writingCount" class="pill">0 次</span></div><div id="writingHistory" class="practice-history"></div></div></aside>
+        </div>
+      </section>
+
+      <section id="studyView" class="view" aria-labelledby="studyTitle">
+        <div class="study-topbar">
+          <button class="text-button" id="backFromStudy" type="button">← 返回考试设置</button>
+          <div><p class="eyebrow accent">LEARN BY DAY</p><h2 id="studyTitle">背单词学习模式</h2></div>
+          <span class="pill">SQLite 本机保存</span>
+        </div>
+        <div class="study-controls panel">
+          <div class="study-selects">
+            <label><span>选择周</span><select id="studyWeek"></select></label>
+            <label><span>选择天</span><select id="studyDay"></select></label>
+            <label><span>显示词汇</span><select id="studyFilter"><option value="all">全部词汇</option><option value="new">尚未学习</option><option value="due">今天待复习</option><option value="needs">需要巩固</option><option value="mastered">已稳定掌握</option></select></label>
+          </div>
+          <div class="study-summary"><strong id="studyProgressSummary">正在加载词汇</strong><span id="studyProgressHint">按天学习，每次完成后标记熟练度。</span></div>
+        </div>
+        <div id="studyWords" class="study-words" aria-live="polite"></div>
+      </section>
+
+      <section id="trainingView" class="view" aria-labelledby="trainingTitle">
+        <div class="study-topbar">
+          <button class="text-button" id="backFromTraining" type="button">← 返回首页</button>
+          <div><p class="eyebrow accent">DAILY INPUT TRAINING</p><h2 id="trainingTitle">单日输入训练</h2></div>
+          <span class="pill">当天 20 词</span>
+        </div>
+        <div class="training-layout">
+          <article class="panel training-card">
+            <div class="training-controls"><label><span>选择周</span><select id="trainingWeek"></select></label><label><span>选择天</span><select id="trainingDay"></select></label><button id="startTraining" class="secondary-button" type="button">开始本日训练</button></div>
+            <div id="trainingSummary" class="training-summary"></div>
+            <div id="trainingProgress" class="training-progress"></div>
+            <div id="trainingPrompt"></div>
+            <div id="trainingAnswerArea"></div>
+            <div id="trainingFeedback" class="feedback" aria-live="polite"></div>
+            <div class="question-actions"><button id="submitTraining" class="primary-button" type="button">提交答案 <span>↵</span></button><button id="nextTraining" class="secondary-button hidden" type="button">下一题 <span>→</span></button></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="statsView" class="view" aria-labelledby="statsTitle">
+        <div class="stats-topbar">
+          <button class="text-button" id="backFromStats" type="button">← 返回考试设置</button>
+          <div><p class="eyebrow accent">LEARNING ANALYTICS</p><h2 id="statsTitle">学习数据统计</h2></div>
+          <span class="pill">本机数据</span>
+        </div>
+        <div class="stats-data-actions" aria-label="学习数据管理">
+          <span id="statsDataHint" class="stats-muted">数据可导出为 SQLite 文件，方便备份或迁移到另一台设备。</span>
+          <div><button id="exportData" class="secondary-button" type="button">导出学习数据</button><button id="importData" class="secondary-button" type="button">导入学习数据</button><input id="importDataFile" type="file" accept=".sqlite,.db,application/vnd.sqlite3,application/octet-stream" hidden /></div>
+        </div>
+
+        <div class="stats-overview" aria-label="学习总览">
+          <article class="panel stats-metric"><span>词汇总量</span><strong id="statsTotalWords">0</strong><small>当前词库</small></article>
+          <article class="panel stats-metric"><span>已学习</span><strong id="statsStudiedWords">0</strong><small id="statsStudiedHint">0% 已有记录</small></article>
+          <article class="panel stats-metric"><span>稳定掌握</span><strong id="statsMasteredWords">0</strong><small id="statsMasteredHint">熟练度 4–5</small></article>
+          <article class="panel stats-metric"><span>今日待复习</span><strong id="statsDueWords">0</strong><small id="statsNewWords">含尚未学习词</small></article>
+        </div>
+
+        <div class="stats-grid">
+          <article class="panel stats-panel">
+            <div class="panel-heading"><div><p class="eyebrow">EXAM PERFORMANCE</p><h3>考试表现</h3></div><span id="statsExamCount" class="pill">0 次</span></div>
+            <div class="stats-inline-metrics"><div><strong id="statsAverageScore">—</strong><span>平均正确率</span></div><div><strong id="statsBestScore">—</strong><span>最高正确率</span></div><div><strong id="statsAnswerCount">0</strong><span>答题总数</span></div></div>
+            <div id="statsRecentExams" class="stats-recent-list"></div>
+          </article>
+          <article class="panel stats-panel">
+            <div class="panel-heading"><div><p class="eyebrow">OUTPUT PRACTICE</p><h3>口语与写作</h3></div><span id="statsPracticeCount" class="pill">0 次</span></div>
+            <div class="stats-inline-metrics"><div><strong id="statsSpeakingCount">0</strong><span>口语练习</span></div><div><strong id="statsWritingCount">0</strong><span>写作练习</span></div><div><strong id="statsPracticeRating">—</strong><span>平均自评分</span></div></div>
+            <p id="statsPracticeHint" class="stats-muted">保存一次回答后，这里会显示你的输出练习节奏。</p>
+          </article>
+        </div>
+
+        <article class="panel stats-panel stats-week-panel">
+          <div class="panel-heading"><div><p class="eyebrow">WEEKLY PROGRESS</p><h3>按 Week 查看进度</h3></div><span class="stats-muted">每个词只计入当前最高熟练度</span></div>
+          <div id="statsWeekProgress" class="stats-week-list" aria-live="polite"></div>
+        </article>
+      </section>
+    </main>
+    <footer class="site-footer">本地静态页面 · SQLite 数据保存在浏览器本机，不会上传</footer>
+
+    <script src="vendor/sql-wasm.js"></script>
+    <script src="data/words.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js?v=20261029-widget-deeplink"></script>
+  </body>
+</html>

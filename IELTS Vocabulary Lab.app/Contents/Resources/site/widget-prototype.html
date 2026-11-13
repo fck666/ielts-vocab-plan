@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Vocabulary Lab · 桌面词卡原型</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #242b2a;
+      background: #edf0ed;
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #edf0ed;
+    }
+
+    button, a { font: inherit; }
+
+    .page {
+      width: min(100% - 40px, 1000px);
+      margin: 0 auto;
+      padding: 38px 0 56px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #cbd3ce;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #547168;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    .draft-tag {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid #cad5cf;
+      border-radius: 6px;
+      color: #4c655d;
+      background: #f7f9f7;
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      gap: 28px;
+      align-items: start;
+      padding-top: 28px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 650;
+    }
+
+    .caption {
+      color: #66736d;
+      font-size: 12px;
+    }
+
+    .desktop-surface {
+      min-height: 376px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      border: 1px solid #d1d8d3;
+      border-radius: 8px;
+      background: #dfe5e0;
+    }
+
+    .widget {
+      width: min(100%, 390px);
+      min-height: 282px;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 24px;
+      background: transparent;
+      box-shadow: 0 10px 28px rgba(33, 49, 42, .08);
+      backdrop-filter: blur(18px);
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(219, 226, 221, .72);
+    }
+
+    .card-heading-actions { display: flex; align-items: center; gap: 8px; }
+
+    .close-card {
+      width: 25px;
+      height: 25px;
+      border: 0;
+      border-radius: 50%;
+      color: #52635a;
+      background: rgba(255,255,255,.48);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .card-selectors {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      padding-top: 12px;
+    }
+
+    .card-selectors label {
+      display: grid;
+      gap: 3px;
+      color: #66746e;
+      font-size: 10px;
+    }
+
+    .card-selectors select {
+      max-width: 112px;
+      height: 30px;
+      padding: 0 6px;
+      border: 1px solid rgba(203,214,207,.9);
+      border-radius: 6px;
+      color: #33463e;
+      background: rgba(255,255,255,.68);
+      font: inherit;
+    }
+
+    .card-selectors .button { min-height: 30px; padding: 0 8px; }
+
+    .widget-brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .widget-brand strong {
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .widget-brand span, .day-badge {
+      color: #66746e;
+      font-size: 11px;
+    }
+
+    .day-badge {
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: #e5ece7;
+      color: #476258;
+      font-weight: 600;
+    }
+
+    .word-area {
+      flex: 1;
+      padding: 18px 0 16px;
+    }
+
+    .word-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .word {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .ipa { color: #68766f; font-size: 14px; }
+
+    .pos {
+      display: inline-block;
+      margin-top: 8px;
+      color: #547168;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .answer {
+      min-height: 66px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid #dbe3de;
+      border-radius: 8px;
+      background: #f2f5f3;
+    }
+
+    .answer[hidden] { display: none; }
+
+    .answer-label {
+      margin: 0 0 5px;
+      color: #738078;
+      font-size: 10px;
+    }
+
+    .answer-text {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .example {
+      margin: 9px 0 0;
+      color: #5d6963;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .widget-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid rgba(219, 226, 221, .72);
+    }
+
+    .button {
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid #cbd6cf;
+      border-radius: 7px;
+      color: #33463e;
+      background: #f7faf8;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .button:hover { background: #eaf1ec; }
+
+    .button-primary {
+      border-color: #2f6754;
+      color: #fff;
+      background: #2f6754;
+    }
+
+    .button-primary:hover { background: #285a49; }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      margin-left: auto;
+      border-color: transparent;
+      color: #2f6754;
+      background: transparent;
+    }
+
+    .widget-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      color: #77837d;
+      font-size: 10px;
+    }
+
+    .management {
+      padding: 0 0 20px;
+      border-bottom: 1px solid #cbd3ce;
+    }
+
+    .management + .management { padding-top: 20px; }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .steps li {
+      position: relative;
+      min-height: 28px;
+      padding-left: 34px;
+      color: #45534c;
+      font-size: 13px;
+      line-height: 1.5;
+      counter-increment: step;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #315b4d;
+      background: #dce8e0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .note {
+      margin: 12px 0 0;
+      color: #68756e;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .decision {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 16px;
+      padding: 12px;
+      border-left: 3px solid #d69a3a;
+      background: #f5f2e9;
+      color: #5e5948;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .decision strong { color: #514a36; }
+
+    @media (max-width: 720px) {
+      .page { width: min(100% - 28px, 560px); padding-top: 24px; }
+      .page-header { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .layout { grid-template-columns: 1fr; gap: 24px; }
+      .desktop-surface { min-height: 350px; padding: 18px; }
+      .widget { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">IELTS Vocabulary Lab · Product Draft</p>
+        <h1>桌面单词卡</h1>
+      </div>
+      <span class="draft-tag">桌面层卡片 · 菜单栏管理</span>
+    </header>
+
+    <div class="layout">
+      <section aria-labelledby="preview-title">
+        <div class="section-title">
+          <h2 id="preview-title">透明桌面卡片</h2>
+          <span class="caption" id="previewSelection">Week 1 · Day 1</span>
+        </div>
+        <div class="desktop-surface">
+          <article class="widget" aria-label="IELTS 每日词卡">
+            <header class="widget-header">
+              <div class="widget-brand">
+                <strong>IELTS VOCABULARY LAB</strong>
+                <span>每日词卡 · 顶部可拖动</span>
+              </div>
+              <div class="card-heading-actions"><span class="day-badge">W1 / D1</span><button id="closeCard" class="close-card" type="button" aria-label="收起卡片" title="收起卡片">×</button></div>
+            </header>
+
+            <div class="card-selectors">
+              <label>Week<select id="weekSelect" aria-label="选择周次"></select></label>
+              <label>Day<select id="daySelect" aria-label="选择学习日"></select></label>
+              <button id="changeBatch" class="button" type="button">换一批</button>
+            </div>
+
+            <section class="word-area" aria-live="polite">
+              <div class="word-line">
+                <h3 id="word" class="word">access</h3>
+                <span id="ipa" class="ipa">/ˈækses/</span>
+              </div>
+              <span id="pos" class="pos">n. / v.</span>
+              <div class="answer" id="answer" hidden>
+                <p class="answer-label">释义与搭配</p>
+                <p id="meaning" class="answer-text">机会；使用权；进入</p>
+                <p id="example" class="example">equal access to quality education</p>
+              </div>
+              <div class="answer" id="hidden-prompt">
+                <p class="answer-label">回忆提示</p>
+                <p class="answer-text">先想想它在教育话题中的常见意思</p>
+              </div>
+            </section>
+
+            <div class="widget-actions">
+              <button id="reveal" class="button button-primary" type="button" aria-expanded="false">显示释义</button>
+              <button id="previous" class="button" type="button" aria-label="上一词">上一词</button>
+              <button id="next" class="button" type="button" aria-label="下一词">下一词</button>
+              <a id="dictationLink" class="button button-link" href="http://localhost:8765/?week=1&amp;day=1&amp;word=w1-d1-01#/study" target="_blank" rel="noreferrer">打开网页默写</a>
+            </div>
+            <footer class="widget-footer">
+              <span id="position">第 1 批 · 1 / 10 词</span>
+              <span id="cardStatus">无遮挡时每分钟自动切词</span>
+            </footer>
+          </article>
+        </div>
+        <p class="note">原型从词库读取所选 Week/Day，每批最多显示 10 个词。浏览器标签页可见时，每分钟自动切换；原生 macOS 卡片则在被其他窗口遮挡时暂停计时。卡片不提供自由文本输入；默写入口会跳转到对应 Week/Day/词条。</p>
+      </section>
+
+      <aside aria-label="桌面卡片的打开与关闭方式">
+        <section class="management">
+          <div class="section-title">
+            <h2>显示 / 隐藏卡片</h2>
+            <span class="caption">由菜单栏管理</span>
+          </div>
+          <ol class="steps">
+            <li>点击菜单栏上的 IELTS Vocabulary Lab 书本图标。</li>
+            <li>选择“显示桌面单词卡”，首次出现在桌面右上方；之后恢复上次位置。</li>
+            <li>按住顶部“拖动这里移动”区域调整位置；菜单或右上角 × 可收起。</li>
+          </ol>
+        </section>
+
+        <section class="management">
+          <div class="section-title">
+            <h2>卡片内容和练习</h2>
+            <span class="caption">不影响学习记录</span>
+          </div>
+          <ol class="steps">
+            <li>在卡片中选择 Week 和 Day；每批最多 10 个词，也可按“换一批”。</li>
+            <li>原生卡片无遮挡时每分钟自动切换一个词；遮挡时暂停，重新露出后计满一分钟。</li>
+            <li>先回忆中文意思，再选择“显示释义”核对。</li>
+            <li>需要拼写练习时，选择“网页默写”进入对应词条。</li>
+          </ol>
+          <p class="note">卡片放在桌面层，其他应用可盖住它；重启后恢复位置和显示状态。此网页仅预览内容，拖动操作请在实际桌面卡片上使用。</p>
+        </section>
+
+        <section>
+          <div class="section-title">
+            <h2>卡片展开与收起</h2>
+          </div>
+          <p class="note">卡片外层使用透明窗口与半透明磨砂背景，桌面内容可以透过。默认收起中文释义；按“显示释义”展开意思和一个常用搭配，再按“收起释义”恢复。</p>
+          <div class="decision"><span><strong>数据边界</strong><br>首版卡片读取只读词库，不记录熟练度、错题或复习日期；这些数据仍由现有网页负责。</span></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    let allWords = [];
+    let week = 1;
+    let day = 1;
+    let batch = 0;
+    let index = 0;
+    let revealed = false;
+    let visibleSince = null;
+    let lastCheckedAt = null;
+    let cardInView = false;
+
+    const weekSelect = document.getElementById("weekSelect");
+    const daySelect = document.getElementById("daySelect");
+    const revealButton = document.getElementById("reveal");
+    const answer = document.getElementById("answer");
+    const hiddenPrompt = document.getElementById("hidden-prompt");
+    const selectedDayWords = () => allWords.filter((item) => item.week === week && item.day === day).sort((a, b) => a.index - b.index);
+    const batchCount = () => Math.max(1, Math.ceil(selectedDayWords().length / 10));
+    const currentBatchWords = () => selectedDayWords().slice(batch * 10, batch * 10 + 10);
+
+    function resetAutoAdvance() {
+      visibleSince = null;
+      lastCheckedAt = null;
+    }
+
+    function populateDays() {
+      const days = [...new Set(allWords.filter((item) => item.week === week).map((item) => item.day))].sort((a, b) => a - b);
+      daySelect.innerHTML = days.map((value) => `<option value="${value}">Day ${value}</option>`).join("");
+      day = days.includes(day) ? day : (days[0] || 1);
+      daySelect.value = String(day);
+    }
+
+    function renderCard() {
+      const cards = currentBatchWords();
+      const card = cards[index];
+      if (!card) return;
+      document.getElementById("word").textContent = card.term;
+      document.getElementById("ipa").textContent = card.ipa;
+      document.getElementById("pos").textContent = card.partOfSpeech;
+      document.getElementById("meaning").textContent = card.meaningZh;
+      document.getElementById("example").textContent = card.collocations[0] || "";
+      hiddenPrompt.querySelector(".answer-text").textContent = `先想想它在“${card.dayTitle}”话题中的意思`;
+      document.getElementById("position").textContent = `第 ${batch + 1} / ${batchCount()} 批 · ${index + 1} / ${cards.length} 词`;
+      document.querySelector(".day-badge").textContent = `W${week} / D${day}`;
+      document.getElementById("changeBatch").textContent = `换一批 · ${batch + 1}/${batchCount()}`;
+      document.getElementById("changeBatch").disabled = batchCount() < 2;
+      document.getElementById("previewSelection").textContent = `Week ${week} · Day ${day}`;
+      const studyURL = new URL("/", window.location.origin);
+      studyURL.search = new URLSearchParams({ week: String(week), day: String(day), word: card.id }).toString();
+      studyURL.hash = "/study";
+      document.getElementById("dictationLink").href = studyURL.href;
+      answer.hidden = !revealed;
+      hiddenPrompt.hidden = revealed;
+      revealButton.textContent = revealed ? "收起释义" : "显示释义";
+      revealButton.setAttribute("aria-expanded", String(revealed));
+    }
+
+    async function initialize() {
+      const response = await fetch("../data/words.json");
+      allWords = await response.json();
+      const weeks = [...new Set(allWords.map((item) => item.week))].sort((a, b) => a - b);
+      weekSelect.innerHTML = weeks.map((value) => `<option value="${value}">Week ${value}</option>`).join("");
+      weekSelect.value = String(week);
+      populateDays();
+      renderCard();
+    }
+
+    revealButton.addEventListener("click", () => {
+      revealed = !revealed;
+      renderCard();
+    });
+    document.getElementById("next").addEventListener("click", () => {
+      const count = currentBatchWords().length;
+      if (!count) return;
+      index = (index + 1) % count;
+      revealed = false;
+      resetAutoAdvance();
+      renderCard();
+    });
+    document.getElementById("previous").addEventListener("click", () => {
+      const count = currentBatchWords().length;
+      if (!count) return;
+      index = (index + count - 1) % count;
+      revealed = false;
+      resetAutoAdvance();
+      renderCard();
+    });
+    document.getElementById("changeBatch").addEventListener("click", () => {
+      if (batchCount() < 2) return;
+      batch = (batch + 1) % batchCount();
+      index = 0;
+      revealed = false;
+      resetAutoAdvance();
+      renderCard();
+    });
+    weekSelect.addEventListener("change", () => {
+      week = Number(weekSelect.value);
+      populateDays();
+      batch = 0;
+      index = 0;
+      revealed = false;
+      resetAutoAdvance();
+      renderCard();
+    });
+    daySelect.addEventListener("change", () => {
+      day = Number(daySelect.value);
+      batch = 0;
+      index = 0;
+      revealed = false;
+      resetAutoAdvance();
+      renderCard();
+    });
+    document.getElementById("closeCard").addEventListener("click", () => {
+      document.getElementById("cardStatus").textContent = "原型演示：实际卡片会收起，菜单栏应用继续运行";
+    });
+    initialize().catch(() => {
+      document.getElementById("word").textContent = "无法加载词库";
+      document.getElementById("cardStatus").textContent = "请通过本地学习应用打开原型页面";
+    });
+    new IntersectionObserver(([entry]) => {
+      cardInView = entry.intersectionRatio >= 0.999;
+      resetAutoAdvance();
+    }, { threshold: [0, 0.999, 1] }).observe(document.querySelector(".widget"));
+    document.addEventListener("visibilitychange", resetAutoAdvance);
+    window.setInterval(() => {
+      const now = performance.now();
+      if (lastCheckedAt !== null && now - lastCheckedAt > 3000) visibleSince = null;
+      lastCheckedAt = now;
+      if (document.visibilityState !== "visible" || !cardInView) {
+        visibleSince = null;
+        return;
+      }
+      const count = currentBatchWords().length;
+      if (!count) return;
+      if (visibleSince === null) { visibleSince = now; return; }
+      if (now - visibleSince < 60000) return;
+      visibleSince = now;
+      index = (index + 1) % count;
+      revealed = false;
+      renderCard();
+    }, 1000);
+  </script>
+</body>
+</html>

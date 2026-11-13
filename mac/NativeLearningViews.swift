@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 enum NativeSection: String, CaseIterable, Identifiable {
-    case today, study, training, review, vocabulary, speaking, writing, statistics, settings
+    case today, study, training, review, vocabulary, translation, speaking, writing, statistics, settings
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -11,6 +11,7 @@ enum NativeSection: String, CaseIterable, Identifiable {
         case .training: "每日训练"
         case .review: "到期复习"
         case .vocabulary: "词库"
+        case .translation: "翻译工具"
         case .speaking: "口语练习"
         case .writing: "写作练习"
         case .statistics: "学习统计"
@@ -24,6 +25,7 @@ enum NativeSection: String, CaseIterable, Identifiable {
         case .training: "rectangle.stack"
         case .review: "arrow.clockwise"
         case .vocabulary: "text.book.closed"
+        case .translation: "character.bubble"
         case .speaking: "waveform"
         case .writing: "pencil.line"
         case .statistics: "chart.bar.xaxis"
@@ -267,6 +269,7 @@ struct NativeRootView: View {
                 case .training: NativeTrainingView(session: model.trainingSession)
                 case .review: NativeReviewView()
                 case .vocabulary: NativeVocabularyView()
+                case .translation: NativeTranslationView()
                 case .speaking: NativeSpeakingView()
                 case .writing: NativeWritingView()
                 case .statistics: NativeStatisticsView()
@@ -301,7 +304,7 @@ struct NativeRootView: View {
         sidebarAutoHideGeneration += 1
         hoverRevealedSidebar = false
         sidebarPointerInside = false
-        withAnimation(.easeInOut(duration: 0.18)) {
+        withAnimation(.easeOut(duration: 0.1)) {
             columnVisibility = .detailOnly
         }
     }
@@ -317,12 +320,8 @@ struct NativeRootView: View {
 
     private func toggleSidebarPin() {
         if sidebarPinned {
-            sidebarAutoHideGeneration += 1
             sidebarPinned = false
-            hoverRevealedSidebar = true
-            if !sidebarPointerInside {
-                scheduleSidebarAutoHide(after: 0.45)
-            }
+            hideSidebar()
         } else {
             sidebarAutoHideGeneration += 1
             sidebarPinned = true

@@ -39,6 +39,8 @@
 		F10000000000000000000020 /* NativeSettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* NativeSettingsViews.swift */; };
 		F10000000000000000000022 /* NativeTrainingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* NativeTrainingSession.swift */; };
 		F10000000000000000000024 /* NativeControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* NativeControls.swift */; };
+		F10000000000000000000026 /* NativeTranslationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000027 /* NativeTranslationViews.swift */; };
+		F10000000000000000000028 /* DeepLTranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000029 /* DeepLTranslationService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +103,8 @@
 		F10000000000000000000021 /* NativeSettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSettingsViews.swift; sourceTree = "<group>"; };
 		F10000000000000000000023 /* NativeTrainingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTrainingSession.swift; sourceTree = "<group>"; };
 		F10000000000000000000025 /* NativeControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeControls.swift; sourceTree = "<group>"; };
+		F10000000000000000000027 /* NativeTranslationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTranslationViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000029 /* DeepLTranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLTranslationService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,8 @@
 				F10000000000000000000021 /* NativeSettingsViews.swift */,
 				F10000000000000000000023 /* NativeTrainingSession.swift */,
 				F10000000000000000000025 /* NativeControls.swift */,
+				F10000000000000000000027 /* NativeTranslationViews.swift */,
+				F10000000000000000000029 /* DeepLTranslationService.swift */,
 				D812A7A04E5D42709AEB4105 /* App.entitlements */,
 				C75D4E9610B746C99A27F582 /* PrivacyInfo.xcprivacy */,
 				93E1921D836EB88A67D06ECD /* main.swift */,
@@ -328,6 +334,8 @@
 				F10000000000000000000020 /* NativeSettingsViews.swift in Sources */,
 				F10000000000000000000022 /* NativeTrainingSession.swift in Sources */,
 				F10000000000000000000024 /* NativeControls.swift in Sources */,
+				F10000000000000000000026 /* NativeTranslationViews.swift in Sources */,
+				F10000000000000000000028 /* DeepLTranslationService.swift in Sources */,
 				A646442C4068BBB6C3919A53 /* main.swift in Sources */,
 				6BA5AA84781B0476F554EC0B /* MenuBarApp.swift in Sources */,
 				BC4C03E2470A4F0DCA876A58 /* DesktopVocabularyCard.swift in Sources */,

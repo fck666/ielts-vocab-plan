@@ -56,6 +56,8 @@ struct NativeSettingsView: View {
                     )
                 }
                 Divider()
+                NativeDeepLSettings()
+                Divider()
                 NativeSectionHeading(title: "学习语言", trailing: "切换语言会清空当前学习进度")
                 VStack(spacing: 0) {
                     ForEach(languages, id: \.0) { locale, name, state, ready in
@@ -144,5 +146,107 @@ struct NativeSettingsView: View {
         }
         exportDocument = NativeSQLiteDocument(data: data)
         showExporter = true
+    }
+}
+
+private struct NativeDeepLSettings: View {
+    @AppStorage("translation.mode") private var translationMode = "onDevice"
+    @State private var apiKeyInput = ""
+    @State private var hasAPIKey = false
+    @State private var isEditingAPIKey = false
+    @State private var status = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            NativeSectionHeading(title: "翻译配置")
+            NativeResponsiveStack(spacing: 10) {
+                Text("翻译方式").font(.system(size: 13, weight: .medium))
+                Picker("翻译方式", selection: $translationMode) {
+                    Text("本机").tag("onDevice")
+                    Text("DeepL 在线").tag("deepL")
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(maxWidth: 260)
+                .accessibilityLabel("翻译方式")
+            }
+            NativeResponsiveStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("DeepL API Key").font(.system(size: 13, weight: .medium))
+                    Text(hasAPIKey ? "已保存在 macOS 钥匙串" : "尚未配置")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                if hasAPIKey && !isEditingAPIKey {
+                    HStack(spacing: 8) {
+                        Button("更换") { isEditingAPIKey = true }
+                            .buttonStyle(.bordered)
+                        Button("移除", role: .destructive, action: removeAPIKey)
+                            .buttonStyle(.bordered)
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        SecureField("粘贴 DeepL API Key", text: $apiKeyInput)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(minWidth: 180, maxWidth: 320)
+                        HStack {
+                            Button("保存", action: saveAPIKey)
+                                .buttonStyle(.borderedProminent)
+                                .disabled(apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                            if hasAPIKey {
+                                Button("取消") {
+                                    apiKeyInput = ""
+                                    isEditingAPIKey = false
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                        }
+                    }
+                }
+            }
+            if !status.isEmpty {
+                Text(status).font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Text("在线翻译会将原文发送给 DeepL。DeepL API Free 提供每月免费字符额度，具体以账户页面为准。")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Link("前往 DeepL API 获取密钥", destination: URL(string: "https://www.deepl.com/pro-api")!)
+                .font(.system(size: 11))
+        }
+        .onAppear(perform: refreshAPIKeyStatus)
+    }
+
+    private func refreshAPIKeyStatus() {
+        do {
+            hasAPIKey = try DeepLKeychain.read()?.isEmpty == false
+        } catch {
+            hasAPIKey = false
+            status = error.localizedDescription
+        }
+    }
+
+    private func saveAPIKey() {
+        let key = apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty else { return }
+        do {
+            try DeepLKeychain.save(key)
+            apiKeyInput = ""
+            hasAPIKey = true
+            isEditingAPIKey = false
+            status = "API Key 已保存。"
+        } catch {
+            status = error.localizedDescription
+        }
+    }
+
+    private func removeAPIKey() {
+        do {
+            try DeepLKeychain.delete()
+            hasAPIKey = false
+            apiKeyInput = ""
+            status = "已从 macOS 钥匙串移除 API Key。"
+        } catch {
+            status = error.localizedDescription
+        }
     }
 }
